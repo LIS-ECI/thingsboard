@@ -69,7 +69,9 @@ public class ParcelController extends BaseController{
     @RequestMapping(value = "/parcel", method = RequestMethod.POST)
     @ResponseBody
     public Parcel saveParcel(@RequestBody Parcel parcel) throws ThingsboardException {
+
         try {
+            System.out.println("ACTUALIZO EL PARCEL ");
             parcel.setTenantId(getCurrentUser().getTenantId());
             if (getCurrentUser().getAuthority() == Authority.CUSTOMER_USER) {
                 if (parcel.getId() == null || parcel.getId().isNullUid() ||

@@ -91,6 +91,8 @@ export default function DeviceDirective($compile, $templateCache, toast, $transl
             }
             $log.log(point);
             scope.device.location = point;
+
+
         };
     }
     return {

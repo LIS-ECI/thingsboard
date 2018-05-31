@@ -20,6 +20,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.thingsboard.server.common.data.crop.Crop;
 import org.thingsboard.server.common.data.farm.Area;
+import org.thingsboard.server.common.data.id.DeviceId;
 import org.thingsboard.server.common.data.parcel.GroundFeatures;
 import org.thingsboard.server.common.data.parcel.Parcel;
 import org.thingsboard.server.common.data.id.ParcelId;
@@ -88,6 +89,11 @@ public final class ParcelEntity implements SearchTextEntity<Parcel> {
     @Column(name = GROUND_FEATURES)
     private String groundFeatures;
 
+    @Column(name = PARCEL_DEVICES)
+    private String devices;
+
+
+
     public ParcelEntity() {
         super();
     }
@@ -112,6 +118,7 @@ public final class ParcelEntity implements SearchTextEntity<Parcel> {
             this.cropsHistory = mapper.writeValueAsString(parcel.getCropsHistory());
             this.totalArea = mapper.writeValueAsString(parcel.getTotalArea());
             this.groundFeatures = mapper.writeValueAsString(parcel.getGroundFeatures());
+            this.setDevices(mapper.writeValueAsString(parcel.getDevices()));
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
@@ -199,6 +206,7 @@ public final class ParcelEntity implements SearchTextEntity<Parcel> {
             parcel.setCropsHistory(mapper.readValue(cropsHistory, mapper.getTypeFactory().constructParametricType(List.class, Crop.class)));
             parcel.setTotalArea(mapper.readValue(totalArea, Area.class));
             parcel.setGroundFeatures(mapper.readValue(groundFeatures, GroundFeatures.class));
+            parcel.setDevices(mapper.readValue(getDevices(), mapper.getTypeFactory().constructParametricType(List.class, UUID.class)));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -237,5 +245,13 @@ public final class ParcelEntity implements SearchTextEntity<Parcel> {
 
     public void setGroundFeatures(String groundFeatures) {
         this.groundFeatures = groundFeatures;
+    }
+
+    public String getDevices() {
+        return devices;
+    }
+
+    public void setDevices(String devices) {
+        this.devices = devices;
     }
 }

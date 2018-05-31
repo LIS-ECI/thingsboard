@@ -11,11 +11,13 @@ import org.thingsboard.server.common.data.Polygon;
 import org.thingsboard.server.common.data.SearchTextBasedWithAdditionalInfo;
 import org.thingsboard.server.common.data.crop.Crop;
 import org.thingsboard.server.common.data.farm.Area;
+import org.thingsboard.server.common.data.id.DeviceId;
 import org.thingsboard.server.common.data.id.ParcelId;
 import org.thingsboard.server.common.data.id.CustomerId;
 import org.thingsboard.server.common.data.id.TenantId;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  *
@@ -36,6 +38,7 @@ public class Parcel extends SearchTextBasedWithAdditionalInfo<ParcelId> implemen
     private List<Crop> cropsHistory;
     private Area totalArea;
     private GroundFeatures groundFeatures;
+    private List<UUID> devices;
 
 
     public Parcel() {
@@ -57,6 +60,7 @@ public class Parcel extends SearchTextBasedWithAdditionalInfo<ParcelId> implemen
         this.cropsHistory = parcel.getCropsHistory();
         this.totalArea = parcel.getTotalArea();
         this.groundFeatures = parcel.getGroundFeatures();
+        this.devices=parcel.getDevices();
     }
 
     public TenantId getTenantId() {
@@ -178,5 +182,13 @@ public class Parcel extends SearchTextBasedWithAdditionalInfo<ParcelId> implemen
 
     public void setGroundFeatures(GroundFeatures groundFeatures) {
         this.groundFeatures = groundFeatures;
+    }
+
+    public List<UUID> getDevices() {
+        return devices;
+    }
+
+    public void setDevices(List<UUID> devices) {
+        this.devices = devices;
     }
 }

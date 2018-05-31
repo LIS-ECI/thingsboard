@@ -117,4 +117,7 @@ public interface ParcelDao extends Dao<Parcel> {
      */
     ListenableFuture<List<ParcelEntity>> allParcels();
 
+
+
+
 }

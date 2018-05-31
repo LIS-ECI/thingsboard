@@ -224,6 +224,7 @@ public class ModelConstants {
     public static final String PARCEL_CROPS_HISTORY = "crops_history";
     public static final String PARCEL_TOTAL_AREA = "total_area";
     public static final String GROUND_FEATURES = "ground_features";
+    public static final String PARCEL_DEVICES = "devices";
     public static final String PARCEL_ADDITIONAL_INFO_PROPERTY = ADDITIONAL_INFO_PROPERTY;
 
     public static final String PARCEL_BY_TENANT_AND_SEARCH_TEXT_COLUMN_FAMILY_NAME = "parcel_by_tenant_and_search_text";

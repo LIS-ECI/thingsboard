@@ -350,6 +350,7 @@ CREATE TABLE IF NOT EXISTS thingsboard.parcel (
     crops_history text,
     total_area text,
     ground_features text,
+    devices text,
     PRIMARY KEY (id, tenant_id, customer_id, type)
 );
 

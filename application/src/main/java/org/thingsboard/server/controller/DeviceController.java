@@ -40,6 +40,7 @@ import org.thingsboard.server.common.data.widget.WidgetType;
 import org.thingsboard.server.common.data.widget.WidgetsBundle;
 import org.thingsboard.server.dao.exception.IncorrectParameterException;
 import org.thingsboard.server.dao.model.ModelConstants;
+import org.thingsboard.server.dao.parcel.ParcelService;
 import org.thingsboard.server.dao.timeseries.TimeseriesService;
 import org.thingsboard.server.exception.ThingsboardErrorCode;
 import org.thingsboard.server.exception.ThingsboardException;
@@ -59,6 +60,9 @@ public class DeviceController extends BaseController {
 
     @Autowired
     private TimeseriesService tsService;
+
+    @Autowired
+    protected ParcelService parcelService;
 
     @PreAuthorize("hasAnyAuthority('TENANT_ADMIN', 'CUSTOMER_USER')")
     @RequestMapping(value = "/device/{deviceId}", method = RequestMethod.GET)
@@ -96,6 +100,16 @@ public class DeviceController extends BaseController {
             long millis = System.currentTimeMillis();
             BasicTsKvEntry tsKvEntry = new BasicTsKvEntry(millis, value);
             tsService.save(savedDevice.getId(),tsKvEntry);
+
+
+            ParcelId parcelId=  ParcelId.fromString(savedDevice.getParcelId());
+            Parcel parcel = parcelService.findParcelById(parcelId);
+            List<UUID> devices= parcel.getDevices();
+            devices.add(savedDevice.getId().getId());
+            parcel.setDevices(devices);
+            parcelService.saveParcel(parcel);
+
+
             //----------------------------------------------------------------
             /*ObjectMapper mapper = new ObjectMapper();
             ParcelId parcelId = new ParcelId(UUID.fromString(savedDevice.getParcelId()));
