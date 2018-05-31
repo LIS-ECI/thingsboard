@@ -37,8 +37,9 @@ export default function DashboardLayout() {
     };
 }
 
+/* global google */
 /*@ngInject*/
-function DashboardLayoutController($scope, $rootScope, $translate, $window, hotkeys, itembuffer) {
+function DashboardLayoutController($scope, $rootScope, $translate, $window, hotkeys, itembuffer,$log) {
 
     var vm = this;
 
@@ -99,6 +100,21 @@ function DashboardLayoutController($scope, $rootScope, $translate, $window, hotk
             vm.layoutCtx.ctrl = vm;
         }
     });
+
+    var map;
+    $scope.tempLatitude = -34.397;
+    $scope.tempLongitude = 150.644;
+    function showMap() {
+        map = new google.maps.Map(angular.element('#mapa')[0], {
+            center: {lat: $scope.tempLatitude, lng: $scope.tempLongitude},
+            zoom: 8
+        });
+        $log.log(map);
+        $log.log("este es el scope");
+        $log.log($scope);
+    }
+
+    showMap();
 
     function noData() {
         return vm.dashboardInitComplete && vm.layoutCtx &&

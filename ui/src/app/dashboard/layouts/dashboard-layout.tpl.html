@@ -26,13 +26,9 @@
              ng-style="{'color': vm.layoutCtx.gridSettings.color}"
              style="text-transform: uppercase; display: flex; z-index: 1; pointer-events: none;"
              class="md-headline tb-absolute-fill">
-            <span translate ng-if="!vm.isEdit">
-                dashboard.no-widgets
-            </span>
-        <md-button ng-if="vm.isEdit && !vm.widgetEditMode" class="tb-add-new-widget" ng-click="vm.addWidget({event: $event})">
-            <md-icon aria-label="{{ 'action.add' | translate }}" class="material-icons tb-md-96">add</md-icon>
-            {{ 'dashboard.add-widget' | translate }}
-        </md-button>
+            <div style="min-height: 500px;">
+                <div id="mapa" style="height: 450px; width: 500px;"></div>
+            </div>
     </section>
     <tb-dashboard
             dashboard-style="{'background-color': vm.layoutCtx.gridSettings.backgroundColor,

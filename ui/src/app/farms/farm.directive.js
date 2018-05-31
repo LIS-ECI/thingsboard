@@ -208,7 +208,8 @@ export default function FarmDirective($compile, $templateCache, toast, $translat
 
 
         var map;
-
+        scope.tempLatitude = -34.397;
+        scope.tempLongitude = 150.644;
         scope.mostrar = function () {
             direction();
             map = new google.maps.Map(angular.element('#mapa')[0], {
