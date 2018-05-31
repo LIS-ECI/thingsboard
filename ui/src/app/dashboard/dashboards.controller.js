@@ -56,7 +56,7 @@ export function DashboardCardController(types) {
 
 /*@ngInject*/
 export function DashboardsController(userService, dashboardService, customerService, importExport, types,
-                                             $state, $stateParams, $mdDialog, $document, $q, $translate,$log) {
+                                             $state, $stateParams, $mdDialog, $document, $q, $translate,$log,$window) {
 
     var customerId = $stateParams.customerId;
 
@@ -609,6 +609,7 @@ export function DashboardsController(userService, dashboardService, customerServ
                 dashboardId: dashboard.id.id
             });
         } else {
+            $window.sessionStorage.setItem('dashboardId',dashboard.id.id);
             $state.go('home.dashboards.dashboard', {dashboardId: dashboard.id.id});
         }
     }

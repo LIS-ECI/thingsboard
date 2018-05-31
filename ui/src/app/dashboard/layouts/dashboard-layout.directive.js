@@ -39,7 +39,7 @@ export default function DashboardLayout() {
 
 /* global google */
 /*@ngInject*/
-function DashboardLayoutController($scope, $rootScope, $translate, $window, hotkeys, itembuffer,$log) {
+function DashboardLayoutController($scope, $rootScope, $translate, $window, hotkeys, dashboardService, itembuffer,$log) {
 
     var vm = this;
 
@@ -110,8 +110,10 @@ function DashboardLayoutController($scope, $rootScope, $translate, $window, hotk
             zoom: 8
         });
         $log.log(map);
-        $log.log("este es el scope");
-        $log.log($scope);
+        $log.log("este es el session storage");
+        $log.log($window.sessionStorage.getItem('dashboardId'));
+        $log.log("El dashborad que deberia retornar");
+        $log.log(dashboardService.getDashboard($window.sessionStorage.getItem('dashboardId')));
     }
 
     showMap();
