@@ -36,6 +36,7 @@ function DashboardService($rootScope, $http, $q, $location, $filter) {
         getTenantDashboards: getTenantDashboards,
         deleteDashboard: deleteDashboard,
         saveDashboard: saveDashboard,
+        getFarmByDashboardId:getFarmByDashboardId,
         unassignDashboardFromCustomer: unassignDashboardFromCustomer,
         updateDashboardCustomers: updateDashboardCustomers,
         addDashboardCustomers: addDashboardCustomers,
@@ -128,6 +129,17 @@ function DashboardService($rootScope, $http, $q, $location, $filter) {
     function getDashboard(dashboardId) {
         var deferred = $q.defer();
         var url = '/api/dashboard/' + dashboardId;
+        $http.get(url, null).then(function success(response) {
+            deferred.resolve(prepareDashboard(response.data));
+        }, function fail() {
+            deferred.reject();
+        });
+        return deferred.promise;
+    }
+
+    function getFarmByDashboardId(dashboardId) {
+        var deferred = $q.defer();
+        var url = '/api/dashboard/farm/' + dashboardId;
         $http.get(url, null).then(function success(response) {
             deferred.resolve(prepareDashboard(response.data));
         }, function fail() {
