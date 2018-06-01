@@ -204,14 +204,16 @@ export default function FarmDirective($compile, $templateCache, toast, $translat
 
         var map;
 
-        scope.mostrar = function () {
-            direction();
-            map = new google.maps.Map(angular.element('#mapa')[0], {
-                center: {lat: scope.tempLatitude, lng: scope.tempLongitude},
-                zoom: 8
-            });
-            dibujar();
-        };
+        scope.$watch("farm",function(newVal) {
+            if(newVal){
+                direction();
+                map = new google.maps.Map(angular.element('#mapa')[0], {
+                    center: {lat: scope.tempLatitude, lng: scope.tempLongitude},
+                    zoom: 8
+                });
+                dibujar();
+            }
+        });
 
         function dibujar(){
             $log.log("Entro a dibujar");
