@@ -42,6 +42,7 @@ import static org.thingsboard.server.dao.model.ModelConstants.FARM_BY_TENANT_AND
 import static org.thingsboard.server.dao.model.ModelConstants.FARM_BY_TENANT_BY_TYPE_AND_SEARCH_TEXT_COLUMN_FAMILY_NAME;
 import static org.thingsboard.server.dao.model.ModelConstants.FARM_COLUMN_FAMILY_NAME;
 import static org.thingsboard.server.dao.model.ModelConstants.FARM_CUSTOMER_ID_PROPERTY;
+import static org.thingsboard.server.dao.model.ModelConstants.FARM_DASHBOARDID_PROPERTY;
 import static org.thingsboard.server.dao.model.ModelConstants.FARM_NAME_PROPERTY;
 import static org.thingsboard.server.dao.model.ModelConstants.FARM_TENANT_ID_PROPERTY;
 import static org.thingsboard.server.dao.model.ModelConstants.FARM_TYPE_PROPERTY;
@@ -203,8 +204,6 @@ public class CassandraFarmDao extends CassandraAbstractSearchTextDao<FarmEntity,
             }
         });
     }
-
-    
 
 }
 

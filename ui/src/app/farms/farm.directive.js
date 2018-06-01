@@ -200,8 +200,6 @@ export default function FarmDirective($compile, $templateCache, toast, $translat
             }
         }
 
-
-
         var map;
 
         scope.$watch("farm",function(newVal) {

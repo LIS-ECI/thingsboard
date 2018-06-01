@@ -37,8 +37,9 @@ export default function DashboardLayout() {
     };
 }
 
+/* global google */
 /*@ngInject*/
-function DashboardLayoutController($scope, $rootScope, $translate, $window, hotkeys, itembuffer) {
+function DashboardLayoutController($scope, $rootScope, $translate, $window, hotkeys, dashboardService, itembuffer,$log) {
 
     var vm = this;
 
@@ -99,6 +100,68 @@ function DashboardLayoutController($scope, $rootScope, $translate, $window, hotk
             vm.layoutCtx.ctrl = vm;
         }
     });
+
+    var map;
+    var tempLatitude = -34.397;
+    var tempLongitude = 150.644;
+    function showMap() {
+        
+        $log.log("este es el session storage");
+        $log.log($window.sessionStorage.getItem('dashboardId'));
+
+        var drawMap = [];
+        dashboardService.getFarmByDashboardId($window.sessionStorage.getItem('dashboardId')).then(
+            function success(farm) {
+
+                $log.log("esta es la finca farm:");
+                $log.log(farm);
+
+                function setPolygonFarm(){
+                    if(farm.polygons.coordinates.length > 0){
+                        tempLatitude = farm.polygons.coordinates[0][1];
+                        tempLongitude = farm.polygons.coordinates[0][0];
+                        for(var i = 0 ; i < farm.polygons.coordinates.length ; i++){
+                            drawMap.push({lat: farm.polygons.coordinates[i][1],lng:  farm.polygons.coordinates[i][0]});
+                        }
+                    }
+                }
+
+                setPolygonFarm();
+
+                map = new google.maps.Map(angular.element('#mapa')[0], {
+                    center: {lat: tempLatitude, lng: tempLongitude},
+                    zoom: 13,
+                    draggable : true
+                });
+        
+                $log.log(map);
+
+                function drawPolygon(){
+                    $log.log("Entro a dibujar");
+                    $log.log(drawMap);
+                    new google.maps.Polygon({
+                        paths: drawMap,
+                        strokeColor: '#FF0000',
+                        strokeOpacity: 0.8,
+                        strokeWeight: 2,
+                        fillColor: '#FF0000',
+                        fillOpacity: 0.35
+                    }).setMap(map);
+                    drawMap = [];
+                }
+        
+                drawPolygon();
+
+            },
+            function fail() {
+                $log.log("error");
+            }
+        );
+
+        
+    }
+
+    showMap();
 
     function noData() {
         return vm.dashboardInitComplete && vm.layoutCtx &&

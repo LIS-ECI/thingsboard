@@ -15,6 +15,7 @@
  */
 package org.thingsboard.server.controller;
 
+import java.util.ArrayList;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -32,7 +33,10 @@ import org.thingsboard.server.dao.model.ModelConstants;
 import org.thingsboard.server.exception.ThingsboardException;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import org.thingsboard.server.common.data.farm.Farm;
+import org.thingsboard.server.dao.model.nosql.FarmEntity;
 
 @RestController
 @RequestMapping("/api")
@@ -68,6 +72,27 @@ public class DashboardController extends BaseController {
         try {
             DashboardId dashboardId = new DashboardId(toUUID(strDashboardId));
             return checkDashboardId(dashboardId);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
+    }
+
+    @PreAuthorize("hasAnyAuthority('TENANT_ADMIN', 'CUSTOMER_USER')")
+    @RequestMapping(value = "/dashboard/farm/{dashboardId}", method = RequestMethod.GET)
+    @ResponseBody
+    public SpatialFarm getFarmDashboardById(@PathVariable(DASHBOARD_ID) String strDashboardId) throws ThingsboardException {
+        try {
+            List<FarmEntity> farmTypes = farmService.allFarms().get();
+            for(FarmEntity fe : farmTypes){
+                Farm farmTemp = fe.toData();
+                if(farmTemp.getDashboardId().equals(strDashboardId)){
+                    System.out.println("Farm returned: "+farmTemp.toString());
+                    SpatialFarm spatialFarm = mongoService.getMongodbFarm().findById(farmTemp.getId().getId().toString());
+                    System.out.println("SpatialFarm returned: "+spatialFarm.toString());
+                    return spatialFarm;
+                }
+            }
+            return null;
         } catch (Exception e) {
             throw handleException(e);
         }

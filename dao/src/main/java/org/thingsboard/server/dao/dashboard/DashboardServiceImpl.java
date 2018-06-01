@@ -51,6 +51,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
+import org.thingsboard.server.common.data.farm.Farm;
 
 import static org.thingsboard.server.dao.service.Validator.validateId;
 
