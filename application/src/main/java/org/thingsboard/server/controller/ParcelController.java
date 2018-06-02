@@ -73,8 +73,6 @@ public class ParcelController extends BaseController{
     public HashMap<String, String> getHistoricalValues(@PathVariable("parcelId") String parcelId, @PathVariable("date") String date) throws ThingsboardException {
         checkParameter("parcelId", parcelId);
         checkParameter("date", date);
-        System.out.println("ENTROO AL QUE CREEEE "+parcelId);
-        System.out.println("ENTROO AL QUE CREEEE "+date);
         return parcelService.getHistoricalValues(parcelId,Long.parseLong(date));
 
     }

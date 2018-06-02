@@ -111,7 +111,6 @@ public class CassandraBaseAttributesDao extends CassandraAbstractAsyncDao implem
 
     @Override
     public HashMap<String, String> getHistoricalValues(String parcelId, long date) {
-        System.out.println("YES");
         HashMap<String, String> data = new HashMap<>();
         long dayts = 86400000L;
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -131,7 +130,6 @@ public class CassandraBaseAttributesDao extends CassandraAbstractAsyncDao implem
             Parcel parcel = parcelService.findParcelById(parcelIdUUID);
             List<UUID> devices= parcel.getDevices();
             //Por cada elemento del arreglo del parcel ir acumulando
-            System.out.println("CONSULTA devices "+devices.size());
             for (UUID device_id: devices){
 
                 Select select = select(KEY_COLUMN,STRING_VALUE_COLUMN).from(TS_KV_CF).allowFiltering();
@@ -142,7 +140,6 @@ public class CassandraBaseAttributesDao extends CassandraAbstractAsyncDao implem
                 ResultSetFuture resp =executeAsyncRead(query);
                 ResultSet resp2= resp.getUninterruptibly();
                 List<Row> rows =resp2.all();
-                System.out.println("LIST Rows "+rows.size()+" "+rows.toString());
                 HashMap<String,ArrayList<Integer>> temp = new HashMap<>();
                 for (Row r:rows){
                     String key=r.getString(0);
@@ -178,14 +175,6 @@ public class CassandraBaseAttributesDao extends CassandraAbstractAsyncDao implem
             e.printStackTrace();
         }
 
-        System.out.println("Hashmap values: ");
-        for (String name: data.keySet()){
-
-            String key =name;
-            String value = data.get(name);
-            System.out.println(key + " " + value);
-
-        }
 
         return data;
     }
