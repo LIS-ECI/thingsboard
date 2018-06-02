@@ -61,7 +61,6 @@
                         <label translate>parcel.description</label>
                         <textarea ng-model="parcel.additionalInfo.description" rows="2"></textarea>
                     </md-input-container>
-                    <md-button ng-click="mostrarMapaParcel()">Refresh</md-button>
                     <div style="min-height: 1000px;">
                         <div id="mapa"  style="height: 450px; width: 450px;"></div>
                     </div>
@@ -193,9 +192,12 @@
                             </div>
                         </div>
                         <md-button ng-click="updateSelectedDate()">Update Dates</md-button>
-                        <md-slider-container style="display:inline-block;width:90%;float: left;">
-                            <md-slider ng-model="slider" min="{{minDate}}}" max="{{maxDate}}}" aria-label="nav Date" flex></md-slider>
-                        </md-slider-container>
+                        <div>
+                            <input ng-model="slider" type="range" min="{{minDate}}" max="{{maxDate}}" style="width:1000px" list="tickmarks">
+                            <datalist id="tickmarks">
+                                <option ng-repeat="fecha in fechas" value="{{fecha}}">
+                            </datalist>
+                        </div>
                         <md-input-container>
                             <input flex type="text" value="{{selectedDate |date:'dd/MM/yyyy'}}" aria-label="green" aria-controls="green-slider" style="width: 300px;">
                         </md-input-container>

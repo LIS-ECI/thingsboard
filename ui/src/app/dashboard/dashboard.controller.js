@@ -29,7 +29,7 @@ import AliasController from '../api/alias-controller';
 /*@ngInject*/
 export default function DashboardController(types, utils, dashboardUtils, widgetService, userService,
                                             dashboardService, timeService, entityService, itembuffer, importExport, hotkeys, $window, $rootScope,
-                                            $scope, $element, $state, $stateParams, $mdDialog, $mdMedia, $timeout, $document, $q, $translate, $filter) {
+                                            $scope, $element, $state, $stateParams, $mdDialog, $mdMedia, $timeout, $document, $q, $translate, $filter, $log) {
 
     var vm = this;
 
@@ -359,6 +359,8 @@ export default function DashboardController(types, utils, dashboardUtils, widget
             parentScope.$root.$broadcast('widgetEditModeInited');
             parentScope.$root.$apply();
         } else {
+            $log.log("Entro a la obtencion de dashboard");
+            $log.log($stateParams.dashboardId);
             dashboardService.getDashboard($stateParams.dashboardId)
                 .then(function success(dashboard) {
                     vm.dashboard = dashboardUtils.validateAndUpdateDashboard(dashboard);

@@ -12,6 +12,8 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.result.DeleteResult;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import org.thingsboard.server.common.data.SparkDevice;
 import org.thingsboard.server.common.data.SpatialDevice;
 import org.thingsboard.server.dao.Dao;
 
@@ -48,6 +50,16 @@ public class MongoDBSpatialDevice extends MongoConnectionPOJO<SpatialDevice> imp
             return t;
         } catch (MongoWriteException ex) {
             System.out.println("No fue posible agregar el device");
+        }
+        return null;
+    }
+
+    public SparkDevice saveSparkDevice(SparkDevice t){
+        try{
+            this.getMongoDatabase().getCollection("SparkDevice", SparkDevice.class).insertOne(t);
+            return t;
+        }catch (MongoWriteException ex){
+            System.out.println("No fue posible agregar el spark device");
         }
         return null;
     }

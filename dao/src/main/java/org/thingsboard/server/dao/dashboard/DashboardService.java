@@ -27,6 +27,7 @@ import org.thingsboard.server.common.data.page.TimePageData;
 import org.thingsboard.server.common.data.page.TimePageLink;
 
 import java.util.Set;
+import org.thingsboard.server.common.data.farm.Farm;
 
 public interface DashboardService {
     

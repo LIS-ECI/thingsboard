@@ -89,6 +89,7 @@ export default function ParcelDirective($compile, $templateCache, toast, $transl
 
         scope.startDate = new Date();
         scope.finishDate = new Date();
+        scope.fechas = [1515992400000,1516856400000];
 
         scope.$watch('slider', function (value) {
             if (value != null) {
@@ -115,10 +116,13 @@ export default function ParcelDirective($compile, $templateCache, toast, $transl
         scope.maxDate = scope.finishDate.getTime();
         scope.minDate = scope.startDate.getTime();
         scope.updateSelectedDate = function(){
+            $log.log("Entró update");
             scope.selectedDate = scope.startDate;
             scope.maxDate = scope.finishDate.getTime();
             scope.minDate = scope.startDate.getTime();
+            scope.fechas = [1515992400000,1516880585842];
         };
+
 
         scope.exists = function (item, list) {
             return list.indexOf(item) > -1;
@@ -161,87 +165,88 @@ export default function ParcelDirective($compile, $templateCache, toast, $transl
             this.coordinates = [];
             this.type = 'Polygon';
         }
-        scope.mostrarMapaParcel =function (){
-            scope.cropFarm = farmService.getFarm(scope.parcel.farmId).then(function(result){
-                var polygon = new Polygon();
-                scope.tempLatitude = -34.397;
-                scope.tempLongitude = 150.644;
-                scope.cropFarm = result;
-                $log.log(scope.cropFarm);
-                if(scope.cropFarm.location.coordinates.length > 0){
-                    scope.tempLatitude = scope.cropFarm.location.coordinates[0][1];
-                    scope.tempLongitude = scope.cropFarm.location.coordinates[0][0];
-                    for(var i=0; i<scope.cropFarm.location.coordinates.length; i++){
-                        drawMapFarm.push({lat: scope.cropFarm.location.coordinates[i][1],lng:  scope.cropFarm.location.coordinates[i][0]});
-                    }
-                    drawMapFarm.push({lat: scope.cropFarm.location.coordinates[0][1],lng:  scope.cropFarm.location.coordinates[0][0]});
-                    if(scope.parcel.location != null){
-                        for(var j = 0; j<scope.parcel.location.coordinates.length; j++){
-                            drawMapParcel.push({lat: scope.parcel.location.coordinates[j][1],lng: scope.parcel.location.coordinates[j][0]});
+        scope.$watch("parcel",function(newVal){
+            if(scope.parcel.id != null && newVal){
+                scope.cropFarm = farmService.getFarm(scope.parcel.farmId).then(function(result){
+                    var polygon = new Polygon();
+                    scope.tempLatitude = -34.397;
+                    scope.tempLongitude = 150.644;
+                    scope.cropFarm = result;
+                    $log.log(scope.cropFarm);
+                    if(scope.cropFarm.location.coordinates.length > 0){
+                        scope.tempLatitude = scope.cropFarm.location.coordinates[0][1];
+                        scope.tempLongitude = scope.cropFarm.location.coordinates[0][0];
+                        for(var i=0; i<scope.cropFarm.location.coordinates.length; i++){
+                            drawMapFarm.push({lat: scope.cropFarm.location.coordinates[i][1],lng:  scope.cropFarm.location.coordinates[i][0]});
                         }
+                        drawMapFarm.push({lat: scope.cropFarm.location.coordinates[0][1],lng:  scope.cropFarm.location.coordinates[0][0]});
+                        if(scope.parcel.location != null){
+                            for(var j = 0; j<scope.parcel.location.coordinates.length; j++){
+                                drawMapParcel.push({lat: scope.parcel.location.coordinates[j][1],lng: scope.parcel.location.coordinates[j][0]});
+                            }
+                        }
+                        $log.log(drawMapParcel);
                     }
-                    $log.log(drawMapParcel);
-                }
-                map = new google.maps.Map(angular.element('#mapa')[0], {
-                    center: {lat: scope.tempLatitude, lng: scope.tempLongitude},
-                    zoom: 8
-                });
+                    map = new google.maps.Map(angular.element('#mapa')[0], {
+                        center: {lat: scope.tempLatitude, lng: scope.tempLongitude},
+                        zoom: 8
+                    });
 
-                new google.maps.Polyline({
-                    path: drawMapFarm,
-                    geodesic: true,
-                    strokeColor: '#FF0000',
-                    strokeOpacity: 1.0,
-                    strokeWeight: 2
-                }).setMap(map);
-                drawMapFarm = [];
-
-                if(scope.parcel.location != null){
-                    new google.maps.Polygon({
-                        paths: drawMapParcel,
+                    new google.maps.Polyline({
+                        path: drawMapFarm,
+                        geodesic: true,
                         strokeColor: '#FF0000',
-                        strokeOpacity: 0.8,
-                        strokeWeight: 2,
-                        fillColor: '#FF0000',
-                        fillOpacity: 0.35
+                        strokeOpacity: 1.0,
+                        strokeWeight: 2
                     }).setMap(map);
-                    drawMapParcel=[];
-                }
+                    drawMapFarm = [];
 
-
-                var isClosed = false;
-                var poly = new google.maps.Polyline({ map: map, path: [], strokeColor: "#FF0000", strokeOpacity: 1.0, strokeWeight: 2 });
-
-                google.maps.event.addListener(map, 'click', first);
-                function first (clickEvent) {
-                    var markerIndex = poly.getPath().length;
-                    var isFirstMarker = markerIndex === 0;
-                    var marker = new google.maps.Marker({ map: map, position: clickEvent.latLng, draggable: true });
-                    if (isFirstMarker) {
-                        google.maps.event.addListener(marker, 'click', second);
+                    if(scope.parcel.location != null){
+                        new google.maps.Polygon({
+                            paths: drawMapParcel,
+                            strokeColor: '#FF0000',
+                            strokeOpacity: 0.8,
+                            strokeWeight: 2,
+                            fillColor: '#FF0000',
+                            fillOpacity: 0.35
+                        }).setMap(map);
+                        drawMapParcel=[];
                     }
-                    poly.getPath().push(clickEvent.latLng);
-                    if (isClosed){
-                        return;
-                    }
-                }
-                function second () {
-                    var path = poly.getPath();
-                    poly.setMap(null);
-                    poly = new google.maps.Polygon({ map: map, path: path, strokeColor: "#FFF000", strokeOpacity: 0.8, strokeWeight: 2, fillColor: "#FF0000", fillOpacity: 0.35 });
-                    isClosed = true;
-                    if (isClosed){
-                        for(var i = 0; i<path.getArray().length;i++){
-                            polygon.coordinates[i] = [poly.getPath().getArray()[i].lng(),poly.getPath().getArray()[i].lat()];
+
+
+                    var isClosed = false;
+                    var poly = new google.maps.Polyline({ map: map, path: [], strokeColor: "#FF0000", strokeOpacity: 1.0, strokeWeight: 2 });
+
+                    google.maps.event.addListener(map, 'click', first);
+                    function first (clickEvent) {
+                        var markerIndex = poly.getPath().length;
+                        var isFirstMarker = markerIndex === 0;
+                        var marker = new google.maps.Marker({ map: map, position: clickEvent.latLng, draggable: true });
+                        if (isFirstMarker) {
+                            google.maps.event.addListener(marker, 'click', second);
                         }
-                        scope.parcel.location = polygon;
-                        return;
+                        poly.getPath().push(clickEvent.latLng);
+                        if (isClosed){
+                            return;
+                        }
                     }
-                }
+                    function second () {
+                        var path = poly.getPath();
+                        poly.setMap(null);
+                        poly = new google.maps.Polygon({ map: map, path: path, strokeColor: "#FFF000", strokeOpacity: 0.8, strokeWeight: 2, fillColor: "#FF0000", fillOpacity: 0.35 });
+                        isClosed = true;
+                        if (isClosed){
+                            for(var i = 0; i<path.getArray().length;i++){
+                                polygon.coordinates[i] = [poly.getPath().getArray()[i].lng(),poly.getPath().getArray()[i].lat()];
+                            }
+                            scope.parcel.location = polygon;
+                            return;
+                        }
+                    }
 
-            });
-
-        };
+                });
+            }
+        });
 
 
         /*scope.mostrarMapaParcel = function (){
