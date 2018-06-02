@@ -44,7 +44,7 @@ export default function AttributeTableDirective($compile, $templateCache, $rootS
                 return scope.types.latestTelemetry;
             }
             for (var attrScope in scope.attributeScopes) {
-                if (scope.attributeScopes[attrScope].value === attributeScopeValue) {
+                if (scope.lastUpdateTs[attrScope].value === attributeScopeValue) {
                     return scope.attributeScopes[attrScope];
                 }
             }

@@ -8,44 +8,31 @@ package org.thingsboard.server.dao.parcel;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.ResultSetFuture;
 import com.datastax.driver.core.Statement;
-import static com.datastax.driver.core.querybuilder.QueryBuilder.eq;
-import static com.datastax.driver.core.querybuilder.QueryBuilder.in;
-import static com.datastax.driver.core.querybuilder.QueryBuilder.select;
+
+import static com.datastax.driver.core.querybuilder.QueryBuilder.*;
+import static org.thingsboard.server.dao.model.ModelConstants.*;
+
+import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.datastax.driver.core.querybuilder.Select;
 import com.datastax.driver.mapping.Result;
 import com.google.common.base.Function;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import javax.annotation.Nullable;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.thingsboard.server.common.data.EntitySubtype;
 import org.thingsboard.server.common.data.EntityType;
+import org.thingsboard.server.common.data.id.ParcelId;
 import org.thingsboard.server.common.data.parcel.Parcel;
 import org.thingsboard.server.common.data.page.TextPageLink;
 import org.thingsboard.server.dao.DaoUtil;
 import org.thingsboard.server.dao.model.EntitySubtypeEntity;
-import static org.thingsboard.server.dao.model.ModelConstants.ALL_PARCELS;
-import static org.thingsboard.server.dao.model.ModelConstants.PARCEL_BY_CUSTOMER_AND_SEARCH_TEXT_COLUMN_FAMILY_NAME;
-import static org.thingsboard.server.dao.model.ModelConstants.PARCEL_BY_CUSTOMER_BY_TYPE_AND_SEARCH_TEXT_COLUMN_FAMILY_NAME;
-import static org.thingsboard.server.dao.model.ModelConstants.PARCEL_BY_TENANT_AND_NAME_VIEW_NAME;
-import static org.thingsboard.server.dao.model.ModelConstants.PARCEL_BY_TENANT_AND_SEARCH_TEXT_COLUMN_FAMILY_NAME;
-import static org.thingsboard.server.dao.model.ModelConstants.PARCEL_BY_TENANT_BY_TYPE_AND_SEARCH_TEXT_COLUMN_FAMILY_NAME;
-import static org.thingsboard.server.dao.model.ModelConstants.PARCEL_COLUMN_FAMILY_NAME;
-import static org.thingsboard.server.dao.model.ModelConstants.PARCEL_CUSTOMER_ID_PROPERTY;
-import static org.thingsboard.server.dao.model.ModelConstants.PARCEL_NAME_PROPERTY;
-import static org.thingsboard.server.dao.model.ModelConstants.PARCEL_TENANT_ID_PROPERTY;
-import static org.thingsboard.server.dao.model.ModelConstants.PARCEL_TYPE_PROPERTY;
-import static org.thingsboard.server.dao.model.ModelConstants.ENTITY_SUBTYPE_COLUMN_FAMILY_NAME;
-import static org.thingsboard.server.dao.model.ModelConstants.ENTITY_SUBTYPE_ENTITY_TYPE_PROPERTY;
-import static org.thingsboard.server.dao.model.ModelConstants.ENTITY_SUBTYPE_TENANT_ID_PROPERTY;
-import static org.thingsboard.server.dao.model.ModelConstants.ID_PROPERTY;
 import org.thingsboard.server.dao.model.nosql.ParcelEntity;
 import org.thingsboard.server.dao.nosql.CassandraAbstractSearchTextDao;
 import org.thingsboard.server.dao.util.NoSqlDao;
@@ -78,6 +65,9 @@ public class CassandraParcelDao extends CassandraAbstractSearchTextDao<ParcelEnt
         executeWrite(saveStatement);
         return savedParcel;
     }
+
+
+
 
     @Override
     public List<Parcel> findParcelsByTenantId(UUID tenantId, TextPageLink pageLink) {
@@ -226,8 +216,9 @@ public class CassandraParcelDao extends CassandraAbstractSearchTextDao<ParcelEnt
             }
         });
     }
-    
-    
+
 
 }
+
+
 

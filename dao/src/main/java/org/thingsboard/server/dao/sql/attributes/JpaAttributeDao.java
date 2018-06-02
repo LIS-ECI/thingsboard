@@ -32,6 +32,7 @@ import org.thingsboard.server.dao.sql.JpaAbstractDaoListeningExecutorService;
 import org.thingsboard.server.dao.util.SqlDao;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -111,6 +112,12 @@ public class JpaAttributeDao extends JpaAbstractDaoListeningExecutorService impl
             attributeKvRepository.delete(entitiesToDelete);
             return null;
         });
+    }
+
+    @Override
+    public HashMap<String, String> getHistoricalValues(String parcelId, long date) {
+        HashMap<String, String> data= new HashMap<>();
+        return data;
     }
 
     private AttributeKvCompositeKey getAttributeKvCompositeKey(EntityId entityId, String attributeType, String attributeKey) {

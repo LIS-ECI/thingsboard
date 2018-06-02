@@ -20,7 +20,9 @@ function ParcelService($http, $q, customerService, userService, $log) {
         getCustomerParcels: getCustomerParcels,
         findByQuery: findByQuery,
         fetchParcelsByNameFilter: fetchParcelsByNameFilter,
-        getParcelTypes: getParcelTypes
+        getParcelTypes: getParcelTypes,
+        getHistoricalValues: getHistoricalValues
+
     }
 
     return service;
@@ -271,6 +273,21 @@ function ParcelService($http, $q, customerService, userService, $log) {
     function getParcelTypes(config) {
         var deferred = $q.defer();
         var url = '/api/parcel/types';
+        $http.get(url, config).then(function success(response) {
+            deferred.resolve(response.data);
+        }, function fail() {
+            deferred.reject();
+        });
+        return deferred.promise;
+    }
+
+    function getHistoricalValues(parcelId, date, ignoreErrors, config) {
+        var deferred = $q.defer();
+        var url = '/api/parcel/historical/' + parcelId+'/'+String(date);
+        if (!config) {
+            config = {};
+        }
+        config = Object.assign(config, { ignoreErrors: ignoreErrors });
         $http.get(url, config).then(function success(response) {
             deferred.resolve(response.data);
         }, function fail() {

@@ -9,11 +9,8 @@ import com.google.common.base.Function;
 import com.google.common.util.concurrent.AsyncFunction;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+
+import java.util.*;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -35,6 +32,8 @@ import org.thingsboard.server.common.data.page.TextPageLink;
 import org.thingsboard.server.common.data.relation.EntityRelation;
 import org.thingsboard.server.common.data.relation.EntitySearchDirection;
 import static org.thingsboard.server.dao.DaoUtil.toUUIDs;
+
+import org.thingsboard.server.dao.attributes.AttributesDao;
 import org.thingsboard.server.dao.customer.CustomerDao;
 import org.thingsboard.server.dao.entity.AbstractEntityService;
 import org.thingsboard.server.dao.exception.DataValidationException;
@@ -64,6 +63,9 @@ public class BaseParcelService extends AbstractEntityService implements ParcelSe
     private ParcelDao parcelDao;
 
     @Autowired
+    private AttributesDao attributesDao;
+
+    @Autowired
     private TenantDao tenantDao;
 
     @Autowired
@@ -74,6 +76,13 @@ public class BaseParcelService extends AbstractEntityService implements ParcelSe
         log.trace("Executing findParcelById [{}]", parcelId);
         validateId(parcelId, INCORRECT_PARCEL_ID + parcelId);
         return parcelDao.findById(parcelId.getId());
+    }
+
+    @Override
+    public HashMap<String, String> getHistoricalValues(String parcelId, long date) {
+        log.trace("Executing getHistoricalValues [{}]", parcelId);
+        return attributesDao.getHistoricalValues(parcelId,date);
+
     }
 
     @Override

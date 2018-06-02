@@ -6,6 +6,8 @@
 package org.thingsboard.server.dao.parcel;
 
 import com.google.common.util.concurrent.ListenableFuture;
+
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -27,6 +29,8 @@ import org.thingsboard.server.dao.model.nosql.ParcelEntity;
 public interface ParcelService {
 
     Parcel findParcelById(ParcelId parcelId);
+
+    HashMap<String, String> getHistoricalValues(String parcelId, long date);
 
     ListenableFuture<Parcel> findParcelByIdAsync(ParcelId parcelId);
 

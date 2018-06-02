@@ -95,8 +95,22 @@ export default function ParcelDirective($compile, $templateCache, toast, $transl
                 $log.log(value);
                 var updatedDate = scope.startDate;
                 scope.selectedDate = new Date(updatedDate.setTime(value));
-            }
+                $log.log(scope.selectedDate);
+
+                parcelService.getHistoricalValues(scope.parcel.id.id,value).then(function(result){
+                    $log.log(result);
+                    scope.data=result;
+                    $log.log(scope.data);
+                });
+
+
+        }
         });
+
+
+
+
+
 
         scope.maxDate = scope.finishDate.getTime();
         scope.minDate = scope.startDate.getTime();
@@ -261,6 +275,10 @@ export default function ParcelDirective($compile, $templateCache, toast, $transl
         if(scope.parcel.groundFeatures == null){
             scope.parcel.groundFeatures = new GroundFeatures();
         }
+        if (scope.data== null){
+            scope.data={};
+        }
+
 
         //------------------------------------------------------------------------
         /*scope.labels = ['1','2','3','4'];

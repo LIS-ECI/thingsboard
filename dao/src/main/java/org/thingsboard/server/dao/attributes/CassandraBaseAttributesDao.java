@@ -22,25 +22,27 @@ import com.google.common.base.Function;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.thingsboard.server.common.data.id.EntityId;
+import org.thingsboard.server.common.data.id.ParcelId;
 import org.thingsboard.server.common.data.kv.AttributeKvEntry;
 import org.thingsboard.server.common.data.kv.BaseAttributeKvEntry;
+import org.thingsboard.server.common.data.parcel.Parcel;
 import org.thingsboard.server.dao.model.ModelConstants;
 import org.thingsboard.server.dao.nosql.CassandraAbstractAsyncDao;
+import org.thingsboard.server.dao.parcel.ParcelService;
 import org.thingsboard.server.dao.timeseries.CassandraBaseTimeseriesDao;
 import org.thingsboard.server.dao.util.NoSqlDao;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.datastax.driver.core.querybuilder.QueryBuilder.eq;
-import static com.datastax.driver.core.querybuilder.QueryBuilder.select;
+import static com.datastax.driver.core.querybuilder.QueryBuilder.*;
 import static org.thingsboard.server.dao.model.ModelConstants.*;
 
 /**
@@ -52,6 +54,9 @@ import static org.thingsboard.server.dao.model.ModelConstants.*;
 public class CassandraBaseAttributesDao extends CassandraAbstractAsyncDao implements AttributesDao {
 
     private PreparedStatement saveStmt;
+
+    @Autowired
+    protected ParcelService parcelService;
 
     @PostConstruct
     public void init() {
@@ -99,6 +104,107 @@ public class CassandraBaseAttributesDao extends CassandraAbstractAsyncDao implem
                         convertResultToAttributesKvEntryList(input)
                 , readResultsProcessingExecutor);
     }
+
+
+
+
+
+    @Override
+    public HashMap<String, String> getHistoricalValues(String parcelId, long date) {
+        System.out.println("YES");
+        HashMap<String, String> data = new HashMap<>();
+        long dayts = 86400000L;
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        try{
+
+            String reportDate = dateFormat.format(date);
+            Date parsedDate = dateFormat.parse(reportDate);
+
+            Timestamp timestampmin = new java.sql.Timestamp(parsedDate.getTime());
+            long tsTime1 = timestampmin.getTime();
+            long tsTime2 = tsTime1 + dayts;
+            System.out.println("min: "+tsTime1);
+            System.out.println("max: "+tsTime2);
+
+            //Obtener el parcel
+            ParcelId parcelIdUUID=  ParcelId.fromString(parcelId);
+            Parcel parcel = parcelService.findParcelById(parcelIdUUID);
+            List<UUID> devices= parcel.getDevices();
+            //Por cada elemento del arreglo del parcel ir acumulando
+            System.out.println("CONSULTA devices "+devices.size());
+            for (UUID device_id: devices){
+
+                Select select = select(KEY_COLUMN,STRING_VALUE_COLUMN).from(TS_KV_CF).allowFiltering();
+                Select.Where query= select.where();
+                query.and(eq(ENTITY_ID_COLUMN,device_id));
+                query.and(gte(TS_COLUMN,tsTime1));
+                query.and(lte(TS_COLUMN,tsTime2));
+                ResultSetFuture resp =executeAsyncRead(query);
+                ResultSet resp2= resp.getUninterruptibly();
+                List<Row> rows =resp2.all();
+                System.out.println("LIST Rows "+rows.size()+" "+rows.toString());
+                HashMap<String,ArrayList<Integer>> temp = new HashMap<>();
+                for (Row r:rows){
+                    String key=r.getString(0);
+                    Integer value=Integer.parseInt(r.getString(1));
+                    if (temp.containsKey(key)){
+                        ArrayList<Integer> arraytemp= temp.get(key);
+                        arraytemp.add(value);
+                        temp.put(key,arraytemp);
+                    }
+
+                    else{
+                        ArrayList<Integer> arraytemp = new ArrayList<>();
+                        arraytemp.add(value);
+                        temp.put(key,arraytemp);
+                    }
+                }
+                Set<String> keys = temp.keySet();
+                for (String key : keys){
+                    ArrayList<Integer> arraytemp= temp.get(key);
+                    Long count=0L;
+                    for (Integer a : arraytemp){
+                        count+=a;
+                    }
+                    Double numcount =(double) count;
+                    Double numcant =(double) arraytemp.size();
+                    Double avg= numcount/numcant;
+                    data.put(key,String.valueOf(avg));
+                }
+
+            }
+        }
+        catch(Exception e) { //this generic but you can control another types of exception
+            e.printStackTrace();
+        }
+
+        System.out.println("Hashmap values: ");
+        for (String name: data.keySet()){
+
+            String key =name;
+            String value = data.get(name);
+            System.out.println(key + " " + value);
+
+        }
+
+        return data;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @Override
     public ListenableFuture<Void> save(EntityId entityId, String attributeType, AttributeKvEntry attribute) {

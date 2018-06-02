@@ -120,7 +120,7 @@
                                         <textarea ng-model="parcel.crop.cause" rows="2"></textarea>
                                     </md-input-container>
                                     <md-input-container class="md-block">
-                                        <label translate>Initial conditions</label>
+                                        <label translate>Initial Conditions</label>
                                         <textarea ng-model="parcel.crop.initialConditions" rows="2"></textarea>
                                     </md-input-container>
                                     <md-input-container class="md-block">
@@ -199,7 +199,23 @@
                         <md-input-container>
                             <input flex type="text" value="{{selectedDate |date:'dd/MM/yyyy'}}" aria-label="green" aria-controls="green-slider" style="width: 300px;">
                         </md-input-container>
+
+                        <br>
+
+                        <table border="2 px">
+                            <tr>
+                                <td>Data Type </td>
+                                <td>Value </td>
+                            </tr>
+                            <tr ng-repeat="(key, value) in data">
+                                <td>{{key}}</td>
+                                <td>{{value}}</td>
+                            </tr>
+                        </table>
+
                     </div>
+
+
                 </md-content>
             </md-tab>
         </md-tabs>

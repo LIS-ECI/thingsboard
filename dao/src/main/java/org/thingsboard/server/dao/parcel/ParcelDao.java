@@ -6,9 +6,9 @@
 package org.thingsboard.server.dao.parcel;
 
 import com.google.common.util.concurrent.ListenableFuture;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+
+import java.util.*;
+
 import org.thingsboard.server.common.data.EntitySubtype;
 import org.thingsboard.server.common.data.parcel.Parcel;
 import org.thingsboard.server.common.data.page.TextPageLink;
@@ -28,6 +28,8 @@ public interface ParcelDao extends Dao<Parcel> {
      * @return saved parcel object
      */
     Parcel save(Parcel parcel);
+
+
 
     /**
      * Find parcels by tenantId and page link.

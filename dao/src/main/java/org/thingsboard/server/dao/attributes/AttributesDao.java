@@ -20,6 +20,7 @@ import org.thingsboard.server.common.data.id.EntityId;
 import org.thingsboard.server.common.data.kv.AttributeKvEntry;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,4 +38,13 @@ public interface AttributesDao {
     ListenableFuture<Void> save(EntityId entityId, String attributeType, AttributeKvEntry attribute);
 
     ListenableFuture<List<Void>> removeAll(EntityId entityId, String attributeType, List<String> keys);
+
+    /**
+     * get all the device data in an specific date of the parcel
+     *
+     * @param parcelId the parcel_id
+     * @param date the timeseries date
+     * @return saved parcel object
+     */
+    HashMap<String,String> getHistoricalValues(String parcelId, long date);
 }

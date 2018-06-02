@@ -22,6 +22,7 @@ function FarmService($http, $q, customerService, userService, $log) {
         findByQuery: findByQuery,
         fetchFarmsByNameFilter: fetchFarmsByNameFilter,
         getFarmTypes: getFarmTypes
+
     }
 
     return service;
@@ -294,5 +295,8 @@ function FarmService($http, $q, customerService, userService, $log) {
         });
         return deferred.promise;
     }
+
+
+
 
 }

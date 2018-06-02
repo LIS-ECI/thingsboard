@@ -7,6 +7,7 @@ package org.thingsboard.server.controller;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
@@ -65,13 +66,29 @@ public class ParcelController extends BaseController{
         }
     }
 
+
+    @PreAuthorize("hasAnyAuthority('TENANT_ADMIN', 'CUSTOMER_USER')")
+    @RequestMapping(value = "/parcel/historical/{parcelId}/{date}", method = RequestMethod.GET)
+    @ResponseBody
+    public HashMap<String, String> getHistoricalValues(@PathVariable("parcelId") String parcelId, @PathVariable("date") String date) throws ThingsboardException {
+        checkParameter("parcelId", parcelId);
+        checkParameter("date", date);
+        System.out.println("ENTROO AL QUE CREEEE "+parcelId);
+        System.out.println("ENTROO AL QUE CREEEE "+date);
+        return parcelService.getHistoricalValues(parcelId,Long.parseLong(date));
+
+    }
+
+
+
+
+
     @PreAuthorize("hasAnyAuthority('TENANT_ADMIN', 'CUSTOMER_USER')")
     @RequestMapping(value = "/parcel", method = RequestMethod.POST)
     @ResponseBody
     public Parcel saveParcel(@RequestBody Parcel parcel) throws ThingsboardException {
 
         try {
-            System.out.println("ACTUALIZO EL PARCEL ");
             parcel.setTenantId(getCurrentUser().getTenantId());
             if (getCurrentUser().getAuthority() == Authority.CUSTOMER_USER) {
                 if (parcel.getId() == null || parcel.getId().isNullUid() ||
@@ -357,5 +374,7 @@ public class ParcelController extends BaseController{
             throw handleException(e);
         }
     }
+
+
     
 }
