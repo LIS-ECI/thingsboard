@@ -166,9 +166,9 @@ public class CassandraBaseAttributesDao extends CassandraAbstractAsyncDao implem
                     Double numcount =(double) count;
                     Double numcant =(double) arraytemp.size();
                     Double avg= numcount/numcant;
-                    String savg= String.valueOf(avg);
                     DecimalFormat df = new DecimalFormat("#.0000");
-                    data.put(key,df.format(savg));
+                    String savgdecimal=df.format(avg);
+                    data.put(key,savgdecimal);
                 }
 
             }
