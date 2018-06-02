@@ -26,6 +26,7 @@ import org.thingsboard.server.common.data.Tenant;
 import org.thingsboard.server.common.data.farm.Farm;
 import org.thingsboard.server.common.data.farm.FarmSearchQuery;
 import org.thingsboard.server.common.data.id.CustomerId;
+import org.thingsboard.server.common.data.id.DashboardId;
 import org.thingsboard.server.common.data.id.EntityId;
 import org.thingsboard.server.common.data.id.FarmId;
 import org.thingsboard.server.common.data.id.TenantId;

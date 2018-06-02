@@ -33,6 +33,7 @@ public interface FarmDao extends Dao<Farm> {
      * Return all farms
      */
     ListenableFuture<List<FarmEntity>> allFarms();
+    
 
     /**
      * Find farms by tenantId and page link.
