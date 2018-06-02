@@ -93,8 +93,15 @@ public class DeviceController extends BaseController {
                 }
             }
             Device savedDevice = checkNotNull(deviceService.saveDevice(device));
-            SpatialDevice spatialDevice = new SpatialDevice(savedDevice.getId().getId().toString(),savedDevice.getParcelId(),device.getLocation());
-            mongoService.getMongodbDevice().save(spatialDevice);
+            if(savedDevice.getType().equals("Spark")){
+                SparkDevice sparkDevice = new SparkDevice(deviceCredentialsService.findDeviceCredentialsByDeviceId(savedDevice.getId()).getCredentialsId(),savedDevice.getParcelId(),device.getTopic());
+                mongoService.getMongodbDevice().saveSparkDevice(sparkDevice);
+            }else{
+                SpatialDevice spatialDevice = new SpatialDevice(savedDevice.getId().getId().toString(),savedDevice.getParcelId(),device.getLocation());
+                mongoService.getMongodbDevice().save(spatialDevice);
+            }
+
+
             //-----------------------Agregando valor a la fuerza en base de datos
             StringDataEntry value = new StringDataEntry("prueba","3");
             long millis = System.currentTimeMillis();

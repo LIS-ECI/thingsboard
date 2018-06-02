@@ -77,6 +77,8 @@
                 ng-model="device.type"
                 entity-type="types.entityType.device">
         </tb-entity-subtype-autocomplete>
+        <label translate>device.topic</label>
+        <input name="topic" ng-model="device.topic">
         <md-input-container class="md-block">
             <md-checkbox ng-disabled="$root.loading || !isEdit" flex aria-label="{{ 'device.is-gateway' | translate }}"
                          ng-model="device.additionalInfo.gateway">{{ 'device.is-gateway' | translate }}

@@ -32,6 +32,7 @@ public class Device extends SearchTextBasedWithAdditionalInfo<DeviceId> implemen
     private String type;
     private String parcelId;
     private Point location;
+    private String topic;
 
     public Device() {
         super();
@@ -47,6 +48,7 @@ public class Device extends SearchTextBasedWithAdditionalInfo<DeviceId> implemen
         this.customerId = device.getCustomerId();
         this.name = device.getName();
         this.type = device.getType();
+        this.topic = device.getTopic();
     }
 
     public TenantId getTenantId() {
@@ -138,4 +140,11 @@ public class Device extends SearchTextBasedWithAdditionalInfo<DeviceId> implemen
         this.location = location;
     }
 
+    public String getTopic() {
+        return topic;
+    }
+
+    public void setTopic(String topic) {
+        this.topic = topic;
+    }
 }
