@@ -89,6 +89,7 @@ export default function ParcelDirective($compile, $templateCache, toast, $transl
 
         scope.startDate = new Date();
         scope.finishDate = new Date();
+        scope.fechas = [1515992400000,1516856400000];
 
         scope.$watch('slider', function (value) {
             if (value != null) {
@@ -101,10 +102,13 @@ export default function ParcelDirective($compile, $templateCache, toast, $transl
         scope.maxDate = scope.finishDate.getTime();
         scope.minDate = scope.startDate.getTime();
         scope.updateSelectedDate = function(){
+            $log.log("Entró update");
             scope.selectedDate = scope.startDate;
             scope.maxDate = scope.finishDate.getTime();
             scope.minDate = scope.startDate.getTime();
+            scope.fechas = [1515992400000,1516880585842];
         };
+
 
         scope.exists = function (item, list) {
             return list.indexOf(item) > -1;
