@@ -38,6 +38,7 @@ import org.thingsboard.server.dao.util.NoSqlDao;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.sql.Timestamp;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -122,8 +123,7 @@ public class CassandraBaseAttributesDao extends CassandraAbstractAsyncDao implem
             Timestamp timestampmin = new java.sql.Timestamp(parsedDate.getTime());
             long tsTime1 = timestampmin.getTime();
             long tsTime2 = tsTime1 + dayts;
-            System.out.println("min: "+tsTime1);
-            System.out.println("max: "+tsTime2);
+
 
             //Obtener el parcel
             ParcelId parcelIdUUID=  ParcelId.fromString(parcelId);
@@ -166,7 +166,9 @@ public class CassandraBaseAttributesDao extends CassandraAbstractAsyncDao implem
                     Double numcount =(double) count;
                     Double numcant =(double) arraytemp.size();
                     Double avg= numcount/numcant;
-                    data.put(key,String.valueOf(avg));
+                    String savg= String.valueOf(avg);
+                    DecimalFormat df = new DecimalFormat("#.0000");
+                    data.put(key,df.format(savg));
                 }
 
             }
