@@ -15,6 +15,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.net.URL;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import org.codehaus.jackson.map.util.JSONPObject;
@@ -28,12 +29,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.thingsboard.server.common.data.Customer;
-import org.thingsboard.server.common.data.Dashboard;
-import org.thingsboard.server.common.data.EntitySubtype;
-import org.thingsboard.server.common.data.EntityType;
-import org.thingsboard.server.common.data.SpatialFarm;
-import org.thingsboard.server.common.data.Tenant;
+import org.thingsboard.server.common.data.*;
 import org.thingsboard.server.common.data.audit.ActionType;
 import org.thingsboard.server.common.data.farm.Farm;
 import org.thingsboard.server.common.data.farm.FarmSearchQuery;
@@ -42,10 +38,12 @@ import org.thingsboard.server.common.data.id.FarmId;
 import org.thingsboard.server.common.data.id.TenantId;
 import org.thingsboard.server.common.data.page.TextPageData;
 import org.thingsboard.server.common.data.page.TextPageLink;
+import org.thingsboard.server.common.data.parcel.Parcel;
 import org.thingsboard.server.common.data.security.Authority;
 import org.thingsboard.server.dao.exception.IncorrectParameterException;
 import org.thingsboard.server.dao.model.ModelConstants;
 import org.thingsboard.server.dao.model.nosql.FarmEntity;
+import org.thingsboard.server.dao.model.nosql.ParcelEntity;
 import org.thingsboard.server.dao.model.nosql.TenantEntity;
 import org.thingsboard.server.exception.ThingsboardErrorCode;
 import org.thingsboard.server.exception.ThingsboardException;
@@ -406,6 +404,29 @@ public class FarmController extends BaseController {
                 farms.add(fe.toData());
             }
             return farms;
+        } catch (Exception e) {
+            throw handleException(e);
+        }
+    }
+
+    @PreAuthorize("hasAnyAuthority('TENANT_ADMIN', 'CUSTOMER_USER')")
+    @RequestMapping(value = "/farm/{farmId}/parcels", method = RequestMethod.GET)
+    @ResponseBody
+    public List<SpatialParcel> getParcelByFarmId(@PathVariable(FARM_ID) String farmId) throws ThingsboardException{
+        List<SpatialParcel> parcelsFarmId = new ArrayList<>();
+        try {
+            List<ParcelEntity> parcelType = parcelService.allParcels().get();
+            List<Parcel> parcels = new ArrayList<>();
+            for(ParcelEntity p : parcelType){
+                if(p.toData().getFarmId().equals(farmId)){
+                    parcels.add(p.toData());
+                }
+            }
+            for(Parcel pa: parcels){
+                parcelsFarmId.add(mongoService.getMongodbparcel().findById(pa.getId().getId().toString()));
+            }
+            return parcelsFarmId;
+
         } catch (Exception e) {
             throw handleException(e);
         }

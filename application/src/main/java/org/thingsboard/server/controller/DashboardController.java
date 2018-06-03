@@ -86,9 +86,7 @@ public class DashboardController extends BaseController {
             for(FarmEntity fe : farmTypes){
                 Farm farmTemp = fe.toData();
                 if(farmTemp.getDashboardId().equals(strDashboardId)){
-                    System.out.println("Farm returned: "+farmTemp.toString());
                     SpatialFarm spatialFarm = mongoService.getMongodbFarm().findById(farmTemp.getId().getId().toString());
-                    System.out.println("SpatialFarm returned: "+spatialFarm.toString());
                     return spatialFarm;
                 }
             }
@@ -467,4 +465,6 @@ public class DashboardController extends BaseController {
             throw handleException(e);
         }
     }
+
+
 }

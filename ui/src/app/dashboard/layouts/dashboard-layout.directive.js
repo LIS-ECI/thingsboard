@@ -39,7 +39,7 @@ export default function DashboardLayout() {
 
 /* global google */
 /*@ngInject*/
-function DashboardLayoutController($scope, $rootScope, $translate, $window, hotkeys, dashboardService, itembuffer,$log) {
+function DashboardLayoutController($scope, $rootScope, $translate, $window, hotkeys, dashboardService, farmService, itembuffer,$log) {
 
     var vm = this;
 
@@ -112,7 +112,7 @@ function DashboardLayoutController($scope, $rootScope, $translate, $window, hotk
         var drawMap = [];
         dashboardService.getFarmByDashboardId($window.sessionStorage.getItem('dashboardId')).then(
             function success(farm) {
-
+                var parcelsFarm = [];
                 $log.log("esta es la finca farm:");
                 $log.log(farm);
 
@@ -123,6 +123,7 @@ function DashboardLayoutController($scope, $rootScope, $translate, $window, hotk
                         for(var i = 0 ; i < farm.polygons.coordinates.length ; i++){
                             drawMap.push({lat: farm.polygons.coordinates[i][1],lng:  farm.polygons.coordinates[i][0]});
                         }
+                        drawMap.push({lat: farm.polygons.coordinates[0][1],lng:  farm.polygons.coordinates[0][0]});
                     }
                 }
 
@@ -139,18 +140,43 @@ function DashboardLayoutController($scope, $rootScope, $translate, $window, hotk
                 function drawPolygon(){
                     $log.log("Entro a dibujar");
                     $log.log(drawMap);
-                    new google.maps.Polygon({
-                        paths: drawMap,
+                    new google.maps.Polyline({
+                        path: drawMap,
+                        geodesic: true,
                         strokeColor: '#FF0000',
-                        strokeOpacity: 0.8,
-                        strokeWeight: 2,
-                        fillColor: '#FF0000',
-                        fillOpacity: 0.35
+                        strokeOpacity: 1.0,
+                        strokeWeight: 2
                     }).setMap(map);
                     drawMap = [];
                 }
         
                 drawPolygon();
+                var parcelsPolygons = [];
+
+                farmService.getParcelsByFarmId(farm.id).then(function(result){
+                    parcelsFarm = result;
+                    if(parcelsFarm.length > 0){
+                        for(var i = 0;i< parcelsFarm.length; i++){
+                            parcelsPolygons.push(parcelsFarm[i].polygons);
+                        }
+                        var drawMapsParcels = [];
+                        for(var j = 0;j< parcelsPolygons.length;j++){
+                            for(var h = 0; h < parcelsPolygons[j].coordinates.length;h++){
+                                drawMapsParcels.push({lat: parcelsPolygons[j].coordinates[h][1],lng: parcelsPolygons[j].coordinates[h][0]});
+                            }
+                            new google.maps.Polygon({
+                                paths: drawMapsParcels,
+                                strokeColor: '#FF0000',
+                                strokeOpacity: 0.8,
+                                strokeWeight: 2,
+                                fillColor: '#FF0000',
+                                fillOpacity: 0.35
+                            }).setMap(map);
+                            drawMapsParcels = [];
+                        }
+
+                    }
+                })
 
             },
             function fail() {
