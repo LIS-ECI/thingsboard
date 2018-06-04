@@ -135,8 +135,5 @@ public class JpaDeviceDao extends JpaAbstractSearchTextDao<DeviceEntity, Device>
         return list;
     }
 
-    @Override
-    public ListenableFuture<List<org.thingsboard.server.dao.model.nosql.DeviceEntity>> findDevicesByParcelId(String parcelId) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+
 }

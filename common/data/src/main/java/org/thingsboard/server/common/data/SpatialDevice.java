@@ -49,7 +49,7 @@ public class SpatialDevice {
 
     @Override
     public String toString(){
-        return ("DeviceId: "+id+" ,device_Parcel_FK: "+device_Parcel_FK+" ,Point: "+point.getCoordinates());
+        return ("DeviceId: "+id+" ,device_Parcel_FK: "+device_Parcel_FK+" ,Point: ");
     }
 
 }

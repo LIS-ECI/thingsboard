@@ -8,6 +8,7 @@ package org.thingsboard.server.dao.mongo;
 import static com.mongodb.client.model.Filters.eq;
 import com.mongodb.Block;
 import com.mongodb.MongoWriteException;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.result.DeleteResult;
 import java.util.List;
@@ -64,6 +65,15 @@ public class MongoDBSpatialDevice extends MongoConnectionPOJO<SpatialDevice> imp
             System.out.println("No fue posible agregar el spark device");
         }
         return null;
+    }
+
+    public List<SpatialDevice> getDevicesByParcelId(String strParcelId){
+        List<SpatialDevice> resultSet = new CopyOnWriteArrayList<>();
+        FindIterable<SpatialDevice> devices=this.getCollectionDependClass().find(eq("device_Parcel_FK", strParcelId));
+        devices.forEach((Block<SpatialDevice>) device -> {
+            resultSet.add(device);
+        });
+        return resultSet;
     }
 
     @Override

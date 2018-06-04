@@ -101,7 +101,7 @@ function DashboardLayoutController($scope, $rootScope, $translate, $window, hotk
         }
     });
 
-    var map;
+    var Map;
     var tempLatitude = -34.397;
     var tempLongitude = 150.644;
     function showMap() {
@@ -129,13 +129,13 @@ function DashboardLayoutController($scope, $rootScope, $translate, $window, hotk
 
                 setPolygonFarm();
 
-                map = new google.maps.Map(angular.element('#mapa')[0], {
+                Map = new google.maps.Map(angular.element('#mapa')[0], {
                     center: {lat: tempLatitude, lng: tempLongitude},
                     zoom: 13,
                     draggable : true
                 });
         
-                $log.log(map);
+                $log.log(Map);
 
                 function drawPolygon(){
                     $log.log("Entro a dibujar");
@@ -146,7 +146,7 @@ function DashboardLayoutController($scope, $rootScope, $translate, $window, hotk
                         strokeColor: '#FF0000',
                         strokeOpacity: 1.0,
                         strokeWeight: 2
-                    }).setMap(map);
+                    }).setMap(Map);
                     drawMap = [];
                 }
         
@@ -171,13 +171,25 @@ function DashboardLayoutController($scope, $rootScope, $translate, $window, hotk
                                 strokeWeight: 2,
                                 fillColor: '#FF0000',
                                 fillOpacity: 0.35
-                            }).setMap(map);
+                            }).setMap(Map);
                             drawMapsParcels = [];
                         }
 
-                        for(var i = 0;i< parcelsPolygons.length; i++){
-                            $log.log("poliigonos");
-                            $log.log(parcelsPolygons[i]);
+                        for(var k = 0;k< parcelsFarm.length; k++){
+                            $log.log("parceels");
+                            $log.log(parcelsFarm[k].id);
+                            dashboardService.getDevicesByParcelId(parcelsFarm[k].id).then(function(result2){
+                                $log.log("devicess");
+                                for(var m = 0;m< result2.length; m++){
+                                    $log.log(result2[m]);
+                                    if (result2[m].point !== null){
+                                        $log.log(result2[m].point.coordinates[0]);
+                                        $log.log(result2[m].point.coordinates[1]);
+                                        addmarkertomap(result2[m].point.coordinates[1],result2[m].point.coordinates[0])
+                                    }
+
+                                }
+                            })
                         }
 
 
@@ -194,6 +206,14 @@ function DashboardLayoutController($scope, $rootScope, $translate, $window, hotk
     }
 
     showMap();
+
+    function addmarkertomap(lat, lng) {
+        var marker = new google.maps.Marker({
+            position: new google.maps.LatLng(lat, lng),
+            map: Map.map
+        });
+        marker.setMap(Map);
+    }
 
     function noData() {
         return vm.dashboardInitComplete && vm.layoutCtx &&
