@@ -191,11 +191,11 @@ export default function FarmDirective($compile, $templateCache, toast, $translat
         scope.tempLongitude = 150.644;
         var drawMap = [];
         function direction(){
-            if(scope.farm.location.coordinates.length > 0){
-                scope.tempLatitude = scope.farm.location.coordinates[0][1];
-                scope.tempLongitude = scope.farm.location.coordinates[0][0];
-                for(var i=0; i<scope.farm.location.coordinates.length; i++){
-                    drawMap.push({lat: scope.farm.location.coordinates[i][1],lng:  scope.farm.location.coordinates[i][0]});
+            if(scope.farm.location.coordinates[0].length > 0){
+                scope.tempLatitude = scope.farm.location.coordinates[0][0][1];
+                scope.tempLongitude = scope.farm.location.coordinates[0][0][0];
+                for(var i=0; i<scope.farm.location.coordinates[0].length; i++){
+                    drawMap.push({lat: scope.farm.location.coordinates[0][i][1],lng:  scope.farm.location.coordinates[0][i][0]});
                 }
             }
         }
@@ -282,10 +282,14 @@ export default function FarmDirective($compile, $templateCache, toast, $translat
 
 
         scope.saveEverything = function() {
+            var coordinateArray = [];
             for (var i = 0; i < scope.labels.length; i++) {
-                polygon.coordinates[i]=[parseFloat(scope.longitudes[i]),parseFloat(scope.latitudes[i])];
+                coordinateArray.push([parseFloat(scope.longitudes[i]),parseFloat(scope.latitudes[i])]);
+                //polygon.coordinates[i]=[parseFloat(scope.longitudes[i]),parseFloat(scope.latitudes[i])];
             }
-            if(calcPolygonArea(polygon.coordinates) > 0 && calcPolygonArea(polygon.coordinates) <= 0.0008063810777798608){
+            coordinateArray.push(coordinateArray[0]);
+            polygon.coordinates.push(coordinateArray);
+            if(calcPolygonArea(coordinateArray) > 0 && calcPolygonArea(coordinateArray) <= 0.0008063810777798608){
                 scope.farm.location = polygon;
             }else{
                 $window.alert("The area of ​​the farm exceeds the limit, please re-enter the coordinates");

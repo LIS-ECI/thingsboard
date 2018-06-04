@@ -117,13 +117,13 @@ function DashboardLayoutController($scope, $rootScope, $translate, $window, hotk
                 $log.log(farm);
 
                 function setPolygonFarm(){
-                    if(farm.polygons.coordinates.length > 0){
-                        tempLatitude = farm.polygons.coordinates[0][1];
-                        tempLongitude = farm.polygons.coordinates[0][0];
-                        for(var i = 0 ; i < farm.polygons.coordinates.length ; i++){
-                            drawMap.push({lat: farm.polygons.coordinates[i][1],lng:  farm.polygons.coordinates[i][0]});
+                    if(farm.polygons.coordinates[0].length > 0){
+                        tempLatitude = farm.polygons.coordinates[0][0][1];
+                        tempLongitude = farm.polygons.coordinates[0][0][0];
+                        for(var i = 0 ; i < farm.polygons.coordinates[0].length ; i++){
+                            drawMap.push({lat: farm.polygons.coordinates[0][i][1],lng:  farm.polygons.coordinates[0][i][0]});
                         }
-                        drawMap.push({lat: farm.polygons.coordinates[0][1],lng:  farm.polygons.coordinates[0][0]});
+                        //drawMap.push({lat: farm.polygons.coordinates[0][1],lng:  farm.polygons.coordinates[0][0]});
                     }
                 }
 
@@ -161,8 +161,8 @@ function DashboardLayoutController($scope, $rootScope, $translate, $window, hotk
                         }
                         var drawMapsParcels = [];
                         for(var j = 0;j< parcelsPolygons.length;j++){
-                            for(var h = 0; h < parcelsPolygons[j].coordinates.length;h++){
-                                drawMapsParcels.push({lat: parcelsPolygons[j].coordinates[h][1],lng: parcelsPolygons[j].coordinates[h][0]});
+                            for(var h = 0; h < parcelsPolygons[j].coordinates[0].length;h++){
+                                drawMapsParcels.push({lat: parcelsPolygons[j].coordinates[0][h][1],lng: parcelsPolygons[j].coordinates[0][h][0]});
                             }
                             new google.maps.Polygon({
                                 paths: drawMapsParcels,
