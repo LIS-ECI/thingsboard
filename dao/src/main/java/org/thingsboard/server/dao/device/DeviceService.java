@@ -16,6 +16,7 @@
 package org.thingsboard.server.dao.device;
 
 import com.google.common.util.concurrent.ListenableFuture;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.thingsboard.server.common.data.Device;
 import org.thingsboard.server.common.data.EntitySubtype;
 import org.thingsboard.server.common.data.device.DeviceSearchQuery;
@@ -66,6 +67,6 @@ public interface DeviceService {
 
     ListenableFuture<List<EntitySubtype>> findDeviceTypesByTenantId(TenantId tenantId);
     
-    ListenableFuture<List<DeviceEntity>> findDevicesByDeviceId(String parcelId);
+
 
 }

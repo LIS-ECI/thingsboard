@@ -9,6 +9,8 @@ import org.thingsboard.server.common.data.SpatialParcel;
 import org.thingsboard.server.common.data.SpatialDevice;
 import org.thingsboard.server.common.data.SpatialFarm;
 
+import java.util.List;
+
 /**
  *
  * @author Carlos Ramirez
@@ -62,5 +64,7 @@ public class MongoDBSpatial extends MongoConnection implements SpatialIndexes {
     public SpatialDevice getCoordenatesByDeviceId(String device_id) throws MongoDBException {
         return mongodbDevice.findById(device_id);
     }
+
+
 
 }

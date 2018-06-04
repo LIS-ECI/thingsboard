@@ -331,10 +331,7 @@ public class DeviceServiceImpl extends AbstractEntityService implements DeviceSe
                 }
             };
 
-    @Override
-    public ListenableFuture<List<DeviceEntity>> findDevicesByDeviceId(String parcelId) {
-        return deviceDao.findDevicesByDeviceId(parcelId);
-    }
+
 
     private class CustomerDevicesUnassigner extends PaginatedRemover<CustomerId, Device> {
 

@@ -175,6 +175,12 @@ function DashboardLayoutController($scope, $rootScope, $translate, $window, hotk
                             drawMapsParcels = [];
                         }
 
+                        for(var i = 0;i< parcelsPolygons.length; i++){
+                            $log.log("poliigonos");
+                            $log.log(parcelsPolygons[i]);
+                        }
+
+
                     }
                 })
 

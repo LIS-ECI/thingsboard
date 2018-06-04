@@ -38,6 +38,8 @@ public class MongoDBSpatialDevice extends MongoConnectionPOJO<SpatialDevice> imp
         return resultSet;
     }
 
+
+
     @Override
     public SpatialDevice findById(String id) {
         return getCollectionDependClass().find(eq("_id", id)).first();

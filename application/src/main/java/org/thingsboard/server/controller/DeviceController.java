@@ -40,6 +40,7 @@ import org.thingsboard.server.common.data.widget.WidgetType;
 import org.thingsboard.server.common.data.widget.WidgetsBundle;
 import org.thingsboard.server.dao.exception.IncorrectParameterException;
 import org.thingsboard.server.dao.model.ModelConstants;
+import org.thingsboard.server.dao.model.nosql.ParcelEntity;
 import org.thingsboard.server.dao.parcel.ParcelService;
 import org.thingsboard.server.dao.timeseries.TimeseriesService;
 import org.thingsboard.server.exception.ThingsboardErrorCode;
@@ -76,6 +77,28 @@ public class DeviceController extends BaseController {
             throw handleException(e);
         }
     }
+
+    @PreAuthorize("hasAnyAuthority('TENANT_ADMIN', 'CUSTOMER_USER')")
+    @RequestMapping(value = "/device/devicesbyparcel/{parcelId}", method = RequestMethod.GET)
+    @ResponseBody
+    public List<SpatialDevice> getDevicesByParcelId(@PathVariable("parcelId") String strParcelId) throws ThingsboardException {
+        checkParameter("parcelId", strParcelId);
+        List<SpatialDevice> devicesParcelId = new ArrayList<>();
+        try {
+            List<SpatialDevice> devices = mongoService.getMongodbDevice().find();
+
+            for(SpatialDevice sd: devices){
+                if(sd.getDevice_Parcel_FK().equals(strParcelId)){
+                    devicesParcelId.add(sd);
+                }
+            }
+        } catch (Exception e) {
+            throw handleException(e);
+        }
+        return devicesParcelId;
+    }
+
+
 
     @PreAuthorize("hasAnyAuthority('TENANT_ADMIN', 'CUSTOMER_USER')")
     @RequestMapping(value = "/device", method = RequestMethod.POST)

@@ -43,7 +43,8 @@ function DashboardService($rootScope, $http, $q, $location, $filter) {
         removeDashboardCustomers: removeDashboardCustomers,
         makeDashboardPublic: makeDashboardPublic,
         makeDashboardPrivate: makeDashboardPrivate,
-        getPublicDashboardLink: getPublicDashboardLink
+        getPublicDashboardLink: getPublicDashboardLink,
+        getDevicesByParcelId: getDevicesByParcelId
     }
 
     return service;
@@ -140,6 +141,17 @@ function DashboardService($rootScope, $http, $q, $location, $filter) {
     function getFarmByDashboardId(dashboardId) {
         var deferred = $q.defer();
         var url = '/api/dashboard/farm/' + dashboardId;
+        $http.get(url, null).then(function success(response) {
+            deferred.resolve(prepareDashboard(response.data));
+        }, function fail() {
+            deferred.reject();
+        });
+        return deferred.promise;
+    }
+
+    function getDevicesByParcelId(parcelId) {
+        var deferred = $q.defer();
+        var url = '/api/device/devicesbyparcel/' + parcelId;
         $http.get(url, null).then(function success(response) {
             deferred.resolve(prepareDashboard(response.data));
         }, function fail() {
