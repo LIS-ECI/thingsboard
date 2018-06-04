@@ -121,7 +121,7 @@ public class ParcelController extends BaseController{
             ParcelId parcelId = new ParcelId(toUUID(strParcelId));
             Parcel parcel = checkParcelId(parcelId);
             parcelService.deleteParcel(parcelId);
-
+            mongoService.getMongodbparcel().removeById(strParcelId);
             logEntityAction(parcelId, parcel,
                     parcel.getCustomerId(),
                     ActionType.DELETED, null, strParcelId);
