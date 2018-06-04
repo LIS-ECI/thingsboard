@@ -88,14 +88,6 @@ public class DeviceController extends BaseController {
         List<SpatialDevice> devices =  new ArrayList<>();
         try {
             devices = mongoService.getMongodbDevice().getDevicesByParcelId(strParcelId);
-            System.out.println(devices);
-            System.out.println(devices.size());
-            //for(SpatialDevice sd: devices){
-            //    System.out.println(sd.toString());
-            //    if(sd.getDevice_Parcel_FK().equals(strParcelId)){
-            //        devicesParcelId.add(sd);
-            //    }
-            //}
         } catch (Exception e) {
             throw handleException(e);
         }
