@@ -173,16 +173,16 @@ export default function ParcelDirective($compile, $templateCache, toast, $transl
                     scope.tempLongitude = 150.644;
                     scope.cropFarm = result;
                     $log.log(scope.cropFarm);
-                    if(scope.cropFarm.location.coordinates.length > 0){
-                        scope.tempLatitude = scope.cropFarm.location.coordinates[0][1];
-                        scope.tempLongitude = scope.cropFarm.location.coordinates[0][0];
-                        for(var i=0; i<scope.cropFarm.location.coordinates.length; i++){
-                            drawMapFarm.push({lat: scope.cropFarm.location.coordinates[i][1],lng:  scope.cropFarm.location.coordinates[i][0]});
+                    if(scope.cropFarm.location.coordinates[0].length > 0){
+                        scope.tempLatitude = scope.cropFarm.location.coordinates[0][0][1];
+                        scope.tempLongitude = scope.cropFarm.location.coordinates[0][0][0];
+                        for(var i=0; i<scope.cropFarm.location.coordinates[0].length; i++){
+                            drawMapFarm.push({lat: scope.cropFarm.location.coordinates[0][i][1],lng:  scope.cropFarm.location.coordinates[0][i][0]});
                         }
-                        drawMapFarm.push({lat: scope.cropFarm.location.coordinates[0][1],lng:  scope.cropFarm.location.coordinates[0][0]});
+                        //drawMapFarm.push({lat: scope.cropFarm.location.coordinates[0][1],lng:  scope.cropFarm.location.coordinates[0][0]});
                         if(scope.parcel.location != null){
-                            for(var j = 0; j<scope.parcel.location.coordinates.length; j++){
-                                drawMapParcel.push({lat: scope.parcel.location.coordinates[j][1],lng: scope.parcel.location.coordinates[j][0]});
+                            for(var j = 0; j<scope.parcel.location.coordinates[0].length; j++){
+                                drawMapParcel.push({lat: scope.parcel.location.coordinates[0][j][1],lng: scope.parcel.location.coordinates[0][j][0]});
                             }
                         }
                         $log.log(drawMapParcel);
@@ -236,9 +236,13 @@ export default function ParcelDirective($compile, $templateCache, toast, $transl
                         poly = new google.maps.Polygon({ map: map, path: path, strokeColor: "#FFF000", strokeOpacity: 0.8, strokeWeight: 2, fillColor: "#FF0000", fillOpacity: 0.35 });
                         isClosed = true;
                         if (isClosed){
+                            var coordinatesArray = [];
                             for(var i = 0; i<path.getArray().length;i++){
-                                polygon.coordinates[i] = [poly.getPath().getArray()[i].lng(),poly.getPath().getArray()[i].lat()];
+                                coordinatesArray.push([poly.getPath().getArray()[i].lng(),poly.getPath().getArray()[i].lat()]);
+                                //polygon.coordinates[i] = [poly.getPath().getArray()[i].lng(),poly.getPath().getArray()[i].lat()];
                             }
+                            coordinatesArray.push(coordinatesArray[0]);
+                            polygon.coordinates.push(coordinatesArray);
                             scope.parcel.location = polygon;
                             return;
                         }
