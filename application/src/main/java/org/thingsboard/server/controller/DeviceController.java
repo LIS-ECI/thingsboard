@@ -210,7 +210,7 @@ public class DeviceController extends BaseController {
             DeviceId deviceId = new DeviceId(toUUID(strDeviceId));
             Device device = checkDeviceId(deviceId);
             deviceService.deleteDevice(deviceId);
-
+            mongoService.getMongodbDevice().removeById(strDeviceId);
             logEntityAction(deviceId, device,
                     device.getCustomerId(),
                     ActionType.DELETED, null, strDeviceId);
