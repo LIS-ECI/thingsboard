@@ -39,7 +39,7 @@ export default function DashboardLayout() {
 
 /* global google */
 /*@ngInject*/
-function DashboardLayoutController($scope, $rootScope, $translate, $window, hotkeys, dashboardService, farmService, itembuffer,$log) {
+function DashboardLayoutController($scope, $rootScope, $translate, $window, hotkeys, dashboardService, farmService, alarmService, itembuffer,$log) {
 
     var vm = this;
 
@@ -176,16 +176,14 @@ function DashboardLayoutController($scope, $rootScope, $translate, $window, hotk
                         }
 
                         for(var k = 0;k< parcelsFarm.length; k++){
-                            $log.log("parceels");
-                            $log.log(parcelsFarm[k].id);
+
                             dashboardService.getDevicesByParcelId(parcelsFarm[k].id).then(function(result2){
-                                $log.log("devicess");
+                                
+
                                 for(var m = 0;m< result2.length; m++){
-                                    $log.log(result2[m]);
+
                                     if (result2[m].point !== null){
-                                        $log.log(result2[m].point.coordinates[0]);
-                                        $log.log(result2[m].point.coordinates[1]);
-                                        addmarkertomap(result2[m].point.coordinates[1],result2[m].point.coordinates[0])
+                                        verifyalarms(result2[m]);
                                     }
 
                                 }
@@ -207,12 +205,27 @@ function DashboardLayoutController($scope, $rootScope, $translate, $window, hotk
 
     showMap();
 
-    function addmarkertomap(lat, lng) {
+    function addmarkertomap(lat, lng, iconurl) {
         var marker = new google.maps.Marker({
             position: new google.maps.LatLng(lat, lng),
-            map: Map.map
+            map: Map.map,
+            icon: iconurl
         });
         marker.setMap(Map);
+    }
+
+    function verifyalarms(devic) {
+        alarmService.getHighestAlarmSeverity("DEVICE",devic.id).then(function(result3){
+        if (result3 === "CRITICAL" || result3 === "MAJOR"){
+           addmarkertomap(devic.point.coordinates[1],devic.point.coordinates[0],'https://maps.google.com/mapfiles/ms/icons/red-dot.png');
+        }
+        else if (result3 === "MINOR" || result3 === "WARNING" || result3 === "INDETERMINATE"){
+           addmarkertomap(devic.point.coordinates[1],devic.point.coordinates[0],'https://maps.google.com/mapfiles/ms/icons/orange-dot.png');                                                
+        }
+        else{
+           addmarkertomap(devic.point.coordinates[1],devic.point.coordinates[0],'https://maps.google.com/mapfiles/ms/icons/green-dot.png');   
+        }                                            
+        });
     }
 
     function noData() {
