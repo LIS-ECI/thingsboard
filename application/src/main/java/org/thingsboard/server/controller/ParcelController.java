@@ -46,11 +46,10 @@ import javax.xml.soap.Text;
  *
  * @author German Lopez
  */
-
 @RestController
 @RequestMapping("/api")
-public class ParcelController extends BaseController{
-    
+public class ParcelController extends BaseController {
+
     public static final String PARCEL_ID = "parcelId";
 
     @PreAuthorize("hasAnyAuthority('TENANT_ADMIN', 'CUSTOMER_USER')")
@@ -66,45 +65,44 @@ public class ParcelController extends BaseController{
         }
     }
 
-
     @PreAuthorize("hasAnyAuthority('TENANT_ADMIN', 'CUSTOMER_USER')")
     @RequestMapping(value = "/parcel/historical/{parcelId}/{date}", method = RequestMethod.GET)
     @ResponseBody
     public HashMap<String, String> getHistoricalValues(@PathVariable("parcelId") String parcelId, @PathVariable("date") String date) throws ThingsboardException {
         checkParameter("parcelId", parcelId);
         checkParameter("date", date);
-        return parcelService.getHistoricalValues(parcelId,Long.parseLong(date));
+        return parcelService.getHistoricalValues(parcelId, Long.parseLong(date));
 
     }
-
-
-
-
 
     @PreAuthorize("hasAnyAuthority('TENANT_ADMIN', 'CUSTOMER_USER')")
     @RequestMapping(value = "/parcel", method = RequestMethod.POST)
     @ResponseBody
     public Parcel saveParcel(@RequestBody Parcel parcel) throws ThingsboardException {
-
         try {
             parcel.setTenantId(getCurrentUser().getTenantId());
             if (getCurrentUser().getAuthority() == Authority.CUSTOMER_USER) {
-                if (parcel.getId() == null || parcel.getId().isNullUid() ||
-                    parcel.getCustomerId() == null || parcel.getCustomerId().isNullUid()) {
+                if (parcel.getId() == null || parcel.getId().isNullUid()
+                        || parcel.getCustomerId() == null || parcel.getCustomerId().isNullUid()) {
                     throw new ThingsboardException("You don't have permission to perform this operation!",
                             ThingsboardErrorCode.PERMISSION_DENIED);
                 } else {
                     checkCustomerId(parcel.getCustomerId());
                 }
             }
-            Parcel savedParcel  = checkNotNull(parcelService.saveParcel(parcel));
-            SpatialParcel spatialParcel = new SpatialParcel(savedParcel.getId().getId().toString(),savedParcel.getFarmId(),parcel.getLocation());
-            mongoService.getMongodbparcel().save(spatialParcel);
-            logEntityAction(savedParcel.getId(), savedParcel,
-                    savedParcel.getCustomerId(),
-                    parcel.getId() == null ? ActionType.ADDED : ActionType.UPDATED, null);
+            Parcel savedParcel = checkNotNull(parcelService.saveParcel(parcel));
+            SpatialParcel spatialParcel = new SpatialParcel(savedParcel.getId().getId().toString(), savedParcel.getFarmId(), parcel.getLocation());
+            if (parcel.getLocation() != null) {
+                if (mongoService.getMongodbFarm().checkCropInFarm(parcel.getLocation(), parcel.getFarmId())) {
+                    mongoService.getMongodbparcel().save(spatialParcel);
+                } else {
+                    throw new IncorrectParameterException("Polygon not contains in farm!");
+                }
+            } else {
+                mongoService.getMongodbparcel().save(spatialParcel);
+            }
+            return savedParcel;
 
-            return  savedParcel;
         } catch (Exception e) {
             logEntityAction(emptyId(EntityType.PARCEL), parcel,
                     null, parcel.getId() == null ? ActionType.ADDED : ActionType.UPDATED, e);
@@ -139,7 +137,7 @@ public class ParcelController extends BaseController{
     @RequestMapping(value = "/customer/{customerId}/parcel/{parcelId}", method = RequestMethod.POST)
     @ResponseBody
     public Parcel assignParcelToCustomer(@PathVariable("customerId") String strCustomerId,
-                                       @PathVariable(PARCEL_ID) String strParcelId) throws ThingsboardException {
+            @PathVariable(PARCEL_ID) String strParcelId) throws ThingsboardException {
         checkParameter("customerId", strCustomerId);
         checkParameter(PARCEL_ID, strParcelId);
         try {
@@ -155,7 +153,7 @@ public class ParcelController extends BaseController{
                     savedParcel.getCustomerId(),
                     ActionType.ASSIGNED_TO_CUSTOMER, null, strParcelId, strCustomerId, customer.getName());
 
-            return  savedParcel;
+            return savedParcel;
         } catch (Exception e) {
 
             logEntityAction(emptyId(EntityType.PARCEL), null,
@@ -235,15 +233,15 @@ public class ParcelController extends BaseController{
         try {
             TenantId tenantId = getCurrentUser().getTenantId();
             TextPageLink pageLink = createPageLink(limit, textSearch, idOffset, textOffset);
-            if (type != null && type.trim().length()>0) {
+            if (type != null && type.trim().length() > 0) {
                 TextPageData<Parcel> parcels = parcelService.findParcelsByTenantIdAndType(tenantId, type, pageLink);
-                for(Parcel p : parcels.getData()){
+                for (Parcel p : parcels.getData()) {
                     p.setLocation(mongoService.getMongodbparcel().findById(p.getId().getId().toString()).getPolygons());
                 }
                 return checkNotNull(parcels);
             } else {
                 TextPageData<Parcel> parcels = parcelService.findParcelsByTenantId(tenantId, pageLink);
-                for(Parcel p : parcels.getData()){
+                for (Parcel p : parcels.getData()) {
                     p.setLocation(mongoService.getMongodbparcel().findById(p.getId().getId().toString()).getPolygons());
                 }
                 return checkNotNull(parcels);
@@ -282,7 +280,7 @@ public class ParcelController extends BaseController{
             CustomerId customerId = new CustomerId(toUUID(strCustomerId));
             checkCustomerId(customerId);
             TextPageLink pageLink = createPageLink(limit, textSearch, idOffset, textOffset);
-            if (type != null && type.trim().length()>0) {
+            if (type != null && type.trim().length() > 0) {
                 return checkNotNull(parcelService.findParcelsByTenantIdAndCustomerIdAndType(tenantId, customerId, type, pageLink));
             } else {
                 return checkNotNull(parcelService.findParcelsByTenantIdAndCustomerId(tenantId, customerId, pageLink));
@@ -317,7 +315,6 @@ public class ParcelController extends BaseController{
             throw handleException(e);
         }
     }
-    
 
     @PreAuthorize("hasAnyAuthority('TENANT_ADMIN', 'CUSTOMER_USER')")
     @RequestMapping(value = "/parcels", method = RequestMethod.POST)
@@ -356,7 +353,7 @@ public class ParcelController extends BaseController{
             throw handleException(e);
         }
     }
-    
+
     @PreAuthorize("hasAnyAuthority('TENANT_ADMIN', 'CUSTOMER_USER')")
     @RequestMapping(value = "/Allparcels", method = RequestMethod.GET)
     @ResponseBody
@@ -364,7 +361,7 @@ public class ParcelController extends BaseController{
         try {
             List<ParcelEntity> parcelTypes = parcelService.allParcels().get();
             List<Parcel> parcels = new ArrayList<>();
-            for(ParcelEntity fe : parcelTypes){
+            for (ParcelEntity fe : parcelTypes) {
                 parcels.add(fe.toData());
             }
             return parcels;
@@ -373,6 +370,4 @@ public class ParcelController extends BaseController{
         }
     }
 
-
-    
 }

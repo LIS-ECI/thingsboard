@@ -9,12 +9,14 @@ import static com.mongodb.client.model.Filters.eq;
 import com.mongodb.Block;
 import com.mongodb.MongoWriteException;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Filters;
 import com.mongodb.client.result.DeleteResult;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.thingsboard.server.common.data.Point;
 import org.thingsboard.server.common.data.SpatialParcel;
 
 /**
@@ -41,6 +43,21 @@ public class MongoDBSpatialParcel extends MongoConnectionPOJO<SpatialParcel> imp
     @Override
     public SpatialParcel findById(String id) {
         return getCollectionDependClass().find(eq("_id", id)).first();
+    }
+    
+    public boolean checkDeviceInParcel(Point point, String farmId) {
+        List<SpatialParcel> resultSet = new CopyOnWriteArrayList<>();
+        getCollectionDependClass().find(Filters.geoIntersects("polygons", new Document("type", "Point").append("coordinates", point.getCoordinates()))).forEach((Block<SpatialParcel>) crop -> {
+            if(crop.getId().equals(farmId)){
+                resultSet.add(crop);
+            }
+        });
+        for (SpatialParcel spatialCrop : resultSet) {
+            if(spatialCrop.getId().equals(farmId)){
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

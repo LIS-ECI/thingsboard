@@ -9,9 +9,12 @@ import static com.mongodb.client.model.Filters.eq;
 import com.mongodb.Block;
 import com.mongodb.MongoWriteException;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Filters;
 import com.mongodb.client.result.DeleteResult;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import org.bson.Document;
+import org.thingsboard.server.common.data.Polygon;
 import org.thingsboard.server.common.data.SpatialFarm;
 
 /**
@@ -38,6 +41,21 @@ public class MongoDBSpatialFarm extends MongoConnectionPOJO<SpatialFarm> impleme
     @Override
     public SpatialFarm findById(String id) {
         return getCollectionDependClass().find(eq("_id", id)).first();
+    }
+    
+    public boolean checkCropInFarm(Polygon polygon, String farmId) {
+        List<SpatialFarm> resultSet = new CopyOnWriteArrayList<>();
+        getCollectionDependClass().find(Filters.geoIntersects("polygons", new Document("type", "Polygon").append("coordinates", polygon.getCoordinates()))).forEach((Block<SpatialFarm>) farm -> {
+            if(farm.getId().equals(farmId)){
+                resultSet.add(farm);
+            }
+        });
+        for (SpatialFarm spatialFarm : resultSet) {
+            if(spatialFarm.getId().equals(farmId)){
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

@@ -85,7 +85,7 @@ public class DeviceController extends BaseController {
         checkParameter("parcelId", strParcelId);
         System.out.println(strParcelId);
         List<SpatialDevice> devicesParcelId = new ArrayList<>();
-        List<SpatialDevice> devices =  new ArrayList<>();
+        List<SpatialDevice> devices = new ArrayList<>();
         try {
             devices = mongoService.getMongodbDevice().getDevicesByParcelId(strParcelId);
         } catch (Exception e) {
@@ -94,8 +94,6 @@ public class DeviceController extends BaseController {
         return devices;
     }
 
-
-
     @PreAuthorize("hasAnyAuthority('TENANT_ADMIN', 'CUSTOMER_USER')")
     @RequestMapping(value = "/device", method = RequestMethod.POST)
     @ResponseBody
@@ -103,41 +101,39 @@ public class DeviceController extends BaseController {
         try {
             device.setTenantId(getCurrentUser().getTenantId());
             if (getCurrentUser().getAuthority() == Authority.CUSTOMER_USER) {
-                if (device.getId() == null || device.getId().isNullUid() ||
-                    device.getCustomerId() == null || device.getCustomerId().isNullUid()) {
+                if (device.getId() == null || device.getId().isNullUid()
+                        || device.getCustomerId() == null || device.getCustomerId().isNullUid()) {
                     throw new ThingsboardException("You don't have permission to perform this operation!",
                             ThingsboardErrorCode.PERMISSION_DENIED);
                 } else {
                     checkCustomerId(device.getCustomerId());
                 }
             }
-            Device savedDevice = checkNotNull(deviceService.saveDevice(device));
-            if(savedDevice.getType().equals("Spark")){
-                SparkDevice sparkDevice = new SparkDevice(deviceCredentialsService.findDeviceCredentialsByDeviceId(savedDevice.getId()).getCredentialsId(),savedDevice.getParcelId(),device.getTopic());
-                mongoService.getMongodbDevice().saveSparkDevice(sparkDevice);
-            }else{
-                SpatialDevice spatialDevice = new SpatialDevice(savedDevice.getId().getId().toString(),savedDevice.getParcelId(),device.getLocation());
-                mongoService.getMongodbDevice().save(spatialDevice);
-            }
+            if (mongoService.getMongodbparcel().checkDeviceInParcel(device.getLocation(), device.getParcelId())) {
+                Device savedDevice = checkNotNull(deviceService.saveDevice(device));
+                if (savedDevice.getType().equals("Spark")) {
+                    SparkDevice sparkDevice = new SparkDevice(deviceCredentialsService.findDeviceCredentialsByDeviceId(savedDevice.getId()).getCredentialsId(), savedDevice.getParcelId(), device.getTopic());
+                    mongoService.getMongodbDevice().saveSparkDevice(sparkDevice);
+                } else {
+                    SpatialDevice spatialDevice = new SpatialDevice(savedDevice.getId().getId().toString(), savedDevice.getParcelId(), device.getLocation());
+                    mongoService.getMongodbDevice().save(spatialDevice);
+                }
 
+                //-----------------------Agregando valor a la fuerza en base de datos
+                StringDataEntry value = new StringDataEntry("prueba", "3");
+                long millis = System.currentTimeMillis();
+                BasicTsKvEntry tsKvEntry = new BasicTsKvEntry(millis, value);
+                tsService.save(savedDevice.getId(), tsKvEntry);
 
-            //-----------------------Agregando valor a la fuerza en base de datos
-            StringDataEntry value = new StringDataEntry("prueba","3");
-            long millis = System.currentTimeMillis();
-            BasicTsKvEntry tsKvEntry = new BasicTsKvEntry(millis, value);
-            tsService.save(savedDevice.getId(),tsKvEntry);
+                ParcelId parcelId = ParcelId.fromString(savedDevice.getParcelId());
+                Parcel parcel = parcelService.findParcelById(parcelId);
+                List<UUID> devices = parcel.getDevices();
+                devices.add(savedDevice.getId().getId());
+                parcel.setDevices(devices);
+                parcelService.saveParcel(parcel);
 
-
-            ParcelId parcelId=  ParcelId.fromString(savedDevice.getParcelId());
-            Parcel parcel = parcelService.findParcelById(parcelId);
-            List<UUID> devices= parcel.getDevices();
-            devices.add(savedDevice.getId().getId());
-            parcel.setDevices(devices);
-            parcelService.saveParcel(parcel);
-
-
-            //----------------------------------------------------------------
-            /*ObjectMapper mapper = new ObjectMapper();
+                //----------------------------------------------------------------
+                /*ObjectMapper mapper = new ObjectMapper();
             ParcelId parcelId = new ParcelId(UUID.fromString(savedDevice.getParcelId()));
             Parcel parcel = parcelService.findParcelById(parcelId);
             FarmId farmId = new FarmId(UUID.fromString(parcel.getFarmId()));
@@ -177,19 +173,24 @@ public class DeviceController extends BaseController {
             System.out.println("Se reemplaza la configuración del dashboard");
             dashboardService.saveDashboard(dashboard);
             System.out.println("Se actualizó el dashboard");
-            */
-            actorService
-                    .onDeviceNameOrTypeUpdate(
-                            savedDevice.getTenantId(),
-                            savedDevice.getId(),
-                            savedDevice.getName(),
-                            savedDevice.getType());
+                 */
+                actorService
+                        .onDeviceNameOrTypeUpdate(
+                                savedDevice.getTenantId(),
+                                savedDevice.getId(),
+                                savedDevice.getName(),
+                                savedDevice.getType());
 
-            logEntityAction(savedDevice.getId(), savedDevice,
-                    savedDevice.getCustomerId(),
-                    device.getId() == null ? ActionType.ADDED : ActionType.UPDATED, null);
+                logEntityAction(savedDevice.getId(), savedDevice,
+                        savedDevice.getCustomerId(),
+                        device.getId() == null ? ActionType.ADDED : ActionType.UPDATED, null);
 
-            return savedDevice;
+                return savedDevice;
+
+            }else{
+                throw new IncorrectParameterException("Device not contains in parcel!");
+            }
+
         } catch (Exception e) {
             logEntityAction(emptyId(EntityType.DEVICE), device,
                     null, device.getId() == null ? ActionType.ADDED : ActionType.UPDATED, e);
@@ -224,7 +225,7 @@ public class DeviceController extends BaseController {
     @RequestMapping(value = "/customer/{customerId}/device/{deviceId}", method = RequestMethod.POST)
     @ResponseBody
     public Device assignDeviceToCustomer(@PathVariable("customerId") String strCustomerId,
-                                         @PathVariable(DEVICE_ID) String strDeviceId) throws ThingsboardException {
+            @PathVariable(DEVICE_ID) String strDeviceId) throws ThingsboardException {
         checkParameter("customerId", strCustomerId);
         checkParameter(DEVICE_ID, strDeviceId);
         try {
