@@ -19,8 +19,9 @@ import deviceFieldsetTemplate from './device-fieldset.tpl.html';
 
 /* eslint-enable import/no-unresolved, import/default */
 
+/* global google */
 /*@ngInject*/
-export default function DeviceDirective($compile, $templateCache, toast, $translate, types, clipboardService, parcelService, deviceService, customerService, $log) {
+export default function DeviceDirective($compile, $templateCache, toast, $translate, types, clipboardService, parcelService, deviceService, dashboardService, farmService, alarmService, customerService, $log) {
     var linker = function (scope, element) {
         var template = $templateCache.get(deviceFieldsetTemplate);
         element.html(template);
@@ -73,27 +74,106 @@ export default function DeviceDirective($compile, $templateCache, toast, $transl
 
         $compile(element.contents())(scope);
 
-        scope.labels = ['1'];
-        scope.latitudes = new Array(scope.labels.size);
-        scope.longitudes = new Array(scope.labels.size);
-
         function Point(){
             this.coordinates = [];
             this.types = 'Point';
         }
 
-        var point = new Point();
+        var map;
 
-        scope.saveEverything = function() {
-            for (var i = 0; i < scope.labels.length; i++) {
-                point.coordinates[0] = parseFloat(scope.longitudes[i])
-                point.coordinates[1] = parseFloat(scope.latitudes[i])
+        scope.$watch('device.parcelId', function(newVal) {
+            if (newVal) {
+                var drawMapFarm = [];
+                var drawMapParcel = [];
+                for(var i = 0 ; i < scope.parcels.length ; i++){
+                    if(scope.parcels[i].id.id === newVal){
+                        $log.log(scope.parcels[i]);
+                        if(scope.parcels[i].location !== null){
+                            map = new google.maps.Map(angular.element('#mapa')[0], {
+                                center: {lat: scope.parcels[i].location.coordinates[0][0][1], lng: scope.parcels[i].location.coordinates[0][0][0]},
+                                zoom: 12
+                            });
+
+                            google.maps.event.addListener(map, 'click', function(clickEvent) {
+                                
+                                var marker = new google.maps.Marker({ map: map, position: clickEvent.latLng, draggable: true });
+                                $log.log(marker);
+                                var point = new Point();
+                                point.coordinates[0] = clickEvent.latLng.lng();
+                                point.coordinates[1] = clickEvent.latLng.lat();
+                                scope.device.location = point;
+                                
+                            });
+
+                            farmService.getFarm(scope.parcels[i].farmId).then(
+                                function success(farm) {
+                                    for(var j = 0; j < farm.location.coordinates[0].length; j++){
+                                        drawMapFarm.push({lat: farm.location.coordinates[0][j][1],lng:  farm.location.coordinates[0][j][0]});
+                                    }
+                                    new google.maps.Polygon({
+                                        paths: drawMapFarm,
+                                        strokeColor: '#FF0000',
+                                        strokeOpacity: 0.8,
+                                        strokeWeight: 2,
+                                        fillColor: '#FF0000',
+                                        fillOpacity: 0.35
+                                    }).setMap(map);
+                                    
+                                }
+                            );
+
+                            for(var k = 0; k < scope.parcels[i].location.coordinates[0].length; k++){
+                                drawMapParcel.push({lat: scope.parcels[i].location.coordinates[0][k][1],lng: scope.parcels[i].location.coordinates[0][k][0]});
+                            }
+                            new google.maps.Polyline({
+                                path: drawMapParcel,
+                                geodesic: true,
+                                strokeColor: '#FF0000',
+                                strokeOpacity: 1.0,
+                                strokeWeight: 2
+                            }).setMap(map);
+                            
+                            dashboardService.getDevicesByParcelId(scope.parcels[i].id.id).then(
+                                function success(devices) {
+                                    $log.log("Estos son los devices");
+                                    $log.log(devices);
+                                    for(var m = 0 ; m < devices.length ; m++){
+                                        if (devices[m].point !== null){
+                                            verifyalarms(devices[m]);
+                                        }
+                                    }
+                                }
+                            );
+                        }
+                    }
+                }
             }
-            $log.log(point);
-            scope.device.location = point;
+        });
 
+        function addmarkertomap(lat, lng, iconurl) {
+            new google.maps.Marker({
+                position: new google.maps.LatLng(lat, lng),
+                map: map,
+                icon: iconurl
+            }).setMap(map);
+        }
+    
+        function verifyalarms(devic) {
+            alarmService.getHighestAlarmSeverity("DEVICE",devic.id).then(function(result3){
+                if (result3 === "CRITICAL" || result3 === "MAJOR"){
+                addmarkertomap(devic.point.coordinates[1],devic.point.coordinates[0],'https://maps.google.com/mapfiles/ms/icons/red-dot.png');
+                }
+                else if (result3 === "MINOR" || result3 === "WARNING" || result3 === "INDETERMINATE"){
+                addmarkertomap(devic.point.coordinates[1],devic.point.coordinates[0],'https://maps.google.com/mapfiles/ms/icons/orange-dot.png');                                                
+                }
+                else{
+                addmarkertomap(devic.point.coordinates[1],devic.point.coordinates[0],'https://maps.google.com/mapfiles/ms/icons/green-dot.png');   
+                }                                            
+            });
+        }
 
-        };
+        
+
     }
     return {
         restrict: "E",

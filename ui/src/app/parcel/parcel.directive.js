@@ -6,7 +6,7 @@ import Action from './action';
 /* eslint-enable import/no-unresolved, import/default */
 /*global google*/
 /*@ngInject*/
-export default function ParcelDirective($compile, $templateCache, toast, $translate, types, parcelService, farmService, customerService, $log) {
+export default function ParcelDirective($compile, $templateCache, toast, $translate, types, parcelService, farmService, dashboardService, customerService, $log) {
     "use strict"
     var linker = function (scope, element) {
         var template = $templateCache.get(parcelFieldsetTemplate);
@@ -176,12 +176,12 @@ export default function ParcelDirective($compile, $templateCache, toast, $transl
                     if(scope.cropFarm.location.coordinates[0].length > 0){
                         scope.tempLatitude = scope.cropFarm.location.coordinates[0][0][1];
                         scope.tempLongitude = scope.cropFarm.location.coordinates[0][0][0];
-                        for(var i=0; i<scope.cropFarm.location.coordinates[0].length; i++){
+                        for(var i=0; i < scope.cropFarm.location.coordinates[0].length; i++){
                             drawMapFarm.push({lat: scope.cropFarm.location.coordinates[0][i][1],lng:  scope.cropFarm.location.coordinates[0][i][0]});
                         }
                         //drawMapFarm.push({lat: scope.cropFarm.location.coordinates[0][1],lng:  scope.cropFarm.location.coordinates[0][0]});
                         if(scope.parcel.location != null){
-                            for(var j = 0; j<scope.parcel.location.coordinates[0].length; j++){
+                            for(var j = 0 ; j < scope.parcel.location.coordinates[0].length; j++){
                                 drawMapParcel.push({lat: scope.parcel.location.coordinates[0][j][1],lng: scope.parcel.location.coordinates[0][j][0]});
                             }
                         }
