@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import org.thingsboard.server.common.data.*;
 import org.thingsboard.server.common.data.audit.ActionStatus;
 import org.thingsboard.server.common.data.audit.ActionType;
+import org.thingsboard.server.common.data.kv.TsKvEntry;
 import org.thingsboard.server.common.data.parcel.Parcel;
 import org.thingsboard.server.common.data.device.DeviceSearchQuery;
 import org.thingsboard.server.common.data.farm.Farm;
@@ -49,8 +50,10 @@ import org.thingsboard.server.service.security.model.SecurityUser;
 import springfox.documentation.spring.web.json.Json;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 @RestController
@@ -122,31 +125,35 @@ public class DeviceController extends BaseController {
                     checkCustomerId(device.getCustomerId());
                 }
             }
-            if (mongoService.getMongodbparcel().checkDeviceInParcel(device.getLocation(), device.getParcelId())) {
-                Device savedDevice = checkNotNull(deviceService.saveDevice(device));
-                if (savedDevice.getType().equals("Spark")) {
-                    SparkDevice sparkDevice = new SparkDevice(deviceCredentialsService.findDeviceCredentialsByDeviceId(savedDevice.getId()).getCredentialsId(), savedDevice.getParcelId(), device.getTopic());
-                    mongoService.getMongodbDevice().saveSparkDevice(sparkDevice);
-                } else {
+
+            Device savedDevice = checkNotNull(deviceService.saveDevice(device));
+            if (savedDevice.getType().equals("Spark")) {
+                SparkDevice sparkDevice = new SparkDevice(deviceCredentialsService.findDeviceCredentialsByDeviceId(savedDevice.getId()).getCredentialsId(), savedDevice.getParcelId(), device.getTopic());
+                mongoService.getMongodbDevice().saveSparkDevice(sparkDevice);
+            } else {
+                if (mongoService.getMongodbparcel().checkDeviceInParcel(device.getLocation(), device.getParcelId())) {
                     SpatialDevice spatialDevice = new SpatialDevice(savedDevice.getId().getId().toString(), savedDevice.getParcelId(), device.getLocation());
                     mongoService.getMongodbDevice().save(spatialDevice);
+                }else{
+                    throw new IncorrectParameterException("Device not contains in parcel!");
                 }
+            }
 
-                //-----------------------Agregando valor a la fuerza en base de datos
-                StringDataEntry value = new StringDataEntry("prueba", "3");
-                long millis = System.currentTimeMillis();
-                BasicTsKvEntry tsKvEntry = new BasicTsKvEntry(millis, value);
-                tsService.save(savedDevice.getId(), tsKvEntry);
+            //-----------------------Agregando valor a la fuerza en base de datos
+            /*StringDataEntry value = new StringDataEntry("prueba", "3");
+            long millis = System.currentTimeMillis();
+            BasicTsKvEntry tsKvEntry = new BasicTsKvEntry(millis, value);
+            tsService.save(savedDevice.getId(), tsKvEntry);*/
 
-                ParcelId parcelId = ParcelId.fromString(savedDevice.getParcelId());
-                Parcel parcel = parcelService.findParcelById(parcelId);
-                List<UUID> devices = parcel.getDevices();
-                devices.add(savedDevice.getId().getId());
-                parcel.setDevices(devices);
-                parcelService.saveParcel(parcel);
+            ParcelId parcelId = ParcelId.fromString(savedDevice.getParcelId());
+            Parcel parcel = parcelService.findParcelById(parcelId);
+            List<UUID> devices = parcel.getDevices();
+            devices.add(savedDevice.getId().getId());
+            parcel.setDevices(devices);
+            parcelService.saveParcel(parcel);
 
-                //----------------------------------------------------------------
-                /*ObjectMapper mapper = new ObjectMapper();
+            //----------------------------------------------------------------
+            /*ObjectMapper mapper = new ObjectMapper();
             ParcelId parcelId = new ParcelId(UUID.fromString(savedDevice.getParcelId()));
             Parcel parcel = parcelService.findParcelById(parcelId);
             FarmId farmId = new FarmId(UUID.fromString(parcel.getFarmId()));
@@ -187,22 +194,20 @@ public class DeviceController extends BaseController {
             dashboardService.saveDashboard(dashboard);
             System.out.println("Se actualizó el dashboard");
                  */
-                actorService
-                        .onDeviceNameOrTypeUpdate(
-                                savedDevice.getTenantId(),
-                                savedDevice.getId(),
-                                savedDevice.getName(),
-                                savedDevice.getType());
+            actorService
+                    .onDeviceNameOrTypeUpdate(
+                            savedDevice.getTenantId(),
+                            savedDevice.getId(),
+                            savedDevice.getName(),
+                            savedDevice.getType());
 
-                logEntityAction(savedDevice.getId(), savedDevice,
-                        savedDevice.getCustomerId(),
-                        device.getId() == null ? ActionType.ADDED : ActionType.UPDATED, null);
+            logEntityAction(savedDevice.getId(), savedDevice,
+                    savedDevice.getCustomerId(),
+                    device.getId() == null ? ActionType.ADDED : ActionType.UPDATED, null);
 
-                return savedDevice;
+            return savedDevice;
 
-            }else{
-                throw new IncorrectParameterException("Device not contains in parcel!");
-            }
+
 
         } catch (Exception e) {
             logEntityAction(emptyId(EntityType.DEVICE), device,
@@ -477,6 +482,23 @@ public class DeviceController extends BaseController {
             TenantId tenantId = user.getTenantId();
             ListenableFuture<List<EntitySubtype>> deviceTypes = deviceService.findDeviceTypesByTenantId(tenantId);
             return checkNotNull(deviceTypes.get());
+        } catch (Exception e) {
+            throw handleException(e);
+        }
+    }
+
+    @PreAuthorize("hasAnyAuthority('TENANT_ADMIN', 'CUSTOMER_USER')")
+    @RequestMapping(value = "/device/{deviceId}/lastTelemetry", method = RequestMethod.GET)
+    @ResponseBody
+    public List<String> getLastTelemetryKey(@PathVariable(DEVICE_ID) String deviceId) throws ThingsboardException{
+        List<String> keyValue = new ArrayList<>();
+        ListenableFuture<List<TsKvEntry>> values = tsService.findAllLatest(new DeviceId(UUID.fromString(deviceId)));
+        try {
+            if(values.get().size() > 0){
+                keyValue.add(values.get().get(0).getKey());
+                keyValue.add(values.get().get(0).getValueAsString());
+            }
+            return keyValue;
         } catch (Exception e) {
             throw handleException(e);
         }

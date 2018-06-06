@@ -39,7 +39,7 @@ export default function DashboardLayout() {
 
 /* global google */
 /*@ngInject*/
-function DashboardLayoutController($scope, $rootScope, $translate, $window, hotkeys, dashboardService, farmService, alarmService, itembuffer,$log) {
+function DashboardLayoutController($scope, $rootScope, $translate, $window, hotkeys, dashboardService, farmService, alarmService,deviceService, itembuffer,$log) {
 
     var vm = this;
 
@@ -195,6 +195,7 @@ function DashboardLayoutController($scope, $rootScope, $translate, $window, hotk
                                 for(var m = 0;m< result2.length; m++){
                                     if (result2[m].point !== null){
                                         verifyalarms(result2[m]);
+
                                     }
 
                                 }
@@ -216,26 +217,41 @@ function DashboardLayoutController($scope, $rootScope, $translate, $window, hotk
 
     showMap();
 
-    function addmarkertomap(lat, lng, iconurl) {
-        var marker = new google.maps.Marker({
+    function addmarkertomap(lat, lng, iconurl,deviceId) {
+       var marker = new google.maps.Marker({
             position: new google.maps.LatLng(lat, lng),
             map: Map.map,
             icon: iconurl
         });
         marker.setMap(Map);
+
+
+        marker.addListener('click', function() {
+            var text = "";
+            deviceService.getLastTelemetryKey(deviceId).then(function(result4){
+                text = result4[0]+': '+result4[1];
+                var infowindow = new google.maps.InfoWindow({
+                    content: text
+                });
+                infowindow.open(Map, marker);
+            });
+        });
     }
+
 
     function verifyalarms(devic) {
         alarmService.getHighestAlarmSeverity("DEVICE",devic.id).then(function(result3){
-        if (result3 === "CRITICAL" || result3 === "MAJOR"){
-           addmarkertomap(devic.point.coordinates[1],devic.point.coordinates[0],'https://maps.google.com/mapfiles/ms/icons/red-dot.png');
-        }
-        else if (result3 === "MINOR" || result3 === "WARNING" || result3 === "INDETERMINATE"){
-           addmarkertomap(devic.point.coordinates[1],devic.point.coordinates[0],'https://maps.google.com/mapfiles/ms/icons/orange-dot.png');                                                
-        }
-        else{
-           addmarkertomap(devic.point.coordinates[1],devic.point.coordinates[0],'https://maps.google.com/mapfiles/ms/icons/green-dot.png');   
-        }                                            
+
+                if (result3 === "CRITICAL" || result3 === "MAJOR"){
+                    addmarkertomap(devic.point.coordinates[1],devic.point.coordinates[0],'https://maps.google.com/mapfiles/ms/icons/red-dot.png',devic.id);
+                }
+                else if (result3 === "MINOR" || result3 === "WARNING" || result3 === "INDETERMINATE"){
+                    addmarkertomap(devic.point.coordinates[1],devic.point.coordinates[0],'https://maps.google.com/mapfiles/ms/icons/orange-dot.png',devic.id);
+                }
+                else{
+                    addmarkertomap(devic.point.coordinates[1],devic.point.coordinates[0],'https://maps.google.com/mapfiles/ms/icons/green-dot.png',devic.id);
+                }
+
         });
     }
 
