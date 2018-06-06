@@ -83,11 +83,24 @@ public class DeviceController extends BaseController {
     @ResponseBody
     public List<SpatialDevice> getDevicesByParcelId(@PathVariable("parcelId") String strParcelId) throws ThingsboardException {
         checkParameter("parcelId", strParcelId);
-        System.out.println(strParcelId);
-        List<SpatialDevice> devicesParcelId = new ArrayList<>();
         List<SpatialDevice> devices = new ArrayList<>();
         try {
             devices = mongoService.getMongodbDevice().getDevicesByParcelId(strParcelId);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
+        return devices;
+    }
+
+
+    @PreAuthorize("hasAnyAuthority('TENANT_ADMIN', 'CUSTOMER_USER')")
+    @RequestMapping(value = "/device/sparkbyparcel/{parcelId}", method = RequestMethod.GET)
+    @ResponseBody
+    public List<SparkDevice> getSparkDevicesByParcelId(@PathVariable("parcelId") String strParcelId) throws ThingsboardException {
+        checkParameter("parcelId", strParcelId);
+        List<SparkDevice> devices = new ArrayList<>();
+        try {
+            devices = mongoService.getMongodbspark().getSparkDevicesByParcelId(strParcelId);
         } catch (Exception e) {
             throw handleException(e);
         }

@@ -164,6 +164,16 @@ function DashboardLayoutController($scope, $rootScope, $translate, $window, hotk
                             for(var h = 0; h < parcelsPolygons[j].coordinates[0].length;h++){
                                 drawMapsParcels.push({lat: parcelsPolygons[j].coordinates[0][h][1],lng: parcelsPolygons[j].coordinates[0][h][0]});
                             }
+
+                            dashboardService.getDevicesByParcelId(parcelsFarm[k].id).then(function(sparkdevices){
+                                $log.log("Spark");
+                                $log.log(sparkdevices);
+
+                            });
+
+
+
+
                             new google.maps.Polygon({
                                 paths: drawMapsParcels,
                                 strokeColor: '#FF0000',
@@ -175,13 +185,14 @@ function DashboardLayoutController($scope, $rootScope, $translate, $window, hotk
                             drawMapsParcels = [];
                         }
 
+
+
+
+
                         for(var k = 0;k< parcelsFarm.length; k++){
 
                             dashboardService.getDevicesByParcelId(parcelsFarm[k].id).then(function(result2){
-                                
-
                                 for(var m = 0;m< result2.length; m++){
-
                                     if (result2[m].point !== null){
                                         verifyalarms(result2[m]);
                                     }

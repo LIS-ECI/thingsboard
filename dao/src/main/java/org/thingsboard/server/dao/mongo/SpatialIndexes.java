@@ -23,4 +23,5 @@ public interface SpatialIndexes {
     
     public SpatialDevice getCoordenatesByDeviceId(String device_id) throws MongoDBException;
 
+    public String getTokenByIdParcelTopic(String idParcel, String topic) throws MongoDBException;
 }
