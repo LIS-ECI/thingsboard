@@ -157,6 +157,8 @@ function DashboardLayoutController($scope, $rootScope, $translate, $window, hotk
 
                 farmService.getParcelsByFarmId(farm.id).then(function(result){
                     parcelsFarm = result;
+                    $log.log("parcelfarms");
+                    $log.log(result);
                     if(parcelsFarm.length > 0){
                        
                         for(var i = 0;i< parcelsFarm.length; i++){
@@ -193,9 +195,11 @@ function DashboardLayoutController($scope, $rootScope, $translate, $window, hotk
     showMap();
 
     function verifyspark(Parcel){
+        $log.log("verify spark ");
+        $log.log(Parcel);
         dashboardService.getSparkDevicesByParcelId(Parcel.id).then(function(sparkdevice){
-            for(var y = 0;y< sparkdevice.length; y++){
-		
+        if (sparkdevice.length>0){
+           for(var y = 0;y< sparkdevice.length; y++){
                 if (!alarm){
                     addsparkalerts(Parcel,sparkdevice[y].id);
                 }
@@ -204,6 +208,24 @@ function DashboardLayoutController($scope, $rootScope, $translate, $window, hotk
                 }
             }
             alarm=false;
+
+        
+        }
+        else{
+            for(var yy = 0; yy < Parcel.polygons.coordinates[0].length;yy++){
+                    drawMapsParcels.push({lat: Parcel.polygons.coordinates[0][yy][1],lng: Parcel.polygons.coordinates[0][yy][0]});
+                }
+                $log.log("no hay spark devices ");
+                $log.log(Parcel.id);
+                new google.maps.Polygon({
+                paths: drawMapsParcels,
+                strokeColor: '#F00000',
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillOpacity: 0.35
+            }).setMap(Map);
+            drawMapsParcels = [];
+        }
 
         });
     }
@@ -234,6 +256,8 @@ function DashboardLayoutController($scope, $rootScope, $translate, $window, hotk
                 for(var hh = 0; hh < parcel.polygons.coordinates[0].length;hh++){
                     drawMapsParcels.push({lat: parcel.polygons.coordinates[0][hh][1],lng: parcel.polygons.coordinates[0][hh][0]});
                 }
+                $log.log("no hay alerta ");
+                $log.log(parcel.id);
                 new google.maps.Polygon({
                 paths: drawMapsParcels,
                 strokeColor: '#F00000',
