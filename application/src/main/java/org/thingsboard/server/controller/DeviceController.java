@@ -86,10 +86,24 @@ public class DeviceController extends BaseController {
     @ResponseBody
     public List<SpatialDevice> getDevicesByParcelId(@PathVariable("parcelId") String strParcelId) throws ThingsboardException {
         checkParameter("parcelId", strParcelId);
-        System.out.println(strParcelId);
         List<SpatialDevice> devices = new ArrayList<>();
         try {
             devices = mongoService.getMongodbDevice().getDevicesByParcelId(strParcelId);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
+        return devices;
+    }
+
+
+    @PreAuthorize("hasAnyAuthority('TENANT_ADMIN', 'CUSTOMER_USER')")
+    @RequestMapping(value = "/device/sparkbyparcel/{parcelId}", method = RequestMethod.GET)
+    @ResponseBody
+    public List<SparkDevice> getSparkDevicesByParcelId(@PathVariable("parcelId") String strParcelId) throws ThingsboardException {
+        checkParameter("parcelId", strParcelId);
+        List<SparkDevice> devices = new ArrayList<>();
+        try {
+            devices = mongoService.getMongodbspark().getSparkDevicesByParcelId(strParcelId);
         } catch (Exception e) {
             throw handleException(e);
         }
@@ -113,8 +127,8 @@ public class DeviceController extends BaseController {
             }
 
             Device savedDevice = checkNotNull(deviceService.saveDevice(device));
-            if (savedDevice.getType().equals("Spark")) {
-                SparkDevice sparkDevice = new SparkDevice(deviceCredentialsService.findDeviceCredentialsByDeviceId(savedDevice.getId()).getCredentialsId(), savedDevice.getParcelId(), device.getTopic());
+            if (savedDevice.getType().toLowerCase().equals("spark")) {
+                SparkDevice sparkDevice = new SparkDevice(savedDevice.getId().toString(), savedDevice.getParcelId(), device.getTopic(),deviceCredentialsService.findDeviceCredentialsByDeviceId(savedDevice.getId()).getCredentialsId());
                 mongoService.getMongodbDevice().saveSparkDevice(sparkDevice);
             } else {
                 if (device.getLocation() != null) {
@@ -211,6 +225,7 @@ public class DeviceController extends BaseController {
             Device device = checkDeviceId(deviceId);
             deviceService.deleteDevice(deviceId);
             mongoService.getMongodbDevice().removeById(strDeviceId);
+            mongoService.getMongodbspark().removeById(strDeviceId);
             logEntityAction(deviceId, device,
                     device.getCustomerId(),
                     ActionType.DELETED, null, strDeviceId);

@@ -5,9 +5,13 @@
  */
 package org.thingsboard.server.dao.mongo;
 
+import com.mongodb.Block;
+import org.thingsboard.server.common.data.SparkDevice;
 import org.thingsboard.server.common.data.SpatialParcel;
 import org.thingsboard.server.common.data.SpatialDevice;
 import org.thingsboard.server.common.data.SpatialFarm;
+import static com.mongodb.client.model.Filters.and;
+import static com.mongodb.client.model.Filters.eq;
 
 import java.util.List;
 
@@ -20,11 +24,13 @@ public class MongoDBSpatial extends MongoConnection implements SpatialIndexes {
     private final MongoDBSpatialParcel mongodbparcel;
     private final MongoDBSpatialFarm mongodbFarm;
     private final MongoDBSpatialDevice mongodbDevice;
+    private final MongoDBSpatialSpark mongodbspark;
 
     public MongoDBSpatial() {
         mongodbparcel = new MongoDBSpatialParcel();
         mongodbFarm = new MongoDBSpatialFarm();
         mongodbDevice = new MongoDBSpatialDevice();
+        mongodbspark = new MongoDBSpatialSpark();
     }
 
     public MongoDBSpatialParcel getMongodbparcel() {
@@ -37,6 +43,9 @@ public class MongoDBSpatial extends MongoConnection implements SpatialIndexes {
 
     public MongoDBSpatialDevice getMongodbDevice() {
         return mongodbDevice;
+    }
+    public MongoDBSpatialSpark getMongodbspark() {
+        return mongodbspark;
     }
 
     @Override
@@ -65,6 +74,15 @@ public class MongoDBSpatial extends MongoConnection implements SpatialIndexes {
         return mongodbDevice.findById(device_id);
     }
 
+    @Override
+    public String getTokenByIdParcelTopic(String idParcel, String topic) throws MongoDBException {
+        StringBuilder token = new StringBuilder();
+        System.out.println("get token: idParcel:"+idParcel+" topic: "+topic);
+        mongodbspark.getCollectionDependClass().find(and(eq("idParcel",idParcel),eq("topic",topic))).forEach((Block<SparkDevice>) sparkDevice -> {
+            token.append(sparkDevice.getId());
+        });
+        return token.toString();
+    }
 
 
 }

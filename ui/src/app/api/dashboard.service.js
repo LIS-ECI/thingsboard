@@ -44,7 +44,8 @@ function DashboardService($rootScope, $http, $q, $location, $filter) {
         makeDashboardPublic: makeDashboardPublic,
         makeDashboardPrivate: makeDashboardPrivate,
         getPublicDashboardLink: getPublicDashboardLink,
-        getDevicesByParcelId: getDevicesByParcelId
+        getDevicesByParcelId: getDevicesByParcelId,
+        getSparkDevicesByParcelId :getSparkDevicesByParcelId
     }
 
     return service;
@@ -152,6 +153,17 @@ function DashboardService($rootScope, $http, $q, $location, $filter) {
     function getDevicesByParcelId(parcelId) {
         var deferred = $q.defer();
         var url = '/api/device/devicesbyparcel/' + parcelId;
+        $http.get(url, null).then(function success(response) {
+            deferred.resolve(prepareDashboard(response.data));
+        }, function fail() {
+            deferred.reject();
+        });
+        return deferred.promise;
+    }
+
+    function getSparkDevicesByParcelId(parcelId) {
+        var deferred = $q.defer();
+        var url = '/api/device/sparkbyparcel/' + parcelId;
         $http.get(url, null).then(function success(response) {
             deferred.resolve(prepareDashboard(response.data));
         }, function fail() {
