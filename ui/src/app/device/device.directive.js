@@ -80,23 +80,61 @@ export default function DeviceDirective($compile, $templateCache, toast, $transl
         }
 
         var map;
-
+        var markerDevice;
         scope.$watch('device.parcelId', function(newVal) {
-            if (newVal) {
+            if (newVal[0] || newVal[1]) {
                 var drawMapFarm = [];
                 var drawMapParcel = [];
                 for(var i = 0 ; i < scope.parcels.length ; i++){
                     if(scope.parcels[i].id.id === newVal){
-                        $log.log(scope.parcels[i]);
                         if(scope.parcels[i].location !== null){
                             map = new google.maps.Map(angular.element('#mapa')[0], {
                                 center: {lat: scope.parcels[i].location.coordinates[0][0][1], lng: scope.parcels[i].location.coordinates[0][0][0]},
                                 zoom: 12
                             });
 
+                            deviceService.getDevice(scope.device.id.id).then(
+                                function success(device) {
+                                    $log.log(device);
+                                    if(device.location !== null){
+                                        var marker2 = new google.maps.Marker({ map: map, position: new google.maps.LatLng(device.location.coordinates[1], device.location.coordinates[0]), draggable: true });
+                                        $log.log("estas son las coordenandas:");
+                                        $log.log(device.location.coordinates[1]);
+                                        $log.log(device.location.coordinates[0]);
+                                        google.maps.event.addListener(marker2, "click", function(e) {
+                                            var content = 'Latitude: '+device.location.coordinates[1] +'<br/> Longitude: '+device.location.coordinates[0];
+                                            var infoWindow = new google.maps.InfoWindow({
+                                                content: content
+                                            });
+                                            infoWindow.open(map,marker2);
+                                            $log.log(e);
+                                        });
+                                        markerDevice = marker2;
+                                        $log.log("este es el marker device:");
+                                        $log.log(markerDevice);
+                                    }
+                                }
+                            );
+                            
                             google.maps.event.addListener(map, 'click', function(clickEvent) {
                                 
                                 var marker = new google.maps.Marker({ map: map, position: clickEvent.latLng, draggable: true });
+                                
+                                google.maps.event.addListener(marker, "click", function(e) {
+                                    var content = 'Laitude: '+clickEvent.latLng.lat() +'<br/> Longitude: '+clickEvent.latLng.lng();
+                                    var infoWindow = new google.maps.InfoWindow({
+                                        content: content
+                                    });
+                                    infoWindow.open(map,marker);
+                                    $log.log(e);
+                                });
+
+                                if(markerDevice != null){
+                                    DeleteMarker();
+                                }
+                                
+                                markerDevice = marker;
+
                                 $log.log(marker);
                                 var point = new Point();
                                 point.coordinates[0] = clickEvent.latLng.lng();
@@ -110,13 +148,12 @@ export default function DeviceDirective($compile, $templateCache, toast, $transl
                                     for(var j = 0; j < farm.location.coordinates[0].length; j++){
                                         drawMapFarm.push({lat: farm.location.coordinates[0][j][1],lng:  farm.location.coordinates[0][j][0]});
                                     }
-                                    new google.maps.Polygon({
-                                        paths: drawMapFarm,
+                                    new google.maps.Polyline({
+                                        path: drawMapFarm,
+                                        geodesic: true,
                                         strokeColor: '#FF0000',
-                                        strokeOpacity: 0.8,
-                                        strokeWeight: 2,
-                                        fillColor: '#FF0000',
-                                        fillOpacity: 0.35
+                                        strokeOpacity: 1.0,
+                                        strokeWeight: 2
                                     }).setMap(map);
                                     
                                 }
@@ -138,7 +175,7 @@ export default function DeviceDirective($compile, $templateCache, toast, $transl
                                     $log.log("Estos son los devices");
                                     $log.log(devices);
                                     for(var m = 0 ; m < devices.length ; m++){
-                                        if (devices[m].point !== null){
+                                        if (devices[m].point !== null && scope.device.id.id !== null && scope.device.id.id !== devices[m].id){
                                             verifyalarms(devices[m]);
                                         }
                                     }
@@ -149,6 +186,10 @@ export default function DeviceDirective($compile, $templateCache, toast, $transl
                 }
             }
         });
+        
+        function DeleteMarker(){
+            markerDevice.setMap(null);
+        }
 
         function addmarkertomap(lat, lng, iconurl) {
             new google.maps.Marker({

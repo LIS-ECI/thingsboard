@@ -189,7 +189,7 @@ export default function ParcelDirective($compile, $templateCache, toast, $transl
                     }
                     map = new google.maps.Map(angular.element('#mapa')[0], {
                         center: {lat: scope.tempLatitude, lng: scope.tempLongitude},
-                        zoom: 8
+                        zoom: 15
                     });
 
                     new google.maps.Polyline({
