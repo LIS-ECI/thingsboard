@@ -104,6 +104,9 @@ function DashboardLayoutController($scope, $rootScope, $translate, $window, hotk
     var Map;
     var tempLatitude = -34.397;
     var tempLongitude = 150.644;
+    var drawMapsParcels = [];
+    var alarm= false;
+
     function showMap() {
         
         $log.log("este es el session storage");
@@ -151,44 +154,16 @@ function DashboardLayoutController($scope, $rootScope, $translate, $window, hotk
                 }
         
                 drawPolygon();
-                var parcelsPolygons = [];
 
                 farmService.getParcelsByFarmId(farm.id).then(function(result){
                     parcelsFarm = result;
                     if(parcelsFarm.length > 0){
+                       
                         for(var i = 0;i< parcelsFarm.length; i++){
-                            parcelsPolygons.push(parcelsFarm[i].polygons);
-                        }
-                        var drawMapsParcels = [];
-                        for(var j = 0;j< parcelsPolygons.length;j++){
-                            for(var h = 0; h < parcelsPolygons[j].coordinates[0].length;h++){
-                                drawMapsParcels.push({lat: parcelsPolygons[j].coordinates[0][h][1],lng: parcelsPolygons[j].coordinates[0][h][0]});
-                            }
-
-                            dashboardService.getDevicesByParcelId(parcelsFarm[k].id).then(function(sparkdevices){
-                                $log.log("Spark");
-                                $log.log(sparkdevices);
-
-                            });
-
-
-
-
-                            new google.maps.Polygon({
-                                paths: drawMapsParcels,
-                                strokeColor: '#FF0000',
-                                strokeOpacity: 0.8,
-                                strokeWeight: 2,
-                                fillColor: '#FF0000',
-                                fillOpacity: 0.35
-                            }).setMap(Map);
-                            drawMapsParcels = [];
+                            verifyspark(parcelsFarm[i]);
                         }
 
-
-
-
-
+         
                         for(var k = 0;k< parcelsFarm.length; k++){
 
                             dashboardService.getDevicesByParcelId(parcelsFarm[k].id).then(function(result2){
@@ -217,6 +192,62 @@ function DashboardLayoutController($scope, $rootScope, $translate, $window, hotk
 
     showMap();
 
+    function verifyspark(Parcel){
+        dashboardService.getSparkDevicesByParcelId(Parcel.id).then(function(sparkdevice){
+            for(var y = 0;y< sparkdevice.length; y++){
+		
+                if (!alarm){
+                    addsparkalerts(Parcel,sparkdevice[y].id);
+                }
+                else{
+                    break;
+                }
+            }
+            alarm=false;
+
+        });
+    }
+
+
+   function addsparkalerts(parcel,sparkdeviceid){
+
+        alarmService.getHighestAlarmSeverity("DEVICE",sparkdeviceid).then(function(severity){
+            if (severity!==""){
+                for(var h = 0; h < parcel.polygons.coordinates[0].length;h++){
+                    drawMapsParcels.push({lat: parcel.polygons.coordinates[0][h][1],lng: parcel.polygons.coordinates[0][h][0]});
+                }
+                $log.log("entroooo alertaaaa en el parcel ");
+                $log.log(parcel.id);
+                new google.maps.Polygon({
+                paths: drawMapsParcels,
+                strokeColor: '#F00000',
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: '#F00000',
+                fillOpacity: 0.35
+                }).setMap(Map);
+                    drawMapsParcels = [];
+                alarm=true;
+            }
+
+            else{
+                for(var hh = 0; hh < parcel.polygons.coordinates[0].length;hh++){
+                    drawMapsParcels.push({lat: parcel.polygons.coordinates[0][hh][1],lng: parcel.polygons.coordinates[0][hh][0]});
+                }
+                new google.maps.Polygon({
+                paths: drawMapsParcels,
+                strokeColor: '#F00000',
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillOpacity: 0.35
+            }).setMap(Map);
+            drawMapsParcels = [];
+            
+            }
+        });
+
+    }
+
     function addmarkertomap(lat, lng, iconurl,deviceId) {
        var marker = new google.maps.Marker({
             position: new google.maps.LatLng(lat, lng),
@@ -237,6 +268,11 @@ function DashboardLayoutController($scope, $rootScope, $translate, $window, hotk
             });
         });
     }
+
+
+    
+
+    
 
 
     function verifyalarms(devic) {

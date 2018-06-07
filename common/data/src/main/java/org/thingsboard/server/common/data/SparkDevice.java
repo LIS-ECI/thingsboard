@@ -5,15 +5,22 @@ public class SparkDevice {
     private String id;
     private String idParcel;
     private String topic;
+    private String token;
 
     public SparkDevice(){}
 
-    public SparkDevice(String id,String idParcel,String topic){
+    public SparkDevice(String id,String idParcel,String topic,String token){
         this.setId(id);
         this.setIdParcel(idParcel);
         this.setTopic(topic);
+        this.setToken(token);
     }
 
+    public String getToken() {return token;}
+
+    public void setToken(String token){
+        this.token=token;
+    }
 
     public String getId() {
         return id;

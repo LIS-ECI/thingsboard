@@ -44,7 +44,8 @@ function DashboardService($rootScope, $http, $q, $location, $filter) {
         makeDashboardPublic: makeDashboardPublic,
         makeDashboardPrivate: makeDashboardPrivate,
         getPublicDashboardLink: getPublicDashboardLink,
-        getDevicesByParcelId: getDevicesByParcelId
+        getDevicesByParcelId: getDevicesByParcelId,
+        getSparkDevicesByParcelId :getSparkDevicesByParcelId
     }
 
     return service;
