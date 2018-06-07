@@ -226,7 +226,7 @@ export default function FarmDirective($compile, $templateCache, toast, $translat
                 direction();
                 map = new google.maps.Map(angular.element('#mapa')[0], {
                     center: {lat: scope.tempLatitude, lng: scope.tempLongitude},
-                    zoom: 8
+                    zoom: 15
                 });
                 dibujar();
             }

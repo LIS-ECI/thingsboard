@@ -87,7 +87,6 @@ public class DeviceController extends BaseController {
     public List<SpatialDevice> getDevicesByParcelId(@PathVariable("parcelId") String strParcelId) throws ThingsboardException {
         checkParameter("parcelId", strParcelId);
         System.out.println(strParcelId);
-        List<SpatialDevice> devicesParcelId = new ArrayList<>();
         List<SpatialDevice> devices = new ArrayList<>();
         try {
             devices = mongoService.getMongodbDevice().getDevicesByParcelId(strParcelId);
@@ -118,11 +117,13 @@ public class DeviceController extends BaseController {
                 SparkDevice sparkDevice = new SparkDevice(deviceCredentialsService.findDeviceCredentialsByDeviceId(savedDevice.getId()).getCredentialsId(), savedDevice.getParcelId(), device.getTopic());
                 mongoService.getMongodbDevice().saveSparkDevice(sparkDevice);
             } else {
-                if (mongoService.getMongodbparcel().checkDeviceInParcel(device.getLocation(), device.getParcelId())) {
-                    SpatialDevice spatialDevice = new SpatialDevice(savedDevice.getId().getId().toString(), savedDevice.getParcelId(), device.getLocation());
-                    mongoService.getMongodbDevice().save(spatialDevice);
-                }else{
-                    throw new IncorrectParameterException("Device not contains in parcel!");
+                if (device.getLocation() != null) {
+                    if (mongoService.getMongodbparcel().checkDeviceInParcel(device.getLocation(), device.getParcelId())) {
+                        SpatialDevice spatialDevice = new SpatialDevice(savedDevice.getId().getId().toString(), savedDevice.getParcelId(), device.getLocation());
+                        mongoService.getMongodbDevice().save(spatialDevice);
+                    } else {
+                        throw new IncorrectParameterException("Device not contains in parcel!");
+                    }
                 }
             }
 
@@ -181,8 +182,7 @@ public class DeviceController extends BaseController {
             dashboardService.saveDashboard(dashboard);
             System.out.println("Se actualizó el dashboard");
                  */
-            actorService
-                    .onDeviceNameOrTypeUpdate(
+            actorService.onDeviceNameOrTypeUpdate(
                             savedDevice.getTenantId(),
                             savedDevice.getId(),
                             savedDevice.getName(),
@@ -193,8 +193,6 @@ public class DeviceController extends BaseController {
                     device.getId() == null ? ActionType.ADDED : ActionType.UPDATED, null);
 
             return savedDevice;
-
-
 
         } catch (Exception e) {
             logEntityAction(emptyId(EntityType.DEVICE), device,

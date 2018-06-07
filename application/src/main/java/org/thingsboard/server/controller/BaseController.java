@@ -340,6 +340,9 @@ public abstract class BaseController {
             validateId(deviceId, "Incorrect deviceId " + deviceId);
             Device device = deviceService.findDeviceById(deviceId);
             checkDevice(device);
+            SpatialDevice spatialDevice = mongoService.getMongodbDevice().findById(device.getId().getId().toString());
+            System.out.println("este es el sd: "+spatialDevice.toString());
+            device.setLocation(spatialDevice.getPoint());
             return device;
         } catch (Exception e) {
             throw handleException(e, false);
