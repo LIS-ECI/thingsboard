@@ -92,29 +92,6 @@ export default function DeviceDirective($compile, $templateCache, toast, $transl
                                 center: {lat: scope.parcels[i].location.coordinates[0][0][1], lng: scope.parcels[i].location.coordinates[0][0][0]},
                                 zoom: 12
                             });
-
-                            deviceService.getDevice(scope.device.id.id).then(
-                                function success(device) {
-                                    $log.log(device);
-                                    if(device.location !== null){
-                                        var marker2 = new google.maps.Marker({ map: map, position: new google.maps.LatLng(device.location.coordinates[1], device.location.coordinates[0]), draggable: true });
-                                        $log.log("estas son las coordenandas:");
-                                        $log.log(device.location.coordinates[1]);
-                                        $log.log(device.location.coordinates[0]);
-                                        google.maps.event.addListener(marker2, "click", function(e) {
-                                            var content = 'Latitude: '+device.location.coordinates[1] +'<br/> Longitude: '+device.location.coordinates[0];
-                                            var infoWindow = new google.maps.InfoWindow({
-                                                content: content
-                                            });
-                                            infoWindow.open(map,marker2);
-                                            $log.log(e);
-                                        });
-                                        markerDevice = marker2;
-                                        $log.log("este es el marker device:");
-                                        $log.log(markerDevice);
-                                    }
-                                }
-                            );
                             
                             google.maps.event.addListener(map, 'click', function(clickEvent) {
                                 
@@ -177,6 +154,17 @@ export default function DeviceDirective($compile, $templateCache, toast, $transl
                                     for(var m = 0 ; m < devices.length ; m++){
                                         if (devices[m].point !== null && scope.device.id.id !== null && scope.device.id.id !== devices[m].id){
                                             verifyalarms(devices[m]);
+                                        }else if(scope.device.id.id !== null && scope.device.id.id === devices[m].id){
+                                            var marker2 = new google.maps.Marker({ map: map, position: new google.maps.LatLng(devices[m].point.coordinates[1],devices[m].point.coordinates[0]), draggable: true });
+                                            google.maps.event.addListener(marker2, "click", function(e) {
+                                                var content = 'Latitude: '+ devices[m].point.coordinates[1] +'<br/> Longitude: '+ devices[m].point.coordinates[0];
+                                                var infoWindow = new google.maps.InfoWindow({
+                                                    content: content
+                                                });
+                                                infoWindow.open(map,marker2);
+                                                $log.log(e);
+                                            });
+                                            markerDevice = marker2;
                                         }
                                     }
                                 }
