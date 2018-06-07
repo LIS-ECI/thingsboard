@@ -362,7 +362,10 @@ public class ParcelController extends BaseController {
             List<ParcelEntity> parcelTypes = parcelService.allParcels().get();
             List<Parcel> parcels = new ArrayList<>();
             for (ParcelEntity fe : parcelTypes) {
-                parcels.add(fe.toData());
+                SpatialParcel sp = mongoService.getMongodbparcel().findById(fe.getId().toString());
+                Parcel p = fe.toData();
+                p.setLocation(sp.getPolygons());
+                parcels.add(p);
             }
             return parcels;
         } catch (Exception e) {
