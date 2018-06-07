@@ -42,7 +42,8 @@ function DeviceService($http, $q, $window, userService, attributeService, custom
         sendOneWayRpcCommand: sendOneWayRpcCommand,
         sendTwoWayRpcCommand: sendTwoWayRpcCommand,
         findByQuery: findByQuery,
-        getDeviceTypes: getDeviceTypes
+        getDeviceTypes: getDeviceTypes,
+        getLastTelemetryKey: getLastTelemetryKey
     }
 
     return service;
@@ -165,6 +166,19 @@ function DeviceService($http, $q, $window, userService, attributeService, custom
         $http.post(url, device).then(function success(response) {
             deferred.resolve(response.data);
         }, function fail() {
+            deferred.reject();
+        });
+        return deferred.promise;
+    }
+
+    function getLastTelemetryKey(deviceId,config){
+        var deferred = $q.defer();
+        var values;
+        var url = '/api/device/'+deviceId+"/lastTelemetry";
+        $http.get(url,config).then(function success(response){
+            values=response.data;
+            deferred.resolve(values);
+        }, function fail(){
             deferred.reject();
         });
         return deferred.promise;

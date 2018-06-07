@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import org.thingsboard.server.common.data.*;
 import org.thingsboard.server.common.data.audit.ActionStatus;
 import org.thingsboard.server.common.data.audit.ActionType;
+import org.thingsboard.server.common.data.kv.TsKvEntry;
 import org.thingsboard.server.common.data.parcel.Parcel;
 import org.thingsboard.server.common.data.device.DeviceSearchQuery;
 import org.thingsboard.server.common.data.farm.Farm;
@@ -49,8 +50,10 @@ import org.thingsboard.server.service.security.model.SecurityUser;
 import springfox.documentation.spring.web.json.Json;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 @RestController
@@ -125,10 +128,10 @@ public class DeviceController extends BaseController {
             }
 
             //-----------------------Agregando valor a la fuerza en base de datos
-            StringDataEntry value = new StringDataEntry("prueba", "3");
+            /*StringDataEntry value = new StringDataEntry("prueba", "3");
             long millis = System.currentTimeMillis();
             BasicTsKvEntry tsKvEntry = new BasicTsKvEntry(millis, value);
-            tsService.save(savedDevice.getId(), tsKvEntry);
+            tsService.save(savedDevice.getId(), tsKvEntry);*/
 
             ParcelId parcelId = ParcelId.fromString(savedDevice.getParcelId());
             Parcel parcel = parcelService.findParcelById(parcelId);
@@ -178,9 +181,8 @@ public class DeviceController extends BaseController {
             System.out.println("Se reemplaza la configuración del dashboard");
             dashboardService.saveDashboard(dashboard);
             System.out.println("Se actualizó el dashboard");
-             */
-            actorService
-                    .onDeviceNameOrTypeUpdate(
+                 */
+            actorService.onDeviceNameOrTypeUpdate(
                             savedDevice.getTenantId(),
                             savedDevice.getId(),
                             savedDevice.getName(),
@@ -465,6 +467,23 @@ public class DeviceController extends BaseController {
             TenantId tenantId = user.getTenantId();
             ListenableFuture<List<EntitySubtype>> deviceTypes = deviceService.findDeviceTypesByTenantId(tenantId);
             return checkNotNull(deviceTypes.get());
+        } catch (Exception e) {
+            throw handleException(e);
+        }
+    }
+
+    @PreAuthorize("hasAnyAuthority('TENANT_ADMIN', 'CUSTOMER_USER')")
+    @RequestMapping(value = "/device/{deviceId}/lastTelemetry", method = RequestMethod.GET)
+    @ResponseBody
+    public List<String> getLastTelemetryKey(@PathVariable(DEVICE_ID) String deviceId) throws ThingsboardException{
+        List<String> keyValue = new ArrayList<>();
+        ListenableFuture<List<TsKvEntry>> values = tsService.findAllLatest(new DeviceId(UUID.fromString(deviceId)));
+        try {
+            if(values.get().size() > 0){
+                keyValue.add(values.get().get(0).getKey());
+                keyValue.add(values.get().get(0).getValueAsString());
+            }
+            return keyValue;
         } catch (Exception e) {
             throw handleException(e);
         }
