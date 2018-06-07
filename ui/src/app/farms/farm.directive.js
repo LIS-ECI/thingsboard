@@ -4,7 +4,9 @@ import farmFieldsetTemplate from './farm-fieldset.tpl.html';
 
 /* eslint-enable import/no-unresolved, import/default */
 /* global google */
+/* global require */
 /*@ngInject*/
+
 export default function FarmDirective($compile, $templateCache, toast, $translate, types, farmService, customerService,$log,$window) {
     var linker = function (scope, element) {
         var template = $templateCache.get(farmFieldsetTemplate);
@@ -110,6 +112,11 @@ export default function FarmDirective($compile, $templateCache, toast, $translat
             this.description = '';
         }
 
+        function FarmPhotographs(){
+            this.front;
+            this.airPhoto;
+        }
+
         scope.tempWaterPointNumber = 0;
         scope.tempWaterPointResolution = '';
 
@@ -121,6 +128,18 @@ export default function FarmDirective($compile, $templateCache, toast, $translat
             scope.tempWaterPointNumber = 0;
             scope.tempWaterPointResolution = '';
         }
+
+        scope.fileSelected = function (element) {
+            var myFileSelected = element.files[0];
+            $log.log(myFileSelected);
+            if(scope.farm.farmPhotographs == null){
+                scope.farm.farmPhotographs = new FarmPhotographs();
+            }
+            var FormData = require('form-data');
+            var form = new FormData();
+            form.append('file',myFileSelected);
+            scope.farm.farmPhotographs.front = form;
+        };
 
 
         scope.exists = function (item, list) {

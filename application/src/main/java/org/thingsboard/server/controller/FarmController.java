@@ -18,6 +18,7 @@ import java.net.URL;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.FileUtils;
 import org.codehaus.jackson.map.util.JSONPObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,6 +30,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.thingsboard.server.common.data.*;
 import org.thingsboard.server.common.data.audit.ActionType;
 import org.thingsboard.server.common.data.farm.Farm;
@@ -48,6 +51,7 @@ import org.thingsboard.server.dao.model.nosql.TenantEntity;
 import org.thingsboard.server.exception.ThingsboardErrorCode;
 import org.thingsboard.server.exception.ThingsboardException;
 import org.thingsboard.server.service.security.model.SecurityUser;
+import java.util.Iterator;
 
 /**
  *
@@ -113,7 +117,7 @@ public class FarmController extends BaseController {
                     checkCustomerId(farm.getCustomerId());
                 }
             }
-            
+            //System.out.println("Hay foto: "+farm.getFarmPhotographs().getFront().exists());
             //Adding a new dashboard with farm name----------------------------------------
             List<TenantEntity> lT = tenantService.findTenantByTitle().get();
             Tenant t = lT.get(0).toData();
@@ -142,6 +146,31 @@ public class FarmController extends BaseController {
                     null, farm.getId() == null ? ActionType.ADDED : ActionType.UPDATED, e);
             throw handleException(e);
         }
+    }
+
+    @PreAuthorize("hasAnyAuthority('TENANT_ADMIN', 'CUSTOMER_USER')")
+    @RequestMapping(value = "/farm/front/{farmId}", method = RequestMethod.POST)
+    @ResponseStatus(value = HttpStatus.OK)
+    public void uploadFile(MultipartHttpServletRequest request, @PathVariable(FARM_ID) String farmId) throws ThingsboardException {
+        try {
+            Iterator<String> itr = request.getFileNames();
+            while (itr.hasNext()) {
+                String uploadedFile = itr.next();
+                MultipartFile file = request.getFile(uploadedFile);
+                System.out.println("Archivo");
+                File imagen = new File(file.getOriginalFilename());
+                file.transferTo(imagen);
+                System.out.println(imagen.getName());
+                System.out.println(imagen.getCanonicalPath());
+                System.out.println(imagen.getTotalSpace());
+                System.out.println(imagen.toString());
+                System.out.println("farmid: "+farmId);
+
+            }
+        } catch (Exception e) {
+            throw handleException(e);
+        }
+
     }
 
     @PreAuthorize("hasAuthority('TENANT_ADMIN')")

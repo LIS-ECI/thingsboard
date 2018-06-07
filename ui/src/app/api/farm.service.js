@@ -115,10 +115,22 @@ function FarmService($http, $q, customerService, userService, $log) {
     function saveFarm(farm, ignoreErrors, config) {
         var deferred = $q.defer();
         var url = '/api/farm';
+        var url2 = '/api/farm/front/'+farm.id.id;
+        $log.log(url2);
+        $log.log(farm);
         if (!config) {
             config = {};
         }
+        var file = farm.farmPhotographs.front;
+        farm.farmPhotographs = null;
         config = Object.assign(config, { ignoreErrors: ignoreErrors });
+        $http.post(url2, file, {
+            transformRequest: angular.identity,
+            headers: {'Content-Type': undefined}
+        }).success(function(){
+
+        }).error(function(){
+        });
         $http.post(url, farm, config).then(function success(response) {
             deferred.resolve(response.data);
         }, function fail() {

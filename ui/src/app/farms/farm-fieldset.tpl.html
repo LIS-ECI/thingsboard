@@ -88,7 +88,7 @@
                         <form>
                             <legend>Cargar foto fachada</legend>
                             <label>Adjunte la foto de la fachada</label>
-                            <input type="file" accept="image/*" ng-model="images" onchange="angular.element(this).scope().uploadimage(this.files)"/>
+                            <input type="file" onchange="angular.element(this).scope().fileSelected(this)" />
                         </form>
                         <div ng-repeat="step in stepsModel">
                             <img ng-src="{{step}}" height="60" width="50"/>
