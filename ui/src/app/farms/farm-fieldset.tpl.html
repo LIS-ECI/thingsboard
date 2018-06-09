@@ -34,53 +34,53 @@
     <fieldset ng-disabled="$root.loading || !isEdit">
         <md-tabs md-dynamic-height md-border-bottom>
             <md-tab label="{{ 'Basic Information' | translate }}">
-                    <md-content class="md-padding">
-                        <md-input-container class="md-block">
-                            <label translate>farm.name</label>
-                            <input required name="name" ng-model="farm.name">
-                            <div ng-messages="theForm.name.$error">
-                                <div translate ng-message="required">farm.name-required</div>
-                            </div>
-                        </md-input-container>
-                        <tb-entity-subtype-autocomplete
-                                ng-disabled="$root.loading || !isEdit"
-                                tb-required="true"
-                                the-form="theForm"
-                                ng-model="farm.type"
-                                entity-type="types.entityType.farm">
-                        </tb-entity-subtype-autocomplete>
-                        <md-input-container class="md-block">
-                            <label translate>farm.description</label>
-                            <textarea ng-model="farm.additionalInfo.description" rows="2"></textarea>
-                        </md-input-container>
-                        <md-button ng-click="addCoordinate()" background-color="grey">Add Coordinate</md-button>
-                        <md-button ng-click="deleteCoordinate()" background-color="grey">Remove Coordinate</md-button><br>
-                        <div style="min-height: 200px;">
-                            <label ng-repeat-start="label in labels">{{label}}</label>
-                            <input ng-model='longitudes[$index]' type='text' value='' />
-                            <input ng-model='latitudes[$index]' type='text' value='' /><br ng-repeat-end>
+                <md-content class="md-padding">
+                    <md-input-container class="md-block">
+                        <label translate>farm.name</label>
+                        <input required name="name" ng-model="farm.name">
+                        <div ng-messages="theForm.name.$error">
+                            <div translate ng-message="required">farm.name-required</div>
                         </div>
-                        <md-button ng-click="saveEverything()">Ubicar</md-button>
+                    </md-input-container>
+                    <tb-entity-subtype-autocomplete
+                            ng-disabled="$root.loading || !isEdit"
+                            tb-required="true"
+                            the-form="theForm"
+                            ng-model="farm.type"
+                            entity-type="types.entityType.farm">
+                    </tb-entity-subtype-autocomplete>
+                    <md-input-container class="md-block">
+                        <label translate>farm.description</label>
+                        <textarea ng-model="farm.additionalInfo.description" rows="2"></textarea>
+                    </md-input-container>
+                    <md-button ng-click="addCoordinate()" background-color="grey">Add Coordinate</md-button>
+                    <md-button ng-click="deleteCoordinate()" background-color="grey">Remove Coordinate</md-button><br>
+                    <div style="min-height: 200px;">
+                        <label ng-repeat-start="label in labels">{{label}}</label>
+                        <input ng-model='longitudes[$index]' type='text' value='' />
+                        <input ng-model='latitudes[$index]' type='text' value='' /><br ng-repeat-end>
+                    </div>
+                    <md-button ng-click="saveEverything()">Ubicar</md-button>
+                    <md-input-container class="md-block">
+                        <label translate>farm.location_description</label>
+                        <textarea ng-model="farm.locationDescription" rows="2"></textarea>
+                    </md-input-container>
+                    <div layout-gt-sm="row">
                         <md-input-container class="md-block">
-                            <label translate>farm.location_description</label>
-                            <textarea ng-model="farm.locationDescription" rows="2"></textarea>
+                            <label translate>farm.totalArea</label>
+                            <input name="Area" ng-model="farm.totalArea.extension" required="true" ng-pattern="/^[0-9]+\.?[0-9]*$/" >
                         </md-input-container>
-                        <div layout-gt-sm="row">
-                            <md-input-container class="md-block">
-                                <label translate>farm.totalArea</label>
-                                <input name="Area" ng-model="farm.totalArea.extension" required="true" ng-pattern="/^[0-9]+\.?[0-9]*$/" >
-                            </md-input-container>
-                            <md-input-container style="margin-right: 10px;">
-                                <label translate>farm.UnitOfMeasurement</label>
-                                <md-select ng-model="farm.totalArea.symbol" >
-                                    <md-option ng-repeat="sym in symbol" value="{{sym}}">{{sym}}</md-option>
-                                </md-select>
-                            </md-input-container>
-                        </div>
-                        <div style="min-height: 500px;">
-                            <div id="mapa"  style="height: 450px; width: 450px;"></div>
-                        </div>
-                    </md-content>
+                        <md-input-container style="margin-right: 10px;">
+                            <label translate>farm.UnitOfMeasurement</label>
+                            <md-select ng-model="farm.totalArea.symbol" >
+                                <md-option ng-repeat="sym in symbol" value="{{sym}}">{{sym}}</md-option>
+                            </md-select>
+                        </md-input-container>
+                    </div>
+                    <div style="min-height: 500px;">
+                        <div id="mapa"  style="height: 450px; width: 450px;"></div>
+                    </div>
+                </md-content>
             </md-tab>
             <md-tab label="{{ 'Photograps' | translate }}">
                 <md-content class="md-padding">
@@ -89,6 +89,7 @@
                             <legend>Cargar foto fachada</legend>
                             <label>Adjunte la foto de la fachada</label>
                             <input type="file" onchange="angular.element(this).scope().fileSelected(this)" />
+                            <button ng-click="uploadImage()">Add Image</button>
                         </form>
                         <div ng-repeat="step in stepsModel">
                             <img ng-src="{{step}}" height="60" width="50"/>

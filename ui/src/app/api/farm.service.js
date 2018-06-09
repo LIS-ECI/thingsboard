@@ -1,5 +1,3 @@
-
-
 export default angular.module('thingsboard.api.farm', [])
     .factory('farmService', FarmService)
     .name;
@@ -22,7 +20,8 @@ function FarmService($http, $q, customerService, userService, $log) {
         getCustomerFarms: getCustomerFarms,
         findByQuery: findByQuery,
         fetchFarmsByNameFilter: fetchFarmsByNameFilter,
-        getFarmTypes: getFarmTypes
+        getFarmTypes: getFarmTypes,
+        frontImage: frontImage
 
     }
 
@@ -88,8 +87,8 @@ function FarmService($http, $q, customerService, userService, $log) {
         var parcels;
         var url = '/api/farm/'+farmId+"/parcels";
         $http.get(url,config).then(function success(response){
-          parcels=response.data;
-          deferred.resolve(parcels);
+            parcels=response.data;
+            deferred.resolve(parcels);
         }, function fail(){
             deferred.reject();
         });
@@ -115,6 +114,36 @@ function FarmService($http, $q, customerService, userService, $log) {
     function saveFarm(farm, ignoreErrors, config) {
         var deferred = $q.defer();
         var url = '/api/farm';
+        if (!config) {
+            config = {};
+        }
+        config = Object.assign(config, { ignoreErrors: ignoreErrors });
+        $http.post(url, farm, config).then(function success(response) {
+            deferred.resolve(response.data);
+        }, function fail() {
+            deferred.reject();
+        });
+        return deferred.promise;
+    }
+
+    function frontImage(file,farmId, ignoreErrors,config){
+        var url = '/api/farm/front/'+farmId;
+        if (!config) {
+            config = {};
+        }
+        config = Object.assign(config, { ignoreErrors: ignoreErrors });
+        $http.post(url, file, {
+            transformRequest: angular.identity,
+            headers: {'Content-Type': undefined}
+        }).success(function(){
+
+        }).error(function(){
+        });
+    }
+
+    /*function saveFarm(farm, ignoreErrors, config) {
+        var deferred = $q.defer();
+        var url = '/api/farm';
         var url2 = '/api/farm/front/'+farm.id.id;
         $log.log(url2);
         $log.log(farm);
@@ -124,12 +153,8 @@ function FarmService($http, $q, customerService, userService, $log) {
         var file = farm.farmPhotographs.front;
         farm.farmPhotographs = null;
         config = Object.assign(config, { ignoreErrors: ignoreErrors });
-        $http.post(url2, file, {
-            transformRequest: angular.identity,
-            headers: {'Content-Type': undefined}
-        }).success(function(){
-
-        }).error(function(){
+        $http.post(url2, file).then(function success(response){
+            $log.log(response);
         });
         $http.post(url, farm, config).then(function success(response) {
             deferred.resolve(response.data);
@@ -137,7 +162,7 @@ function FarmService($http, $q, customerService, userService, $log) {
             deferred.reject();
         });
         return deferred.promise;
-    }
+    }*/
 
     function deleteFarm(farmId, ignoreErrors, config) {
         var deferred = $q.defer();

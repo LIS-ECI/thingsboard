@@ -6,7 +6,6 @@ import farmFieldsetTemplate from './farm-fieldset.tpl.html';
 /* global google */
 /* global require */
 /*@ngInject*/
-
 export default function FarmDirective($compile, $templateCache, toast, $translate, types, farmService, customerService,$log,$window) {
     var linker = function (scope, element) {
         var template = $templateCache.get(farmFieldsetTemplate);
@@ -129,6 +128,8 @@ export default function FarmDirective($compile, $templateCache, toast, $translat
             scope.tempWaterPointResolution = '';
         }
 
+
+        var front;
         scope.fileSelected = function (element) {
             var myFileSelected = element.files[0];
             $log.log(myFileSelected);
@@ -138,7 +139,13 @@ export default function FarmDirective($compile, $templateCache, toast, $translat
             var FormData = require('form-data');
             var form = new FormData();
             form.append('file',myFileSelected);
-            scope.farm.farmPhotographs.front = form;
+            front = form;
+        };
+
+        scope.uploadImage = function(){
+            if(front != null){
+                farmService.frontImage(front,scope.farm.id.id);
+            }
         };
 
 
@@ -363,12 +370,10 @@ export default function FarmDirective($compile, $templateCache, toast, $translat
                     for(var i = 0; i< poly.getPath().getArray().length; i++){
                         polygon.coordinates[i] = [poly.getPath().getArray()[i].lng(),poly.getPath().getArray()[i].lat()]
                     }
-
                     $log.log(polygon);
                 });
             }
             poly.getPath().push(clickEvent.latLng);
-
         });*/
 
 

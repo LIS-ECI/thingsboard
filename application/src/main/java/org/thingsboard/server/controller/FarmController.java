@@ -159,7 +159,10 @@ public class FarmController extends BaseController {
                 MultipartFile file = request.getFile(uploadedFile);
                 System.out.println("Archivo");
                 File imagen = new File(file.getOriginalFilename());
-                file.transferTo(imagen);
+                imagen.createNewFile();
+                FileOutputStream fos = new FileOutputStream(imagen);
+                fos.write(file.getBytes());
+                fos.close();
                 System.out.println(imagen.getName());
                 System.out.println(imagen.getCanonicalPath());
                 System.out.println(imagen.getTotalSpace());
@@ -172,6 +175,7 @@ public class FarmController extends BaseController {
         }
 
     }
+
 
     @PreAuthorize("hasAuthority('TENANT_ADMIN')")
     @RequestMapping(value = "/farm/{farmId}", method = RequestMethod.DELETE)
