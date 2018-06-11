@@ -60,6 +60,7 @@
     "flot": "git://github.com/thingsboard/flot.git#0.9-work",
     "flot-curvedlines": "git://github.com/MichaelZinsmaier/CurvedLines.git#master",
     "font-awesome": "^4.6.3",
+    "highcharts": "^6.1.0",
     "form-data": "^2.3.2",
     "javascript-detect-element-resize": "^0.5.3",
     "jquery": "^3.1.0",

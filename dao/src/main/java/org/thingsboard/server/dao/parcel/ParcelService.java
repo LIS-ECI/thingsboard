@@ -30,7 +30,7 @@ public interface ParcelService {
 
     Parcel findParcelById(ParcelId parcelId);
 
-    HashMap<String, String> getHistoricalValues(String parcelId, long date);
+    HashMap<String, HashMap<Long,Double>> getHistoricalValues(String parcelId, long minDate, long maxDate);
 
     ListenableFuture<Parcel> findParcelByIdAsync(ParcelId parcelId);
 

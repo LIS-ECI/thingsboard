@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.util.concurrent.ListenableFuture;
 
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.nio.charset.Charset;
@@ -51,6 +52,8 @@ import org.thingsboard.server.dao.model.nosql.TenantEntity;
 import org.thingsboard.server.exception.ThingsboardErrorCode;
 import org.thingsboard.server.exception.ThingsboardException;
 import org.thingsboard.server.service.security.model.SecurityUser;
+
+import javax.imageio.ImageIO;
 
 /**
  *
@@ -165,9 +168,22 @@ public class FarmController extends BaseController {
                 fos.write(file.getBytes());
                 fos.close();
                 metadata.put("FarmId",farmId);
+                System.out.println("Antes de la conversión");
+                File filetemp;
+                if (file.getOriginalFilename().endsWith(".tif")){
+                    final BufferedImage tif = ImageIO.read(imagen);
+                    String temp= file.getOriginalFilename().replace(".tif",".png");
+                    filetemp= new File(temp);
+                    ImageIO.write(tif, "png", filetemp);
+                }
+                else{
+                    filetemp=imagen;
+                }
                 System.out.println("Antes de enviar al mongo");
-                mongoService.getMongodbimage().uploadFile(imagen,metadata);
+                mongoService.getMongodbimage().uploadFile(filetemp,metadata);
+
                 System.out.println("Después de que mongo guardo la imagen");
+                filetemp.delete();
             }
         } catch (Exception e) {
             throw handleException(e);

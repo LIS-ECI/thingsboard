@@ -2,7 +2,6 @@
 import parcelFieldsetTemplate from './parcel-fieldset.tpl.html';
 import Action from './action';
 
-
 /* eslint-enable import/no-unresolved, import/default */
 /*global google*/
 /*@ngInject*/
@@ -21,8 +20,6 @@ export default function ParcelDirective($compile, $templateCache, toast, $transl
             $log.log(result[0]);
             scope.farms=result;
         });
-
-
 
         scope.$watch('parcel', function(newVal) {
             if (newVal) {
@@ -98,27 +95,70 @@ export default function ParcelDirective($compile, $templateCache, toast, $transl
                 scope.selectedDate = new Date(updatedDate.setTime(value));
                 $log.log(scope.selectedDate);
 
-                parcelService.getHistoricalValues(scope.parcel.id.id,value).then(function(result){
-                    $log.log(result);
-                    scope.data=result;
-                    $log.log(scope.data);
-                });
-        }
+            }
         });
 
-
-
-
-
+        scope.highchartsNG = {
+            options: {
+                chart: {
+                    type: 'line',
+                    events: {
+                        redraw: function() {
+                            $log.log('The chart is being redrawn');
+                        }
+    
+                    }
+                }
+            },
+            navigator: {
+                enabled: true,
+                series: {
+                    data: []
+                }
+            },	
+            xAxis: {
+                type: 'datetime',
+                dateTimeLabelFormats: {
+                    day: "%e. %b",
+                    month: "%b '%y",
+                    year: "%Y"
+                }
+            },
+            title: {
+                text: 'Temperatura'
+            },
+            loading: false,
+            series: [{
+                name: 'Usage Time',
+                data: [],
+                type: 'line',
+            }]
+        };
 
         scope.maxDate = scope.finishDate.getTime();
         scope.minDate = scope.startDate.getTime();
         scope.updateSelectedDate = function(){
-            $log.log("Entró update");
             scope.selectedDate = scope.startDate;
             scope.maxDate = scope.finishDate.getTime();
             scope.minDate = scope.startDate.getTime();
             scope.fechas = [1515992400000,1516880585842];
+            parcelService.getHistoricalValues(scope.parcel.id.id,scope.minDate,scope.maxDate).then(function(result){
+                $log.log(result);
+                $log.log(result['temperature']);
+                var seriesToAdd = [];
+                angular.forEach(result['temperature'], function (value, key){
+                    var point = [];
+                    point.push(Number(key));
+                    point.push(value);
+                    seriesToAdd.push(point);
+                });
+                if(scope.highchartsNG.series.length == 1){
+                    scope.highchartsNG.series.shift();
+                }
+                scope.highchartsNG.series.push({
+                    data: seriesToAdd
+                });
+            });
         };
 
 
@@ -249,6 +289,8 @@ export default function ParcelDirective($compile, $templateCache, toast, $transl
                 });
             }
         });
+
+        
 
 
         /*scope.mostrarMapaParcel = function (){

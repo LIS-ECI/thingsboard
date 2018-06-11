@@ -106,17 +106,12 @@ public class CassandraBaseAttributesDao extends CassandraAbstractAsyncDao implem
                 , readResultsProcessingExecutor);
     }
 
-
-
-
-
     @Override
     public HashMap<String, String> getHistoricalValues(String parcelId, long date) {
         HashMap<String, String> data = new HashMap<>();
         long dayts = 86400000L;
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         try{
-
             String reportDate = dateFormat.format(date);
             Date parsedDate = dateFormat.parse(reportDate);
 
@@ -124,9 +119,8 @@ public class CassandraBaseAttributesDao extends CassandraAbstractAsyncDao implem
             long tsTime1 = timestampmin.getTime();
             long tsTime2 = tsTime1 + dayts;
 
-
             //Obtener el parcel
-            ParcelId parcelIdUUID=  ParcelId.fromString(parcelId);
+            ParcelId parcelIdUUID = ParcelId.fromString(parcelId);
             Parcel parcel = parcelService.findParcelById(parcelIdUUID);
             List<UUID> devices= parcel.getDevices();
             //Por cada elemento del arreglo del parcel ir acumulando
@@ -167,34 +161,16 @@ public class CassandraBaseAttributesDao extends CassandraAbstractAsyncDao implem
                     Double numcant =(double) arraytemp.size();
                     Double avg= numcount/numcant;
                     DecimalFormat df = new DecimalFormat("#.0000");
-                    String savgdecimal=df.format(avg);
+                    String savgdecimal = df.format(avg);
                     data.put(key,savgdecimal);
                 }
-
             }
         }
         catch(Exception e) { //this generic but you can control another types of exception
             e.printStackTrace();
         }
-
-
         return data;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     @Override
