@@ -12,8 +12,8 @@ import com.google.common.util.concurrent.ListenableFuture;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
+import java.nio.file.Files;
+import java.util.*;
 import java.net.URL;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
@@ -51,7 +51,6 @@ import org.thingsboard.server.dao.model.nosql.TenantEntity;
 import org.thingsboard.server.exception.ThingsboardErrorCode;
 import org.thingsboard.server.exception.ThingsboardException;
 import org.thingsboard.server.service.security.model.SecurityUser;
-import java.util.Iterator;
 
 /**
  *
@@ -153,7 +152,9 @@ public class FarmController extends BaseController {
     @ResponseStatus(value = HttpStatus.OK)
     public void uploadFile(MultipartHttpServletRequest request, @PathVariable(FARM_ID) String farmId) throws ThingsboardException {
         try {
+            System.out.println("Entró al back-end");
             Iterator<String> itr = request.getFileNames();
+            HashMap<String,String> metadata = new HashMap<>();
             while (itr.hasNext()) {
                 String uploadedFile = itr.next();
                 MultipartFile file = request.getFile(uploadedFile);
@@ -163,18 +164,45 @@ public class FarmController extends BaseController {
                 FileOutputStream fos = new FileOutputStream(imagen);
                 fos.write(file.getBytes());
                 fos.close();
-                System.out.println(imagen.getName());
-                System.out.println(imagen.getCanonicalPath());
-                System.out.println(imagen.getTotalSpace());
-                System.out.println(imagen.toString());
-                System.out.println("farmid: "+farmId);
-
+                metadata.put("FarmId",farmId);
+                System.out.println("Antes de enviar al mongo");
+                mongoService.getMongodbimage().uploadFile(imagen,metadata);
+                System.out.println("Después de que mongo guardo la imagen");
             }
         } catch (Exception e) {
             throw handleException(e);
         }
 
     }
+
+    /*@PreAuthorize("hasAnyAuthority('TENANT_ADMIN', 'CUSTOMER_USER')")
+    @RequestMapping(value = "/farm/front/{farmId}", method = RequestMethod.GET)
+    @ResponseStatus(value = HttpStatus.OK)
+    public File loadFile(@PathVariable(FARM_ID) String farmId) throws ThingsboardException {
+        try {
+           return mongoService.getMongodbimage().getFrontImage(farmId);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
+    }*/
+
+    @PreAuthorize("hasAnyAuthority('TENANT_ADMIN', 'CUSTOMER_USER')")
+    @RequestMapping(value = "/farm/front/{farmId}", method = RequestMethod.GET)
+    @ResponseStatus(value = HttpStatus.OK)
+    public @ResponseBody Map<String, String> getImage(@PathVariable String farmId) throws ThingsboardException {
+        try {
+            String file = mongoService.getMongodbimage().downloadFile(farmId);
+            //File file = new ClassPathResource(imagesPath + imageName).getFile();
+            //String encodeImage = Base64.getEncoder().withoutPadding().encodeToString(Files.readAllBytes(file.toPath()));
+            Map<String, String> jsonMap = new HashMap<>();
+            jsonMap.put("content", file);
+            return jsonMap;
+        } catch (Exception e) {
+           throw handleException(e);
+        }
+
+    }
+
 
 
     @PreAuthorize("hasAuthority('TENANT_ADMIN')")

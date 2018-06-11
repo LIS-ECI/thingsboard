@@ -58,6 +58,12 @@ cluster:
   hash_function_name: "${CLUSTER_HASH_FUNCTION_NAME:murmur3_128}"
   # Amount of virtual nodes in consistent hash ring.
   vitrual_nodes_size: "${CLUSTER_VIRTUAL_NODES_SIZE:16}"
+  
+spring:
+ http:
+  multipart:
+   max-file-size: 10MB
+   max-request-size: 10MB
 
 # Plugins configuration parameters
 plugins:

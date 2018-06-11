@@ -1,7 +1,6 @@
 import farmFieldsetTemplate from './farm-fieldset.tpl.html';
 
 
-
 /* eslint-enable import/no-unresolved, import/default */
 /* global google */
 /* global require */
@@ -144,10 +143,19 @@ export default function FarmDirective($compile, $templateCache, toast, $translat
 
         scope.uploadImage = function(){
             if(front != null){
+                $log.log("Entró al la función para guardar el archivo");
                 farmService.frontImage(front,scope.farm.id.id);
+                $log.log("Salió de la función para guardar el archivo");
             }
         };
 
+        scope.frontImage;
+        scope.getFrontFarmImage = function(){
+            farmService.getFrontImage(scope.farm.id.id).then(function(response){
+                scope.frontImage = response.content;
+                $log.log(scope.frontImage);
+            })
+        };
 
         scope.exists = function (item, list) {
             return list.indexOf(item) > -1;

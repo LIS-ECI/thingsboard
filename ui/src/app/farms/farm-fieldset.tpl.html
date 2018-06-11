@@ -85,15 +85,14 @@
             <md-tab label="{{ 'Photograps' | translate }}">
                 <md-content class="md-padding">
                     <div style="min-height: 1000px;">
-                        <form>
+                        <br>
                             <legend>Cargar foto fachada</legend>
                             <label>Adjunte la foto de la fachada</label>
                             <input type="file" onchange="angular.element(this).scope().fileSelected(this)" />
                             <button ng-click="uploadImage()">Add Image</button>
+                            <button ng-click="getFrontFarmImage()">Get Image</button>
                         </form>
-                        <div ng-repeat="step in stepsModel">
-                            <img ng-src="{{step}}" height="60" width="50"/>
-                        </div>
+                        <img src="data:image/*;base64,{{frontImage}}"/>
                     </div>
                 </md-content>
             </md-tab>

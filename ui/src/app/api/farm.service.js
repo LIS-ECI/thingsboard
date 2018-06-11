@@ -21,7 +21,8 @@ function FarmService($http, $q, customerService, userService, $log) {
         findByQuery: findByQuery,
         fetchFarmsByNameFilter: fetchFarmsByNameFilter,
         getFarmTypes: getFarmTypes,
-        frontImage: frontImage
+        frontImage: frontImage,
+        getFrontImage: getFrontImage
 
     }
 
@@ -132,6 +133,7 @@ function FarmService($http, $q, customerService, userService, $log) {
             config = {};
         }
         config = Object.assign(config, { ignoreErrors: ignoreErrors });
+        $log.log("Antes del post");
         $http.post(url, file, {
             transformRequest: angular.identity,
             headers: {'Content-Type': undefined}
@@ -139,6 +141,22 @@ function FarmService($http, $q, customerService, userService, $log) {
 
         }).error(function(){
         });
+        $log.log("Despues del post");
+    }
+
+    function getFrontImage(farmId,ignoreErrors,config){
+        var deferred = $q.defer();
+        var url = '/api/farm/front/'+farmId;
+        if (!config) {
+            config = {};
+        }
+        config = Object.assign(config, { ignoreErrors: ignoreErrors });
+        $http.get(url,config).then(function success(response) {
+        deferred.resolve(response.data);
+        }, function fail() {
+            deferred.reject();
+        });
+        return deferred.promise;
     }
 
     /*function saveFarm(farm, ignoreErrors, config) {

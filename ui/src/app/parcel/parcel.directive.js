@@ -103,8 +103,6 @@ export default function ParcelDirective($compile, $templateCache, toast, $transl
                     scope.data=result;
                     $log.log(scope.data);
                 });
-
-
         }
         });
 
