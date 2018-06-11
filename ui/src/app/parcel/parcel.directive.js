@@ -113,7 +113,7 @@ export default function ParcelDirective($compile, $templateCache, toast, $transl
             navigator: {
                 enabled: true,
                 series: {
-                    data: [[1426291200000, 5], [1426809600000, 26]]
+                    data: []
                 }
             },	
             xAxis: {
@@ -138,7 +138,6 @@ export default function ParcelDirective($compile, $templateCache, toast, $transl
         scope.maxDate = scope.finishDate.getTime();
         scope.minDate = scope.startDate.getTime();
         scope.updateSelectedDate = function(){
-            $log.log("Entró update");
             scope.selectedDate = scope.startDate;
             scope.maxDate = scope.finishDate.getTime();
             scope.minDate = scope.startDate.getTime();

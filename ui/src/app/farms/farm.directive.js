@@ -1,9 +1,9 @@
 import farmFieldsetTemplate from './farm-fieldset.tpl.html';
 
 
-
 /* eslint-enable import/no-unresolved, import/default */
 /* global google */
+/* global require */
 /*@ngInject*/
 export default function FarmDirective($compile, $templateCache, toast, $translate, types, farmService, customerService,$log,$window) {
     var linker = function (scope, element) {
@@ -110,6 +110,11 @@ export default function FarmDirective($compile, $templateCache, toast, $translat
             this.description = '';
         }
 
+        function FarmPhotographs(){
+            this.front;
+            this.airPhoto;
+        }
+
         scope.tempWaterPointNumber = 0;
         scope.tempWaterPointResolution = '';
 
@@ -122,6 +127,35 @@ export default function FarmDirective($compile, $templateCache, toast, $translat
             scope.tempWaterPointResolution = '';
         }
 
+
+        var front;
+        scope.fileSelected = function (element) {
+            var myFileSelected = element.files[0];
+            $log.log(myFileSelected);
+            if(scope.farm.farmPhotographs == null){
+                scope.farm.farmPhotographs = new FarmPhotographs();
+            }
+            var FormData = require('form-data');
+            var form = new FormData();
+            form.append('file',myFileSelected);
+            front = form;
+        };
+
+        scope.uploadImage = function(){
+            if(front != null){
+                $log.log("Entró al la función para guardar el archivo");
+                farmService.frontImage(front,scope.farm.id.id);
+                $log.log("Salió de la función para guardar el archivo");
+            }
+        };
+
+        scope.frontImage;
+        scope.getFrontFarmImage = function(){
+            farmService.getFrontImage(scope.farm.id.id).then(function(response){
+                scope.frontImage = response.content;
+                $log.log(scope.frontImage);
+            })
+        };
 
         scope.exists = function (item, list) {
             return list.indexOf(item) > -1;
@@ -344,12 +378,10 @@ export default function FarmDirective($compile, $templateCache, toast, $translat
                     for(var i = 0; i< poly.getPath().getArray().length; i++){
                         polygon.coordinates[i] = [poly.getPath().getArray()[i].lng(),poly.getPath().getArray()[i].lat()]
                     }
-
                     $log.log(polygon);
                 });
             }
             poly.getPath().push(clickEvent.latLng);
-
         });*/
 
 

@@ -11,6 +11,7 @@ import {FarmController, FarmCardController} from './farm.controller';
 import AssignFarmToCustomerController from './assign-to-customer.controller';
 import AddFarmsToCustomerController from './add-farms-to-customer.controller';
 import FarmDirective from './farm.directive';
+//import 'angular-base64';
 
 export default angular.module('thingsboard.farm', [
     uiRouter,
@@ -18,6 +19,7 @@ export default angular.module('thingsboard.farm', [
     thingsboardApiUser,
     thingsboardApiFarm,
     thingsboardApiCustomer
+    //'base64'
 ])
     .config(FarmRoutes)
     .controller('FarmController', FarmController)

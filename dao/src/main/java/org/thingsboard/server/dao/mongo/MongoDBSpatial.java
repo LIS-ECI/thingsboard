@@ -25,12 +25,14 @@ public class MongoDBSpatial extends MongoConnection implements SpatialIndexes {
     private final MongoDBSpatialFarm mongodbFarm;
     private final MongoDBSpatialDevice mongodbDevice;
     private final MongoDBSpatialSpark mongodbspark;
+    private final MongoDbImage mongodbimage;
 
     public MongoDBSpatial() {
         mongodbparcel = new MongoDBSpatialParcel();
         mongodbFarm = new MongoDBSpatialFarm();
         mongodbDevice = new MongoDBSpatialDevice();
         mongodbspark = new MongoDBSpatialSpark();
+        mongodbimage = new MongoDbImage();
     }
 
     public MongoDBSpatialParcel getMongodbparcel() {
@@ -47,6 +49,7 @@ public class MongoDBSpatial extends MongoConnection implements SpatialIndexes {
     public MongoDBSpatialSpark getMongodbspark() {
         return mongodbspark;
     }
+    public MongoDbImage getMongodbimage() { return mongodbimage; }
 
     @Override
     public SpatialFarm findFarmsByDeviceId(String device_id) throws MongoDBException {
@@ -83,6 +86,7 @@ public class MongoDBSpatial extends MongoConnection implements SpatialIndexes {
         });
         return token.toString();
     }
+
 
 
 }

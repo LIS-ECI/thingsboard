@@ -13,6 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
+
+import com.mongodb.client.gridfs.GridFSBucket;
+import com.mongodb.client.gridfs.GridFSBuckets;
 import org.bson.codecs.pojo.PojoCodecProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
@@ -25,6 +28,7 @@ public abstract class MongoConnection {
 
     private MongoClient mongoClient;
     private MongoDatabase mongoDatabase;
+    private GridFSBucket gridFSBucket;
 
     @Autowired
     private ServerProperties serverProperties;
@@ -78,6 +82,13 @@ public abstract class MongoConnection {
         } else {
             throw new MongoDBException("Collection not exist!!");
         }
+    }
+
+    public GridFSBucket getGridFSDatabase(){
+        if(gridFSBucket == null){
+            gridFSBucket = GridFSBuckets.create(getMongoDatabase());
+        }
+        return gridFSBucket;
     }
 
 }
