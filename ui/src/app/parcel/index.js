@@ -1,6 +1,7 @@
 
 
 import uiRouter from 'angular-ui-router';
+import 'highcharts-ng/dist/highcharts-ng.js';
 import thingsboardGrid from '../components/grid.directive';
 import thingsboardApiUser from '../api/user.service';
 import thingsboardApiParcel from '../api/parcel.service';
@@ -13,6 +14,7 @@ import AddParcelsToCustomerController from './add-parcels-to-customer.controller
 import ParcelDirective from './parcel.directive';
 
 export default angular.module('thingsboard.parcel', [
+    "highcharts-ng",
     uiRouter,
     thingsboardGrid,
     thingsboardApiUser,
