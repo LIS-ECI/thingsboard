@@ -115,6 +115,23 @@ export default function FarmDirective($compile, $templateCache, toast, $translat
             this.airPhoto;
         }
 
+        scope.files = [];
+        scope.getFileDetails = function (e) {
+            scope.$apply(function () {
+                for (var i = 0; i < e.files.length; i++) {
+                    scope.files.push(e.files[i]);
+                }
+            });
+        };
+
+        scope.uploadFiles = function () {
+            var FormData = require('form-data');
+            var form = new FormData();
+            for (var i in scope.files) {
+                form.append("uploadedFile", scope.files[i]);
+            }
+        };
+
         scope.tempWaterPointNumber = 0;
         scope.tempWaterPointResolution = '';
 

@@ -84,6 +84,12 @@
             </md-tab>
             <md-tab label="{{ 'Photograps' | translate }}">
                 <md-content class="md-padding">
+                    <form>
+                        Select images: <input type="file" name="img" multiple onchange="angular.element(this).scope().getFileDetails(this)" >
+                        <md-button type="submit" class="md-raised md-primary">
+                            Upload Photos
+                        </md-button>
+                    </form>
                     <div style="min-height: 1000px;">
                         <br>
                             <legend>Cargar foto fachada</legend>
