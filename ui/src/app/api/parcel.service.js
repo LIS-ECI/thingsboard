@@ -281,9 +281,9 @@ function ParcelService($http, $q, customerService, userService, $log) {
         return deferred.promise;
     }
 
-    function getHistoricalValues(parcelId, date, ignoreErrors, config) {
+    function getHistoricalValues(parcelId, minDate, maxDate, ignoreErrors, config) {
         var deferred = $q.defer();
-        var url = '/api/parcel/historical/' + parcelId+'/'+String(date);
+        var url = '/api/parcel/historical/' + parcelId+'/'+String(minDate)+'/'+String(maxDate);
         if (!config) {
             config = {};
         }

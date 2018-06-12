@@ -78,11 +78,46 @@ public class BaseParcelService extends AbstractEntityService implements ParcelSe
         return parcelDao.findById(parcelId.getId());
     }
 
-    @Override
-    public HashMap<String, String> getHistoricalValues(String parcelId, long date) {
-        log.trace("Executing getHistoricalValues [{}]", parcelId);
-        return attributesDao.getHistoricalValues(parcelId,date);
+    private List<Date> getDaysBetweenDates(Date startDate, Date endDate){
+        List<Date> dates = new ArrayList<>();
+        Calendar calendar = new GregorianCalendar();
+        calendar.setTime(startDate);
+        while(calendar.getTime().before(endDate)){
+            Date result = calendar.getTime();
+            dates.add(result);
+            calendar.add(Calendar.DATE, 1);
+        }
+        return dates;
+    }
 
+    private void putInformationHistoricalValue(HashMap<String, HashMap<Long,Double>> dataComplete, String device, Date date, String value){
+        if(!dataComplete.containsKey(device)){
+            dataComplete.put(device, new HashMap<>());
+        }
+        dataComplete.get(device).put(date.getTime(), Double.parseDouble(value));
+    }
+
+    @Override
+    public HashMap<String, HashMap<Long,Double>> getHistoricalValues(String parcelId, long minDate, long maxDate) {
+        log.trace("Executing getHistoricalValues [{}]", parcelId);
+        System.out.println("Este es el parcel Id: "+parcelId);
+        System.out.println("Estas son las fechas de consulta");
+        System.out.println("minDate: "+Long.toString(minDate)+", maxDate: "+Long.toString(maxDate));
+        List<Date> daysList = getDaysBetweenDates(new Date(minDate), new Date(maxDate));
+        HashMap<String, HashMap<Long,Double>> dataComplete = new HashMap<>();
+        for(Date date : daysList){
+            HashMap<String, String> dayValuesReturned = attributesDao.getHistoricalValues(parcelId,date.getTime());
+            for(Map.Entry<String, String> entry : dayValuesReturned.entrySet()){
+                putInformationHistoricalValue(dataComplete,entry.getKey(),date,entry.getValue());
+            }
+        }
+        HashMap<String, String> lastDayValuesReturned = attributesDao.getHistoricalValues(parcelId,maxDate);
+        for(Map.Entry<String, String> entry : lastDayValuesReturned.entrySet()){
+            putInformationHistoricalValue(dataComplete,entry.getKey(),new Date(maxDate),entry.getValue());
+        }
+        System.out.println("Esto es el resultado final");
+        System.out.println(dataComplete);
+        return dataComplete;
     }
 
     @Override

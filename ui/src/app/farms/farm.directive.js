@@ -115,6 +115,24 @@ export default function FarmDirective($compile, $templateCache, toast, $translat
             this.airPhoto;
         }
 
+        scope.files = [];
+        scope.getFileDetails = function (e) {
+            scope.$apply(function () {
+                for (var i = 0; i < e.files.length; i++) {
+                    scope.files.push(e.files[i]);
+                }
+            });
+        };
+
+        scope.uploadFiles = function () {
+            var FormData = require('form-data');
+            var form = new FormData();
+            for (var j = 0; j < scope.files.length; j++) {
+                form.append("uploadedFile", scope.files[j]);
+            }
+            farmService.multipleImage(form);
+        };
+
         scope.tempWaterPointNumber = 0;
         scope.tempWaterPointResolution = '';
 
@@ -131,7 +149,6 @@ export default function FarmDirective($compile, $templateCache, toast, $translat
         var front;
         scope.fileSelected = function (element) {
             var myFileSelected = element.files[0];
-            $log.log(myFileSelected);
             if(scope.farm.farmPhotographs == null){
                 scope.farm.farmPhotographs = new FarmPhotographs();
             }

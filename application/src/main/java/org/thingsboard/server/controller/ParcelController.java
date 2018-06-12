@@ -64,13 +64,13 @@ public class ParcelController extends BaseController {
     }
 
     @PreAuthorize("hasAnyAuthority('TENANT_ADMIN', 'CUSTOMER_USER')")
-    @RequestMapping(value = "/parcel/historical/{parcelId}/{date}", method = RequestMethod.GET)
+    @RequestMapping(value = "/parcel/historical/{parcelId}/{minDate}/{maxDate}", method = RequestMethod.GET)
     @ResponseBody
-    public HashMap<String, String> getHistoricalValues(@PathVariable("parcelId") String parcelId, @PathVariable("date") String date) throws ThingsboardException {
+    public HashMap<String, HashMap<Long,Double>> getHistoricalValues(@PathVariable("parcelId") String parcelId, @PathVariable("minDate") String minDate, @PathVariable("maxDate") String maxDate) throws ThingsboardException {
         checkParameter("parcelId", parcelId);
-        checkParameter("date", date);
-        return parcelService.getHistoricalValues(parcelId, Long.parseLong(date));
-
+        checkParameter("minDate", minDate);
+        checkParameter("maxDate", maxDate);
+        return parcelService.getHistoricalValues(parcelId, Long.parseLong(minDate), Long.parseLong(maxDate));
     }
 
 
