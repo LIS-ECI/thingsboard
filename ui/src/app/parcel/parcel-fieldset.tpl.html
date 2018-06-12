@@ -204,21 +204,16 @@
 
                         <br>
 
-                        <table border="2 px">
-                            <tr>
-                                <td>Data Type </td>
-                                <td>Value </td>
-                            </tr>
-                            <tr ng-repeat="(key, value) in data">
-                                <td>{{key}}</td>
-                                <td>{{value}}</td>
-                            </tr>
-                        </table>
-                        <highchart id="chart1" config="highchartsNG"></highchart>
-
+                        <md-content class="md-padding">
+                            <md-tabs md-selected="selectedIndex" md-border-bottom md-autoselect md-swipe-content>
+                                <md-tab ng-repeat="tab in tabs"
+                                        ng-disabled="tab.disabled"
+                                        label="{{tab}}">
+                                        <highchart id="chart1" config="highchartsNG"></highchart>
+                                </md-tab>
+                            </md-tabs>
+                        </md-content>
                     </div>
-
-
                 </md-content>
             </md-tab>
         </md-tabs>

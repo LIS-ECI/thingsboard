@@ -40,8 +40,6 @@ import static sun.security.krb5.Confounder.bytes;
  */
 public class MongoDbImage extends MongoConnection {
 
-
-
     public MongoDbImage(){}
 
     public void uploadFile(File file, HashMap<String,String> metadata) throws FileNotFoundException {

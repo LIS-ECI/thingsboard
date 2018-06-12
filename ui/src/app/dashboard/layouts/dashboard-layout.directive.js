@@ -160,12 +160,9 @@ function DashboardLayoutController($scope, $rootScope, $translate, $window, hotk
                     $log.log("parcelfarms");
                     $log.log(result);
                     if(parcelsFarm.length > 0){
-                       
                         for(var i = 0;i< parcelsFarm.length; i++){
                             verifyspark(parcelsFarm[i]);
                         }
-
-         
                         for(var k = 0;k< parcelsFarm.length; k++){
 
                             dashboardService.getDevicesByParcelId(parcelsFarm[k].id).then(function(result2){
@@ -174,22 +171,16 @@ function DashboardLayoutController($scope, $rootScope, $translate, $window, hotk
                                         verifyalarms(result2[m]);
 
                                     }
-
                                 }
                             })
                         }
-
-
                     }
                 })
-
             },
             function fail() {
                 $log.log("error");
             }
         );
-
-        
     }
 
     showMap();

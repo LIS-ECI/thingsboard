@@ -135,6 +135,21 @@ export default function ParcelDirective($compile, $templateCache, toast, $transl
             }]
         };
 
+        var selected = null;
+        var previous = null;
+        scope.tabs = [];
+        scope.selectedIndex = 0;
+        scope.$watch('selectedIndex', function(current, old){
+            previous = selected;
+            selected = scope.tabs[current];
+            if ( old + 1 && (old != current)){ 
+                $log.log('Goodbye ' + previous + '!');
+            };
+            if ( current + 1 ){               
+                $log.log('Hello ' + selected + '!');
+            };
+        });
+
         scope.maxDate = scope.finishDate.getTime();
         scope.minDate = scope.startDate.getTime();
         scope.updateSelectedDate = function(){
@@ -145,13 +160,19 @@ export default function ParcelDirective($compile, $templateCache, toast, $transl
             parcelService.getHistoricalValues(scope.parcel.id.id,scope.minDate,scope.maxDate).then(function(result){
                 $log.log(result);
                 $log.log(result['temperature']);
-                var seriesToAdd = [];
-                angular.forEach(result['temperature'], function (value, key){
-                    var point = [];
-                    point.push(Number(key));
-                    point.push(value);
-                    seriesToAdd.push(point);
+                angular.forEach(result,function (value,key){
+                    scope.tabs.push(key);
+                    angular.forEach(result[key], function (value, key){
+                        var point = [];
+                        point.push(Number(key));
+                        point.push(value);
+                        seriesToAdd.push(point);
+                    });
                 });
+                $log.log("estas son las llaves");
+                $log.log(scope.tabs);
+                var seriesToAdd = [];
+                
                 if(scope.highchartsNG.series.length == 1){
                     scope.highchartsNG.series.shift();
                 }
