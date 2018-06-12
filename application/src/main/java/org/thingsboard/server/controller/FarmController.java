@@ -194,26 +194,21 @@ public class FarmController extends BaseController {
     @PreAuthorize("hasAnyAuthority('TENANT_ADMIN', 'CUSTOMER_USER')")
     @RequestMapping(value = "/farm/multipleImage", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
-    public void uploadFile(MultipartHttpServletRequest request) throws ThingsboardException {
+    public void uploadMultipleImage(@RequestParam(value = "uploadedFile", required = false) MultipartFile[] request) throws ThingsboardException {
+        System.out.println(request.length);
         try {
-            System.out.println("Entró al back-end");
-            Iterator<String> itr = request.getFileNames();
-            HashMap<String,String> metadata = new HashMap<>();
-            while (itr.hasNext()) {
-                String uploadedFile = itr.next();
-                MultipartFile file = request.getFile(uploadedFile);
-                System.out.println("Archivo");
-                File imagen = new File(file.getOriginalFilename());
+            for(MultipartFile f: request){
+                File imagen = new File(f.getOriginalFilename());
                 imagen.createNewFile();
                 FileOutputStream fos = new FileOutputStream(imagen);
-                fos.write(file.getBytes());
+                fos.write(f.getBytes());
                 fos.close();
-                //mongoService.getMongodbimage().uploadFile(imagen,metadata);
+                System.out.println(imagen.getName());
+                System.out.println(imagen.getTotalSpace());
             }
         } catch (Exception e) {
             throw handleException(e);
         }
-
     }
 
     /*@PreAuthorize("hasAnyAuthority('TENANT_ADMIN', 'CUSTOMER_USER')")

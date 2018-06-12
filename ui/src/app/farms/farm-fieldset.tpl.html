@@ -86,7 +86,7 @@
                 <md-content class="md-padding">
                     <form>
                         Select images: <input type="file" name="img" multiple onchange="angular.element(this).scope().getFileDetails(this)" >
-                        <md-button type="submit" class="md-raised md-primary">
+                        <md-button ng-click="uploadFiles()" type="submit" class="md-raised md-primary">
                             Upload Photos
                         </md-button>
                     </form>

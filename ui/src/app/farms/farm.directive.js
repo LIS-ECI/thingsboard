@@ -127,9 +127,10 @@ export default function FarmDirective($compile, $templateCache, toast, $translat
         scope.uploadFiles = function () {
             var FormData = require('form-data');
             var form = new FormData();
-            for (var i in scope.files) {
-                form.append("uploadedFile", scope.files[i]);
+            for (var j = 0; j < scope.files.length; j++) {
+                form.append("uploadedFile", scope.files[j]);
             }
+            farmService.multipleImage(form);
         };
 
         scope.tempWaterPointNumber = 0;
@@ -148,7 +149,6 @@ export default function FarmDirective($compile, $templateCache, toast, $translat
         var front;
         scope.fileSelected = function (element) {
             var myFileSelected = element.files[0];
-            $log.log(myFileSelected);
             if(scope.farm.farmPhotographs == null){
                 scope.farm.farmPhotographs = new FarmPhotographs();
             }

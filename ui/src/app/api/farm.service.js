@@ -22,7 +22,8 @@ function FarmService($http, $q, customerService, userService, $log) {
         fetchFarmsByNameFilter: fetchFarmsByNameFilter,
         getFarmTypes: getFarmTypes,
         frontImage: frontImage,
-        getFrontImage: getFrontImage
+        getFrontImage: getFrontImage,
+        multipleImage: multipleImage
 
     }
 
