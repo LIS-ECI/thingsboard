@@ -154,10 +154,6 @@ public class MongoDbImage extends MongoConnection {
         }
     }
 
-
-
-
-
     public Map<Image, String> downloadMapsFile(String parcelId, String date) throws Exception {
         GridFSFindIterable gridFSFiles = getGridFSDatabase().find(Filters.and(Filters.eq("metadata.ParcelId", parcelId),Filters.eq("metadata.Date", date)));
         Map<Image, String> data = new HashMap<>();
@@ -168,8 +164,6 @@ public class MongoDbImage extends MongoConnection {
                 getGridFSDatabase().downloadToStream(gridFSFile.getFilename(), streamToDownloadTo);
                 streamToDownloadTo.close();
                 System.out.println(streamToDownloadTo.toString());
-
-
 
                 File f = new File( gridFSFile.getFilename());
                 String resultBase64Encoded = "";
@@ -193,27 +187,21 @@ public class MongoDbImage extends MongoConnection {
         }
         return data;
     }
-
-
+    
     private Image setImageValues(Metadata metadata, Image img){
         for (com.drew.metadata.Directory directory : metadata.getDirectories()) {
             for (Tag tag : directory.getTags()) {
                 if(tag.getTagName().equals("GPS Latitude")){
                     img.setLatitude(tag.getDescription());
-                    System.out.println("    "+tag.getDescription());
                 }else if(tag.getTagName().equals("GPS Longitude")){
                     img.setLongitude(tag.getDescription());
-                    System.out.println("    "+tag.getDescription());
-                }else if(tag.getTagName().equals("File Modified Date")){
-                    img.setModifiedDate(tag.getDescription());
-                    System.out.println("    "+tag.getDescription());
                 }else if(tag.getTagName().equals("File Size")){
                     img.setFileSize(tag.getDescription());
-                    System.out.println("    "+tag.getDescription());
                 }else if(tag.getTagName().equals("File Name")){
                     img.setName(tag.getDescription());
-                    System.out.println("    "+tag.getDescription());
-                }
+                }else if(tag.getTagName().equals("Date/Time")){
+                    img.setModifiedDate(tag.getDescription());
+                } 
             }
         }
         return img;

@@ -36,6 +36,10 @@ export default function ParcelDirective($compile, $templateCache, toast, $transl
                     scope.isPublic = false;
                     scope.assignedCustomer = null;
                 }
+                scope.highchartsNG.series.length = 0;
+                scope.highchartsNG.title['text'] = '';
+                scope.tabs.length = 0;
+                scope.selectedIndex = 0;
             }
         });
 
@@ -125,30 +129,39 @@ export default function ParcelDirective($compile, $templateCache, toast, $transl
                 }
             },
             title: {
-                text: 'Temperatura'
+                text: ''
             },
             loading: false,
             series: [{
-                name: 'Usage Time',
+                name: 'Average per day',
                 data: [],
                 type: 'line',
             }]
         };
 
         var selected = null;
-        var previous = null;
+        var dataTelemetryUpdated = [];
         scope.tabs = [];
         scope.selectedIndex = 0;
-        scope.$watch('selectedIndex', function(current, old){
-            previous = selected;
+
+        scope.$watch('selectedIndex', function(current){
             selected = scope.tabs[current];
-            if ( old + 1 && (old != current)){ 
-                $log.log('Goodbye ' + previous + '!');
-            };
             if ( current + 1 ){               
-                $log.log('Hello ' + selected + '!');
-            };
+                scope.highchartsNG.series.length = 0;
+                scope.highchartsNG.series.push({
+                    name: 'Average per day',
+                    data: dataTelemetryUpdated[dataTelemetryUpdated.findIndex(data => data.titleTab === selected)]['telemetry'],
+                    type: 'line'
+                });
+                scope.highchartsNG.title['text'] = selected;
+            }
+            scope.$apply();
         });
+
+        function infoTab(title,telemetryData){
+            this.titleTab = title;
+            this.telemetry = telemetryData;
+        }
 
         scope.maxDate = scope.finishDate.getTime();
         scope.minDate = scope.startDate.getTime();
@@ -159,26 +172,30 @@ export default function ParcelDirective($compile, $templateCache, toast, $transl
             scope.fechas = [1515992400000,1516880585842];
             parcelService.getHistoricalValues(scope.parcel.id.id,scope.minDate,scope.maxDate).then(function(result){
                 $log.log(result);
-                $log.log(result['temperature']);
+                scope.tabs.length = 0;
+                dataTelemetryUpdated.length = 0;
                 angular.forEach(result,function (value,key){
                     scope.tabs.push(key);
+                    var seriesToAdd = [];
                     angular.forEach(result[key], function (value, key){
                         var point = [];
                         point.push(Number(key));
                         point.push(value);
                         seriesToAdd.push(point);
                     });
+                    var tabHistoricalValues = new infoTab(key,seriesToAdd);
+                    dataTelemetryUpdated.push(tabHistoricalValues);
                 });
-                $log.log("estas son las llaves");
-                $log.log(scope.tabs);
-                var seriesToAdd = [];
-                
-                if(scope.highchartsNG.series.length == 1){
-                    scope.highchartsNG.series.shift();
+                if(dataTelemetryUpdated.length == 1){
+                    $log.log(dataTelemetryUpdated[0]);
+                    scope.highchartsNG.series.push({
+                        name: 'Average per day',
+                        data: dataTelemetryUpdated[0]['telemetry'],
+                        type: 'line'
+                    });
+                    scope.highchartsNG.title['text'] = dataTelemetryUpdated[0]['titleTab'];
+                    scope.$apply();
                 }
-                scope.highchartsNG.series.push({
-                    data: seriesToAdd
-                });
             });
         };
 

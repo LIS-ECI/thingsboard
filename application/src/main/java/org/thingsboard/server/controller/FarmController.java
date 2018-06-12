@@ -203,8 +203,7 @@ public class FarmController extends BaseController {
                 FileOutputStream fos = new FileOutputStream(imagen);
                 fos.write(f.getBytes());
                 fos.close();
-                System.out.println(imagen.getName());
-                System.out.println(imagen.getTotalSpace());
+                
             }
         } catch (Exception e) {
             throw handleException(e);

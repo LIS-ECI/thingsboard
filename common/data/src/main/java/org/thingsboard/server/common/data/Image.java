@@ -1,15 +1,28 @@
 package org.thingsboard.server.common.data;
 
-public class Image {
-    private String name;
-    private String latitude;
-    private String longitude;
-    private String fileSize;
-    private String modifiedDate;
+import java.util.Arrays;
 
+/**
+ *
+ * @author carlos
+ */
+public class Image{
+    
+    private String name, latitude, longitude, fileSize, modifiedDate;
+    private Double[] coordinates;
+    
     public Image(){
     }
 
+    public Image(String name, String latitude, String longitude, String fileSize, String modifiedDate, Double[] coordinates) {
+        this.name = name;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.fileSize = fileSize;
+        this.modifiedDate = modifiedDate;
+        this.coordinates = coordinates;
+    }
+    
     public String getLatitude() {
         return latitude;
     }
@@ -41,7 +54,7 @@ public class Image {
     public void setModifiedDate(String modifiedDate) {
         this.modifiedDate = modifiedDate;
     }
-
+    
     public String getName() {
         return name;
     }
@@ -49,6 +62,19 @@ public class Image {
     public void setName(String name) {
         this.name = name;
     }
+    
+    public Double[] getCoordinates() {
+        return coordinates;
+    }
 
-
+    public void setCoordinates(Double[] coordinates) {
+        this.coordinates = coordinates;
+    }
+    
+    @Override
+    public String toString(){
+        return "[name: "+name+", latitude: "+latitude+", longitud: "+longitude+", fileSize: "+fileSize+", modifiedDate: "+modifiedDate+", coordinates: "+Arrays.toString(coordinates)+"]";
+    }
+    
+    
 }
