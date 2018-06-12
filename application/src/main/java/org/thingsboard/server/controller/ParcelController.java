@@ -9,6 +9,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,10 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.thingsboard.server.common.data.Customer;
-import org.thingsboard.server.common.data.EntitySubtype;
-import org.thingsboard.server.common.data.EntityType;
-import org.thingsboard.server.common.data.SpatialParcel;
+import org.thingsboard.server.common.data.*;
 import org.thingsboard.server.common.data.audit.ActionType;
 import org.thingsboard.server.common.data.parcel.Parcel;
 import org.thingsboard.server.common.data.parcel.ParcelSearchQuery;
@@ -74,6 +72,25 @@ public class ParcelController extends BaseController {
         checkParameter("maxDate", maxDate);
         return parcelService.getHistoricalValues(parcelId, Long.parseLong(minDate), Long.parseLong(maxDate));
     }
+
+
+    @PreAuthorize("hasAnyAuthority('TENANT_ADMIN', 'CUSTOMER_USER')")
+    @RequestMapping(value = "/parcel/image/{parcelId}/{date}", method = RequestMethod.GET)
+    @ResponseStatus(value = HttpStatus.OK)
+    public @ResponseBody
+    Map<Image, String> getImages(@PathVariable("parcelId") String parcelId, @PathVariable("date") String date) throws ThingsboardException {
+        try {
+            return mongoService.getMongodbimage().downloadMapsFile(parcelId,date);
+
+        } catch (Exception e) {
+            throw handleException(e);
+        }
+
+    }
+
+
+
+
 
     @PreAuthorize("hasAnyAuthority('TENANT_ADMIN', 'CUSTOMER_USER')")
     @RequestMapping(value = "/parcel", method = RequestMethod.POST)

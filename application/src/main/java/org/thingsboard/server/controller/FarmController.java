@@ -191,6 +191,26 @@ public class FarmController extends BaseController {
 
     }
 
+    @PreAuthorize("hasAnyAuthority('TENANT_ADMIN', 'CUSTOMER_USER')")
+    @RequestMapping(value = "/farm/multipleImage", method = RequestMethod.POST)
+    @ResponseStatus(value = HttpStatus.OK)
+    public void uploadMultipleImage(@RequestParam(value = "uploadedFile", required = false) MultipartFile[] request) throws ThingsboardException {
+        System.out.println(request.length);
+        try {
+            for(MultipartFile f: request){
+                File imagen = new File(f.getOriginalFilename());
+                imagen.createNewFile();
+                FileOutputStream fos = new FileOutputStream(imagen);
+                fos.write(f.getBytes());
+                fos.close();
+                System.out.println(imagen.getName());
+                System.out.println(imagen.getTotalSpace());
+            }
+        } catch (Exception e) {
+            throw handleException(e);
+        }
+    }
+
     /*@PreAuthorize("hasAnyAuthority('TENANT_ADMIN', 'CUSTOMER_USER')")
     @RequestMapping(value = "/farm/front/{farmId}", method = RequestMethod.GET)
     @ResponseStatus(value = HttpStatus.OK)
