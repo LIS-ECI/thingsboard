@@ -81,14 +81,15 @@ export default function ParcelDirective($compile, $templateCache, toast, $transl
         //-----------------------------------------------------------------------------------------------------------------
 
 
-       // var map2;
-       // $log.log(map2);
-       // function showMap2() {
-       //     map2 = new google.maps.Map(angular.element('#mapa2')[0], {
-       //        center: {lat: 4.8, lng: -74.0},
-       //        zoom: 15
-       //     });}
-       // showMap2();
+        
+        function showMap2(latitud,longitud) {
+            var map2 = new google.maps.Map(angular.element('#mapa2')[0], {
+               center: {lat: latitud, lng: longitud},
+              zoom: 15
+            });
+            $log.log(map2);
+        }
+        
 
         scope.symbol = ['ha','fg'];
         scope.practices=["The field should be free of trash, papers,plastics and empty containers","Check there is no risk of water contamination","Be acquainted with the type of pests, diseases and weeds that exist, mainly in the crop area.","Check on possible contamination sources from neighboring plots.","Signpost the place where the crop will be planted with the number of the lot or name of the crop.","With the support of the technician analyze the type of soil and its depth for good growth of the roots.","Consider the slope of the field where the planting will be done.","Avoid soil erosion and compression","Install rubbish bins in strategic zones of the field and throw the rubbish in them once the working day is over","Sow at an adequate distance"];
@@ -182,6 +183,7 @@ export default function ParcelDirective($compile, $templateCache, toast, $transl
         scope.maxDate = scope.finishDate.getTime();
         scope.minDate = scope.startDate.getTime();
         scope.updateSelectedDate = function(){
+            
             scope.selectedDate = scope.startDate;
             scope.maxDate = scope.finishDate.getTime();
             scope.minDate = scope.startDate.getTime();
@@ -279,6 +281,9 @@ export default function ParcelDirective($compile, $templateCache, toast, $transl
                         }
                         $log.log(drawMapParcel);
                     }
+
+
+                    showMap2(scope.tempLatitude,scope.tempLongitude);
                     map = new google.maps.Map(angular.element('#mapa')[0], {
                         center: {lat: scope.tempLatitude, lng: scope.tempLongitude},
                         zoom: 15
