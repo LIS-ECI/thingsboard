@@ -89,9 +89,6 @@ public class ParcelController extends BaseController {
     }
 
 
-
-
-
     @PreAuthorize("hasAnyAuthority('TENANT_ADMIN', 'CUSTOMER_USER')")
     @RequestMapping(value = "/parcel", method = RequestMethod.POST)
     @ResponseBody
