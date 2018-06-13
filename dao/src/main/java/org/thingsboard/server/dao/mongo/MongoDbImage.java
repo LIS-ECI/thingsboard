@@ -20,6 +20,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -36,6 +37,9 @@ import org.bson.types.ObjectId;
 import org.thingsboard.server.common.data.Image;
 import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.imaging.jpeg.JpegProcessingException;
+import org.thingsboard.server.common.data.Point;
+import org.thingsboard.server.common.data.SpatialParcel;
+
 import static sun.security.krb5.Confounder.bytes;
 //import org.apache.commons.io;
 
@@ -45,20 +49,63 @@ import static sun.security.krb5.Confounder.bytes;
  */
 public class MongoDbImage extends MongoConnection {
 
-    public MongoDbImage(){}
+    private MongoDBSpatialParcel spatialParcel;
 
-    public void uploadFile(File file, HashMap<String,String> metadata) throws FileNotFoundException {
+    public MongoDbImage() {
+    }
+
+    public MongoDbImage(MongoDBSpatialParcel spatialParcel){
+        this.spatialParcel = spatialParcel;
+    }
+
+    public void uploadFile(File file, HashMap<String,String> metadata) throws Exception {
         // Get the input stream
-        InputStream streamToUploadFrom = new FileInputStream(file);
-        Document doc = new Document();
-        metadata.forEach((k,v) -> doc.append(k,v));
+        if(!findFilesStores(file.getName())){
+            InputStream streamToUploadFrom = new FileInputStream(file);
+            Document doc = new Document();
+            metadata.forEach((k,v) -> doc.append(k,v));
 
-        // Create some custom options
-        GridFSUploadOptions options = new GridFSUploadOptions()
-                .chunkSizeBytes(1048576*2)
-                .metadata(doc);
-        ObjectId fileId = getGridFSDatabase().uploadFromStream(file.getName(), streamToUploadFrom, options);
-        System.out.println("Archivo ya subido!!");
+            // Create some custom options
+            GridFSUploadOptions options = new GridFSUploadOptions()
+                    .chunkSizeBytes(1048576*2)
+                    .metadata(doc);
+            ObjectId fileId = getGridFSDatabase().uploadFromStream(file.getName(), streamToUploadFrom, options);
+            System.out.println("Archivo ya subido!!");
+        }else{
+            throw new MongoDBException("File already exist!");
+        }
+    }
+
+    public void uploadMultipleFiles(File file) throws Exception {
+        if(!findFilesStores(file.getName())){
+            InputStream streamToUploadFrom = new FileInputStream(file);
+            Image i = new Image();
+            Metadata metadata = JpegMetadataReader.readMetadata(file);
+            i = setImageValues(metadata,i);
+            List<Double> coord = new ArrayList<>();
+            coord.add(toDecimalResult(i.getLongitude().replaceAll(",",".")));
+            coord.add(toDecimalResult(i.getLatitude().replaceAll(",",".")));
+            i.setCoordinates(coord);
+            System.out.println(i.toString());
+            Point point = new Point(coord,"Point");
+            SpatialParcel sp = spatialParcel.findNearestParcel(point);
+            System.out.println(sp.toString());
+            Document doc = new Document();
+            doc.append("parcelId",sp.getId());
+            String dateString = i.getModifiedDate().replace(":","/");
+            dateString = dateString.split(" ")[0];
+            String reportDate = dateString;
+            System.out.println(reportDate);
+            doc.append("date",reportDate);
+
+            GridFSUploadOptions options = new GridFSUploadOptions()
+                    .chunkSizeBytes(1048576*2)
+                    .metadata(doc);
+            ObjectId fileId = getGridFSDatabase().uploadFromStream(file.getName(), streamToUploadFrom, options);
+            System.out.println("Archivo ya subido!!");
+        }else{
+            throw new MongoDBException("File already exist!");
+        }
     }
 
     public void findFilesStores() {
@@ -70,50 +117,6 @@ public class MongoDbImage extends MongoConnection {
                     }
                 });
     }
-
-    /*public static void main(String[] args) throws Throwable {
-
-        MongoClient mongoClient = new MongoClient();
-
-        myDatabase = mongoClient.getDatabase("prueba");
-
-        gridFSBucket = GridFSBuckets.create(myDatabase);
-
-        File file = new File("//home//carlos//Downloads//Carlos//DJI_0194.JPG");
-
-        if (file.exists()) {
-
-            System.out.println("El archivo si existe!!");
-
-            uploadFile(file);
-
-            findFilesStores();
-
-            downloadFile(file.getName());
-
-            //restoreFile(file.getName());
-        } else {
-            System.out.println("El archivo no existe!!");
-        }
-
-    }*/
-
-
-
-    /*public void downloadFile(String nameFile) throws FileNotFoundException, IOException {
-        FileOutputStream streamToDownloadTo = new FileOutputStream("/home/carlos/Documents/" + nameFile);
-        GridFSDownloadByNameOptions downloadOptions = new GridFSDownloadByNameOptions().revision(0);
-        getGridFSDatabase().downloadToStreamByName(nameFile, streamToDownloadTo, downloadOptions);
-        streamToDownloadTo.close();
-    }*/
-
-    /*public void restoreFile(String nameFile) throws IOException {
-        GridFSDownloadStream downloadStream = getGridFSDatabase().openDownloadStreamByName(nameFile);
-        int fileLength = (int) downloadStream.getGridFSFile().getLength();
-        byte[] bytesToWriteTo = new byte[fileLength];
-        downloadStream.read(bytesToWriteTo);
-        downloadStream.close();
-    }*/
 
     public File getFrontImage(String farmId) throws Exception {
         GridFSFile gridFSFile = getGridFSDatabase().find(Filters.eq("metadata.FarmId", farmId)).first();
@@ -137,7 +140,6 @@ public class MongoDbImage extends MongoConnection {
             FileOutputStream streamToDownloadTo = new FileOutputStream( gridFSFile.getFilename());
             getGridFSDatabase().downloadToStream(gridFSFile.getFilename(), streamToDownloadTo);
             streamToDownloadTo.close();
-            System.out.println(streamToDownloadTo.toString());
 
             File f = new File( gridFSFile.getFilename());
             String resultBase64Encoded = "";
@@ -154,8 +156,10 @@ public class MongoDbImage extends MongoConnection {
         }
     }
 
-    public Map<Image, String> downloadMapsFile(String parcelId, String date) throws Exception {
-        GridFSFindIterable gridFSFiles = getGridFSDatabase().find(Filters.and(Filters.eq("metadata.ParcelId", parcelId),Filters.eq("metadata.Date", date)));
+    public Map<Image, String> downloadMapsFile(String parcelId, long date) throws Exception {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+        String reportDate = dateFormat.format(date);
+        GridFSFindIterable gridFSFiles = getGridFSDatabase().find(Filters.and(Filters.eq("metadata.parcelId", parcelId),Filters.eq("metadata.date", reportDate)));
         Map<Image, String> data = new HashMap<>();
         for (GridFSFile gridFSFile: gridFSFiles){
             try {
@@ -163,13 +167,11 @@ public class MongoDbImage extends MongoConnection {
                 FileOutputStream streamToDownloadTo = new FileOutputStream( gridFSFile.getFilename());
                 getGridFSDatabase().downloadToStream(gridFSFile.getFilename(), streamToDownloadTo);
                 streamToDownloadTo.close();
-                System.out.println(streamToDownloadTo.toString());
-
                 File f = new File( gridFSFile.getFilename());
                 String resultBase64Encoded = "";
                 if (f.exists()) {
                     resultBase64Encoded = Base64.getEncoder().encodeToString(org.apache.commons.io.FileUtils.readFileToByteArray(f));
-                    f.delete();
+
                 } else {
                     System.out.println("no existe el archivo");
                 }
@@ -177,10 +179,15 @@ public class MongoDbImage extends MongoConnection {
                 Metadata metadata = JpegMetadataReader.readMetadata(f);
 
                 image=setImageValues(metadata,image);
-
+                List<Double> coord = new ArrayList<>();
+                coord.add(toDecimalResult(image.getLongitude().replaceAll(",",".")));
+                coord.add(toDecimalResult(image.getLatitude().replaceAll(",",".")));
+                image.setCoordinates(coord);
+                System.out.println(image.toString());
                 data.put(image,resultBase64Encoded);
-
+                f.delete();
             } catch (IOException e) {
+                e.printStackTrace();
                 throw new MongoDBException("It wasn´t posible to load the file");
             }
 
@@ -205,5 +212,64 @@ public class MongoDbImage extends MongoConnection {
             }
         }
         return img;
+    }
+
+    public static Double toDecimalResult(String degreeCoordinate) {
+        try {
+            String[] degree = degreeCoordinate.replaceAll("[^0-9.\\s-]", "").split(" ");
+            Double decimalConv = toDecimal(degree);
+            return decimalConv;
+        } catch(Exception ex) {
+            System.out.println(String.format("Error en el formato de las coordenadas:"));
+            return null;
+        }
+    }
+
+    public static Double toDecimal(String latOrLng) {
+        try {
+            String[] latlng = latOrLng.replaceAll("[^0-9.\\s-]", "").split(" ");
+            Double dlatlng = toDecimal(latlng);
+            return dlatlng;
+        } catch(Exception ex) {
+            System.out.println(String.format("Error en el formato de las coordenadas: %s ", new Object[]{latOrLng}));
+            return null;
+        }
+    }
+
+    public static Double toDecimal(String[] coord) {
+        double d = Double.parseDouble(coord[0]);
+        double m = Double.parseDouble(coord[1]);
+        double s = Double.parseDouble(coord[2]);
+        double signo = 1;
+        if (coord[0].startsWith("-"))
+            signo = -1;
+        return signo * (Math.abs(d) + (m / 60.0) + (s / 3600.0));
+    }
+
+    private boolean findFilesStores(String fileName) {
+        List<String> fileNames = new ArrayList<>();
+        getGridFSDatabase().find().forEach(
+                new Block<GridFSFile>() {
+                    @Override
+                    public void apply(final GridFSFile gridFSFile) {
+                        fileNames.add(gridFSFile.getFilename());
+                    }
+                });
+        return fileNames.contains(fileName);
+    }
+
+    private List<String> datesOfFilesParcel() {
+        List<String> dates = new ArrayList<>();
+        getGridFSDatabase().find().forEach(
+                new Block<GridFSFile>() {
+                    @Override
+                    public void apply(final GridFSFile gridFSFile) {
+                        String dateFile = gridFSFile.getMetadata().getString("date");
+                        if(dateFile != null && !dates.contains(dateFile)){
+                            dates.add(dateFile);
+                        }
+                    }
+                });
+        return dates;
     }
 }

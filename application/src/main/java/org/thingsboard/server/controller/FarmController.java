@@ -195,7 +195,6 @@ public class FarmController extends BaseController {
     @RequestMapping(value = "/farm/multipleImage", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     public void uploadMultipleImage(@RequestParam(value = "uploadedFile", required = false) MultipartFile[] request) throws ThingsboardException {
-        System.out.println(request.length);
         try {
             for(MultipartFile f: request){
                 File imagen = new File(f.getOriginalFilename());
@@ -203,7 +202,7 @@ public class FarmController extends BaseController {
                 FileOutputStream fos = new FileOutputStream(imagen);
                 fos.write(f.getBytes());
                 fos.close();
-                
+                mongoService.getMongodbimage().uploadMultipleFiles(imagen);
             }
         } catch (Exception e) {
             throw handleException(e);

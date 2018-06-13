@@ -78,7 +78,7 @@ public class ParcelController extends BaseController {
     @RequestMapping(value = "/parcel/image/{parcelId}/{date}", method = RequestMethod.GET)
     @ResponseStatus(value = HttpStatus.OK)
     public @ResponseBody
-    Map<Image, String> getImages(@PathVariable("parcelId") String parcelId, @PathVariable("date") String date) throws ThingsboardException {
+    Map<Image, String> getImages(@PathVariable("parcelId") String parcelId, @PathVariable("date") long date) throws ThingsboardException {
         try {
             return mongoService.getMongodbimage().downloadMapsFile(parcelId,date);
 

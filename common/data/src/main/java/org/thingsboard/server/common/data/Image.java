@@ -1,6 +1,7 @@
 package org.thingsboard.server.common.data;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  *
@@ -9,12 +10,12 @@ import java.util.Arrays;
 public class Image{
     
     private String name, latitude, longitude, fileSize, modifiedDate;
-    private Double[] coordinates;
+    private List<Double> coordinates;
     
     public Image(){
     }
 
-    public Image(String name, String latitude, String longitude, String fileSize, String modifiedDate, Double[] coordinates) {
+    public Image(String name, String latitude, String longitude, String fileSize, String modifiedDate, List<Double> coordinates) {
         this.name = name;
         this.latitude = latitude;
         this.longitude = longitude;
@@ -63,17 +64,17 @@ public class Image{
         this.name = name;
     }
     
-    public Double[] getCoordinates() {
+    public List<Double> getCoordinates() {
         return coordinates;
     }
 
-    public void setCoordinates(Double[] coordinates) {
+    public void setCoordinates(List<Double> coordinates) {
         this.coordinates = coordinates;
     }
     
     @Override
     public String toString(){
-        return "[name: "+name+", latitude: "+latitude+", longitud: "+longitude+", fileSize: "+fileSize+", modifiedDate: "+modifiedDate+", coordinates: "+Arrays.toString(coordinates)+"]";
+        return "[name: "+name+", latitude: "+latitude+", longitud: "+longitude+", fileSize: "+fileSize+", modifiedDate: "+modifiedDate+", coordinates: "+coordinates+"]";
     }
     
     
