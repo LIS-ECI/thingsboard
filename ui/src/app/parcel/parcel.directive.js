@@ -187,7 +187,13 @@ export default function ParcelDirective($compile, $templateCache, toast, $transl
             scope.selectedDate = scope.startDate;
             scope.maxDate = scope.finishDate.getTime();
             scope.minDate = scope.startDate.getTime();
-            scope.fechas = [1515992400000,1516880585842];
+            parcelService.getFilesDates(scope.minDate,scope.maxDate).then(function(response){
+                $log.log("Fechas en long");
+                $log.log(scope.minDate);
+                $log.log(scope.maxDate);
+                scope.fechas = response;
+                $log.log(scope.fechas);
+            });
             parcelService.getHistoricalValues(scope.parcel.id.id,scope.minDate,scope.maxDate).then(function(result){
                 $log.log(result);
                 scope.tabs.length = 0;

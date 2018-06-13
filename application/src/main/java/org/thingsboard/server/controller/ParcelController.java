@@ -90,6 +90,20 @@ public class ParcelController extends BaseController {
 
 
     @PreAuthorize("hasAnyAuthority('TENANT_ADMIN', 'CUSTOMER_USER')")
+    @RequestMapping(value = "/parcel/files/{startDate}/{finishDate}", method = RequestMethod.GET)
+    @ResponseStatus(value = HttpStatus.OK)
+    public @ResponseBody List<Long> getFilesDates(@PathVariable("startDate") long startDate,@PathVariable("finishDate") long finishDate) throws ThingsboardException {
+        System.out.println("Entró al controlador con las fechas: "+startDate+" "+finishDate);
+        try {
+            return mongoService.getMongodbimage().datesOfFilesParcel(startDate,finishDate);
+
+        } catch (Exception e) {
+            throw handleException(e);
+        }
+
+    }
+
+    @PreAuthorize("hasAnyAuthority('TENANT_ADMIN', 'CUSTOMER_USER')")
     @RequestMapping(value = "/parcel", method = RequestMethod.POST)
     @ResponseBody
     public Parcel saveParcel(@RequestBody Parcel parcel) throws ThingsboardException {
