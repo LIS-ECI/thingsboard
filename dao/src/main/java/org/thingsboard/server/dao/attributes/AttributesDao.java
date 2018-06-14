@@ -22,7 +22,9 @@ import org.thingsboard.server.common.data.kv.AttributeKvEntry;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
 
 /**
  * @author Andrew Shvayka
@@ -46,5 +48,5 @@ public interface AttributesDao {
      * @param date the timeseries date
      * @return saved parcel object
      */
-    HashMap<String,String> getHistoricalValues(String parcelId, long date);
+    Map<String, TreeMap<Long,Double>> getHistoricalValues(String parcelId, long date);
 }

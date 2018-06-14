@@ -77,9 +77,9 @@ public class CassandraBaseAttributesDao extends CassandraAbstractAsyncDao implem
                 .and(eq(ATTRIBUTE_TYPE_COLUMN, attributeType))
                 .and(eq(ATTRIBUTE_KEY_COLUMN, attributeKey));
         log.trace("Generated query [{}] for entityId {} and key {}", select, entityId, attributeKey);
-        return Futures.transform(executeAsyncRead(select), (Function<? super ResultSet, ? extends Optional<AttributeKvEntry>>) input ->
-                        Optional.ofNullable(convertResultToAttributesKvEntry(attributeKey, input.one()))
-                , readResultsProcessingExecutor);
+        return Futures.transform(executeAsyncRead(select), (Function<? super ResultSet, ? extends Optional<AttributeKvEntry>>) input
+                -> Optional.ofNullable(convertResultToAttributesKvEntry(attributeKey, input.one())),
+                 readResultsProcessingExecutor);
     }
 
     @Override
@@ -93,7 +93,6 @@ public class CassandraBaseAttributesDao extends CassandraAbstractAsyncDao implem
         }, readResultsProcessingExecutor);
     }
 
-
     @Override
     public ListenableFuture<List<AttributeKvEntry>> findAll(EntityId entityId, String attributeType) {
         Select.Where select = select().from(ATTRIBUTES_KV_CF)
@@ -101,17 +100,17 @@ public class CassandraBaseAttributesDao extends CassandraAbstractAsyncDao implem
                 .and(eq(ENTITY_ID_COLUMN, entityId.getId()))
                 .and(eq(ATTRIBUTE_TYPE_COLUMN, attributeType));
         log.trace("Generated query [{}] for entityId {} and attributeType {}", select, entityId, attributeType);
-        return Futures.transform(executeAsyncRead(select), (Function<? super ResultSet, ? extends List<AttributeKvEntry>>) input ->
-                        convertResultToAttributesKvEntryList(input)
-                , readResultsProcessingExecutor);
+        return Futures.transform(executeAsyncRead(select), (Function<? super ResultSet, ? extends List<AttributeKvEntry>>) input
+                -> convertResultToAttributesKvEntryList(input),
+                 readResultsProcessingExecutor);
     }
 
     @Override
-    public HashMap<String, String> getHistoricalValues(String parcelId, long date) {
-        HashMap<String, String> data = new HashMap<>();
+    public Map<String, TreeMap<Long, Double>> getHistoricalValues(String parcelId, long date) {
         long dayts = 86400000L;
+        Map<String, TreeMap<Long, Double>> data = new HashMap<>();
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        try{
+        try {
             String reportDate = dateFormat.format(date);
             Date parsedDate = dateFormat.parse(reportDate);
 
@@ -122,56 +121,36 @@ public class CassandraBaseAttributesDao extends CassandraAbstractAsyncDao implem
             //Obtener el parcel
             ParcelId parcelIdUUID = ParcelId.fromString(parcelId);
             Parcel parcel = parcelService.findParcelById(parcelIdUUID);
-            List<UUID> devices= parcel.getDevices();
+            List<UUID> devices = parcel.getDevices();
             //Por cada elemento del arreglo del parcel ir acumulando
-            for (UUID device_id: devices){
+            for (UUID device_id : devices) {
 
-                Select select = select(KEY_COLUMN,STRING_VALUE_COLUMN).from(TS_KV_CF).allowFiltering();
-                Select.Where query= select.where();
-                query.and(eq(ENTITY_ID_COLUMN,device_id));
-                query.and(gte(TS_COLUMN,tsTime1));
-                query.and(lte(TS_COLUMN,tsTime2));
-                ResultSetFuture resp =executeAsyncRead(query);
-                ResultSet resp2= resp.getUninterruptibly();
-                List<Row> rows =resp2.all();
-                HashMap<String,ArrayList<Integer>> temp = new HashMap<>();
-                for (Row r:rows){
-                    String key=r.getString(0);
-                    Integer value=Integer.parseInt(r.getString(1));
-                    if (temp.containsKey(key)){
-                        ArrayList<Integer> arraytemp= temp.get(key);
-                        arraytemp.add(value);
-                        temp.put(key,arraytemp);
+                Select select = select(KEY_COLUMN, TS_COLUMN, STRING_VALUE_COLUMN).from(TS_KV_CF).allowFiltering();
+                Select.Where query = select.where();
+                query.and(eq(ENTITY_ID_COLUMN, device_id));
+                query.and(gte(TS_COLUMN, tsTime1));
+                query.and(lte(TS_COLUMN, tsTime2));
+                ResultSetFuture resp = executeAsyncRead(query);
+                ResultSet resp2 = resp.getUninterruptibly();
+                List<Row> rows = resp2.all();
+                for (Row r : rows) {
+                    String key = r.getString(0);
+                    long ts = r.getLong(ModelConstants.TS_COLUMN);
+                    Double value = Double.parseDouble(r.getString(2));
+                    if (data.containsKey(key)) {
+                        data.get(key).put(ts, value);
+                    } else {
+                        TreeMap<Long, Double> mapTemp = new TreeMap<>();
+                        mapTemp.put(ts, value);
+                        data.put(key, mapTemp);
                     }
-
-                    else{
-                        ArrayList<Integer> arraytemp = new ArrayList<>();
-                        arraytemp.add(value);
-                        temp.put(key,arraytemp);
-                    }
-                }
-                Set<String> keys = temp.keySet();
-                for (String key : keys){
-                    ArrayList<Integer> arraytemp= temp.get(key);
-                    Long count=0L;
-                    for (Integer a : arraytemp){
-                        count+=a;
-                    }
-                    Double numcount =(double) count;
-                    Double numcant =(double) arraytemp.size();
-                    Double avg= numcount/numcant;
-                    DecimalFormat df = new DecimalFormat("#.0000");
-                    String savgdecimal = df.format(avg);
-                    data.put(key,savgdecimal);
                 }
             }
-        }
-        catch(Exception e) { //this generic but you can control another types of exception
+        } catch (Exception e) { //this generic but you can control another types of exception
             e.printStackTrace();
         }
         return data;
     }
-
 
     @Override
     public ListenableFuture<Void> save(EntityId entityId, String attributeType, AttributeKvEntry attribute) {
@@ -225,18 +204,18 @@ public class CassandraBaseAttributesDao extends CassandraAbstractAsyncDao implem
 
     private PreparedStatement getSaveStmt() {
         if (saveStmt == null) {
-            saveStmt = getSession().prepare("INSERT INTO " + ModelConstants.ATTRIBUTES_KV_CF +
-                    "(" + ENTITY_TYPE_COLUMN +
-                    "," + ENTITY_ID_COLUMN +
-                    "," + ATTRIBUTE_TYPE_COLUMN +
-                    "," + ATTRIBUTE_KEY_COLUMN +
-                    "," + LAST_UPDATE_TS_COLUMN +
-                    "," + ModelConstants.STRING_VALUE_COLUMN +
-                    "," + ModelConstants.BOOLEAN_VALUE_COLUMN +
-                    "," + ModelConstants.LONG_VALUE_COLUMN +
-                    "," + ModelConstants.DOUBLE_VALUE_COLUMN +
-                    ")" +
-                    " VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            saveStmt = getSession().prepare("INSERT INTO " + ModelConstants.ATTRIBUTES_KV_CF
+                    + "(" + ENTITY_TYPE_COLUMN
+                    + "," + ENTITY_ID_COLUMN
+                    + "," + ATTRIBUTE_TYPE_COLUMN
+                    + "," + ATTRIBUTE_KEY_COLUMN
+                    + "," + LAST_UPDATE_TS_COLUMN
+                    + "," + ModelConstants.STRING_VALUE_COLUMN
+                    + "," + ModelConstants.BOOLEAN_VALUE_COLUMN
+                    + "," + ModelConstants.LONG_VALUE_COLUMN
+                    + "," + ModelConstants.DOUBLE_VALUE_COLUMN
+                    + ")"
+                    + " VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)");
         }
         return saveStmt;
     }

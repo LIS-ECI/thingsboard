@@ -66,9 +66,6 @@ public class CassandraParcelDao extends CassandraAbstractSearchTextDao<ParcelEnt
         return savedParcel;
     }
 
-
-
-
     @Override
     public List<Parcel> findParcelsByTenantId(UUID tenantId, TextPageLink pageLink) {
         log.debug("Try to find parcels by tenantId [{}] and pageLink [{}]", tenantId, pageLink);

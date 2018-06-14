@@ -9,7 +9,9 @@ import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
 import java.util.UUID;
 import org.thingsboard.server.common.data.EntitySubtype;
 import org.thingsboard.server.common.data.parcel.Parcel;
@@ -30,7 +32,7 @@ public interface ParcelService {
 
     Parcel findParcelById(ParcelId parcelId);
 
-    HashMap<String, HashMap<Long,Double>> getHistoricalValues(String parcelId, long minDate, long maxDate);
+    Map<String, TreeMap<Long,Double>> getHistoricalValues(String parcelId, long minDate, long maxDate);
 
     ListenableFuture<Parcel> findParcelByIdAsync(ParcelId parcelId);
 
