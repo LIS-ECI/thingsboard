@@ -10,6 +10,7 @@ import com.mongodb.Block;
 import com.mongodb.MongoWriteException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Indexes;
 import com.mongodb.client.result.DeleteResult;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -24,6 +25,18 @@ import org.thingsboard.server.common.data.SpatialParcel;
  * @author Carlos Ramirez
  */
 public class MongoDBSpatialParcel extends MongoConnectionPOJO<SpatialParcel> implements DaoMongo<SpatialParcel> {
+
+    public MongoDBSpatialParcel(){
+        getCollectionDependClass().createIndex(Indexes.geo2dsphere("polygons"));
+    }
+
+    public SpatialParcel findNearestParcel(Point p){
+        SpatialParcel nearSp = null;
+        getCollectionDependClass().createIndex(Indexes.geo2dsphere("polygons"));
+        Document doc = new Document("polygons",new Document("$near",new Document("$geometry",new Document("type", "Point").append("coordinates", p.getCoordinates()))));
+        nearSp = getCollectionDependClass().find(doc).first();
+        return nearSp;
+    }
 
     @Override
     public MongoCollection<SpatialParcel> getCollectionDependClass() {

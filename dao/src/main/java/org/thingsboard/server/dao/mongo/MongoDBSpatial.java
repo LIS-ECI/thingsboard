@@ -32,7 +32,7 @@ public class MongoDBSpatial extends MongoConnection implements SpatialIndexes {
         mongodbFarm = new MongoDBSpatialFarm();
         mongodbDevice = new MongoDBSpatialDevice();
         mongodbspark = new MongoDBSpatialSpark();
-        mongodbimage = new MongoDbImage();
+        mongodbimage = new MongoDbImage(mongodbparcel);
     }
 
     public MongoDBSpatialParcel getMongodbparcel() {

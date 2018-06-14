@@ -74,21 +74,33 @@ public class ParcelController extends BaseController {
         return parcelService.getHistoricalValues(parcelId, Long.parseLong(minDate), Long.parseLong(maxDate));
     }
 
-
     @PreAuthorize("hasAnyAuthority('TENANT_ADMIN', 'CUSTOMER_USER')")
     @RequestMapping(value = "/parcel/image/{parcelId}/{date}", method = RequestMethod.GET)
     @ResponseStatus(value = HttpStatus.OK)
     public @ResponseBody
-    Map<Image, String> getImages(@PathVariable("parcelId") String parcelId, @PathVariable("date") String date) throws ThingsboardException {
+    Map<Image, String> getImages(@PathVariable("parcelId") String parcelId, @PathVariable("date") long date) throws ThingsboardException {
         try {
             return mongoService.getMongodbimage().downloadMapsFile(parcelId,date);
 
         } catch (Exception e) {
             throw handleException(e);
         }
-
     }
 
+    @PreAuthorize("hasAnyAuthority('TENANT_ADMIN', 'CUSTOMER_USER')")
+    @RequestMapping(value = "/parcel/files/{startDate}/{finishDate}", method = RequestMethod.GET)
+    @ResponseStatus(value = HttpStatus.OK)
+    public @ResponseBody List<Long> getFilesDates(@PathVariable("startDate") long startDate,@PathVariable("finishDate") long finishDate) throws ThingsboardException {
+        System.out.println("Entró al controlador con las fechas: "+startDate+" "+finishDate);
+        try {
+            return mongoService.getMongodbimage().datesOfFilesParcel(startDate,finishDate);
+
+        } catch (Exception e) {
+            throw handleException(e);
+        }
+
+    }
+    
     @PreAuthorize("hasAnyAuthority('TENANT_ADMIN', 'CUSTOMER_USER')")
     @RequestMapping(value = "/parcel", method = RequestMethod.POST)
     @ResponseBody
