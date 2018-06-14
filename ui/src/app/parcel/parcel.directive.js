@@ -1,4 +1,3 @@
-
 import parcelFieldsetTemplate from './parcel-fieldset.tpl.html';
 import Action from './action';
 
@@ -82,12 +81,66 @@ export default function ParcelDirective($compile, $templateCache, toast, $transl
 
 
         
-        function showMap2(latitud,longitud) {
+        function showMap2() {
             var map2 = new google.maps.Map(angular.element('#mapa2')[0], {
-               center: {lat: latitud, lng: longitud},
+               center: {lat:4.75387 , lng: -74.08531},
               zoom: 15
             });
             $log.log(map2);
+
+
+            DebugOverlay.prototype = new google.maps.OverlayView();
+
+            function initialize() {
+
+                var neBound2 = new google.maps.LatLng(4.75393, -74.08525);
+                var swBound2 = new google.maps.LatLng(4.75383, -74.08535);
+
+                var bounds2 = new google.maps.LatLngBounds(swBound2, neBound2);
+
+                var srcImage2 = 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/UEFA-Women%27s_Cup_Final_2005_at_Potsdam_1.jpg/220px-UEFA-Women%27s_Cup_Final_2005_at_Potsdam_1.jpg';
+                var overlay = new DebugOverlay(bounds2, srcImage2, map2);
+                $log.log(overlay);
+            }
+
+            function DebugOverlay(bounds, image, map) {
+                this.bounds_ = bounds;
+                this.image_ = image;
+                this.map_ = map;
+                this.div_ = null;
+                this.setMap(map);
+            }
+
+            DebugOverlay.prototype.onAdd = function() {
+
+                scope.div = angular.element('<div style="borderStyle:none;borderWidth:0px;position:absolute"></div>');
+                /*scope.div.style.borderStyle = 'none';
+                scope.div.style.borderWidth = '0px';
+                scope.div.style.position = 'absolute';*/
+                scope.img = angular.element('<img src=\"'+this.image_ +'\" style="width:100%;height:100%;opacity:0.5;position:absolute"/>');
+                /*scope.img.src = this.image_;
+                scope.img.style.width = '100%';
+                scope.img.style.height = '100%';
+                scope.img.style.opacity = '0.5';
+                scope.img.style.position = 'absolute';*/
+                angular.element(scope.div).append(scope.img);
+                //this.div_ = scope.div;
+                var panes = this.getPanes();
+                angular.element(panes.overlayLayer).append(scope.div);
+            };
+
+            DebugOverlay.prototype.draw = function() {
+                var overlayProjection = this.getProjection();
+                var sw = overlayProjection.fromLatLngToDivPixel(this.bounds_.getSouthWest());
+                var ne = overlayProjection.fromLatLngToDivPixel(this.bounds_.getNorthEast());
+                //var div = this.div_;
+                angular.element(scope.div).css('left',sw.x + 'px');
+                angular.element(scope.div).css('top',ne.y + 'px');
+                angular.element(scope.div).css('width',(ne.x - sw.x) + 'px');
+                angular.element(scope.div).css('height', (sw.y - ne.y) + 'px');
+            };
+            initialize();
+
         }
         
 
@@ -187,7 +240,13 @@ export default function ParcelDirective($compile, $templateCache, toast, $transl
             scope.selectedDate = scope.startDate;
             scope.maxDate = scope.finishDate.getTime();
             scope.minDate = scope.startDate.getTime();
-            scope.fechas = [1515992400000,1516880585842];
+            parcelService.getFilesDates(scope.minDate,scope.maxDate).then(function(response){
+                $log.log("Fechas en long");
+                $log.log(scope.minDate);
+                $log.log(scope.maxDate);
+                scope.fechas = response;
+                $log.log(scope.fechas);
+            });
             parcelService.getHistoricalValues(scope.parcel.id.id,scope.minDate,scope.maxDate).then(function(result){
                 $log.log(result);
                 scope.tabs.length = 0;
@@ -283,11 +342,14 @@ export default function ParcelDirective($compile, $templateCache, toast, $transl
                     }
 
 
-                    showMap2(scope.tempLatitude,scope.tempLongitude);
+                    showMap2();
                     map = new google.maps.Map(angular.element('#mapa')[0], {
                         center: {lat: scope.tempLatitude, lng: scope.tempLongitude},
                         zoom: 15
                     });
+
+
+
 
                     new google.maps.Polyline({
                         path: drawMapFarm,
@@ -357,7 +419,6 @@ export default function ParcelDirective($compile, $templateCache, toast, $transl
             });
             dibujar();
         };
-
         function dibujar(){
             $log.log("Entro a dibujar");
             $log.log(drawMap);
@@ -389,7 +450,6 @@ export default function ParcelDirective($compile, $templateCache, toast, $transl
         /*scope.labels = ['1','2','3','4'];
         scope.latitudes = new Array(scope.labels.size);
         scope.longitudes = new Array(scope.labels.size);
-
         scope.saveEverything = function() {
             for (var i = 0; i < scope.labels.length; i++) {
                 polygon.coordinates[i]=[parseFloat(scope.longitudes[i]),parseFloat(scope.latitudes[i])];
