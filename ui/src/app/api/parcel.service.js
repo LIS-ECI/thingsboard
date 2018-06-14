@@ -22,8 +22,8 @@ function ParcelService($http, $q, customerService, userService, $log) {
         fetchParcelsByNameFilter: fetchParcelsByNameFilter,
         getParcelTypes: getParcelTypes,
         getHistoricalValues: getHistoricalValues,
-        getImagesByParcelId: getImagesByParcelId
-
+        getImagesByParcelId: getImagesByParcelId,
+        getFilesDates: getFilesDates
     }
 
     return service;
@@ -81,6 +81,19 @@ function ParcelService($http, $q, customerService, userService, $log) {
         });
         return deferred.promise;
     }
+
+    function getFilesDates(startDate,finishDate,config) {
+        $log.log("Entró a getFilesDates");
+        var deferred = $q.defer();
+        var url = '/api/parcel/files/'+startDate+"/"+finishDate;
+        $http.get(url,config).then(function success(response) {
+            deferred.resolve(response.data);
+        }, function fail() {
+            deferred.reject();
+        });
+        return deferred.promise;
+    }
+
 
     function getImagesByParcelId(parcelId,date,config) {
         var deferred = $q.defer();

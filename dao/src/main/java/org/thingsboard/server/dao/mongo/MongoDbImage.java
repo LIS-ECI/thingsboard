@@ -20,6 +20,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import javax.imageio.ImageIO;
@@ -258,15 +259,24 @@ public class MongoDbImage extends MongoConnection {
         return fileNames.contains(fileName);
     }
 
-    private List<String> datesOfFilesParcel() {
-        List<String> dates = new ArrayList<>();
+    public List<Long> datesOfFilesParcel(long startDate,long finishDate) {
+        List<Long> dates = new ArrayList<>();
+        SimpleDateFormat f = new SimpleDateFormat("yyyy/MM/dd");
         getGridFSDatabase().find().forEach(
                 new Block<GridFSFile>() {
                     @Override
                     public void apply(final GridFSFile gridFSFile) {
                         String dateFile = gridFSFile.getMetadata().getString("date");
-                        if(dateFile != null && !dates.contains(dateFile)){
-                            dates.add(dateFile);
+                        try {
+                            if(dateFile != null){
+                                Date d = f.parse(dateFile);
+                                long milliseconds = d.getTime();
+                                if(milliseconds >= startDate && milliseconds <= finishDate && !dates.contains(milliseconds)){
+                                    dates.add(milliseconds);
+                                }
+                            }
+                        } catch (ParseException e) {
+                            e.printStackTrace();
                         }
                     }
                 });
