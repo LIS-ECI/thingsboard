@@ -1,6 +1,5 @@
 package org.thingsboard.server.common.data;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -9,19 +8,25 @@ import java.util.List;
  */
 public class Image{
     
-    private String name, latitude, longitude, fileSize, modifiedDate;
+    private String name;
+    private String latitude;
+    private String longitude;
+    private String fileSize;
+    private String modifiedDate;
+    private String src;
     private List<Double> coordinates;
     
     public Image(){
     }
 
-    public Image(String name, String latitude, String longitude, String fileSize, String modifiedDate, List<Double> coordinates) {
+    public Image(String name, String latitude, String longitude, String fileSize, String modifiedDate, List<Double> coordinates,String src) {
         this.name = name;
         this.latitude = latitude;
         this.longitude = longitude;
         this.fileSize = fileSize;
         this.modifiedDate = modifiedDate;
         this.coordinates = coordinates;
+        this.src=src;
     }
     
     public String getLatitude() {
@@ -74,8 +79,15 @@ public class Image{
     
     @Override
     public String toString(){
-        return "[name: "+name+", latitude: "+latitude+", longitud: "+longitude+", fileSize: "+fileSize+", modifiedDate: "+modifiedDate+", coordinates: "+coordinates+"]";
+        return "name: "+name+", latitude: "+latitude+", longitud: "+longitude+", fileSize: "+fileSize+", modifiedDate: "+modifiedDate+", coordinates: "+coordinates+" ";
     }
-    
-    
+
+
+    public String getSrc() {
+        return src;
+    }
+
+    public void setSrc(String src) {
+        this.src = src;
+    }
 }

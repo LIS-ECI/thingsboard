@@ -157,11 +157,11 @@ public class MongoDbImage extends MongoConnection {
         }
     }
 
-    public Map<Image, String> downloadMapsFile(String parcelId, long date) throws Exception {
+    public List<Image> downloadMapsFile(String parcelId, long date) throws Exception {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
         String reportDate = dateFormat.format(date);
         GridFSFindIterable gridFSFiles = getGridFSDatabase().find(Filters.and(Filters.eq("metadata.parcelId", parcelId),Filters.eq("metadata.date", reportDate)));
-        Map<Image, String> data = new HashMap<>();
+        List<Image> data = new ArrayList<>();
         for (GridFSFile gridFSFile: gridFSFiles){
             try {
                 Image image= new Image();
@@ -184,8 +184,9 @@ public class MongoDbImage extends MongoConnection {
                 coord.add(toDecimalResult(image.getLongitude().replaceAll(",",".")));
                 coord.add(toDecimalResult(image.getLatitude().replaceAll(",",".")));
                 image.setCoordinates(coord);
+                image.setSrc(resultBase64Encoded);
                 System.out.println(image.toString());
-                data.put(image,resultBase64Encoded);
+                data.add(image);
                 f.delete();
             } catch (IOException e) {
                 e.printStackTrace();
