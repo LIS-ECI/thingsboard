@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -66,13 +67,12 @@ public class ParcelController extends BaseController {
     @PreAuthorize("hasAnyAuthority('TENANT_ADMIN', 'CUSTOMER_USER')")
     @RequestMapping(value = "/parcel/historical/{parcelId}/{minDate}/{maxDate}", method = RequestMethod.GET)
     @ResponseBody
-    public HashMap<String, HashMap<Long,Double>> getHistoricalValues(@PathVariable("parcelId") String parcelId, @PathVariable("minDate") String minDate, @PathVariable("maxDate") String maxDate) throws ThingsboardException {
+    public Map<String, TreeMap<Long,Double>> getHistoricalValues(@PathVariable("parcelId") String parcelId, @PathVariable("minDate") String minDate, @PathVariable("maxDate") String maxDate) throws ThingsboardException {
         checkParameter("parcelId", parcelId);
         checkParameter("minDate", minDate);
         checkParameter("maxDate", maxDate);
         return parcelService.getHistoricalValues(parcelId, Long.parseLong(minDate), Long.parseLong(maxDate));
     }
-
 
     @PreAuthorize("hasAnyAuthority('TENANT_ADMIN', 'CUSTOMER_USER')")
     @RequestMapping(value = "/parcel/image/{parcelId}/{date}", method = RequestMethod.GET)
@@ -85,9 +85,7 @@ public class ParcelController extends BaseController {
         } catch (Exception e) {
             throw handleException(e);
         }
-
     }
-
 
     @PreAuthorize("hasAnyAuthority('TENANT_ADMIN', 'CUSTOMER_USER')")
     @RequestMapping(value = "/parcel/files/{startDate}/{finishDate}", method = RequestMethod.GET)
@@ -102,7 +100,7 @@ public class ParcelController extends BaseController {
         }
 
     }
-
+    
     @PreAuthorize("hasAnyAuthority('TENANT_ADMIN', 'CUSTOMER_USER')")
     @RequestMapping(value = "/parcel", method = RequestMethod.POST)
     @ResponseBody

@@ -35,6 +35,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import static org.thingsboard.server.common.data.UUIDConverter.fromTimeUUID;
@@ -115,8 +116,8 @@ public class JpaAttributeDao extends JpaAbstractDaoListeningExecutorService impl
     }
 
     @Override
-    public HashMap<String, String> getHistoricalValues(String parcelId, long date) {
-        HashMap<String, String> data= new HashMap<>();
+    public HashMap<String, TreeMap<Long, Double>> getHistoricalValues(String parcelId, long date) {
+        HashMap<String, TreeMap<Long, Double>> data= new HashMap<>();
         return data;
     }
 

@@ -80,11 +80,10 @@ export default function ParcelDirective($compile, $templateCache, toast, $transl
         //-----------------------------------------------------------------------------------------------------------------
 
 
-      
 
         
         var delta =[0.00010,0.00010,-0.00010,-0.00010]
-        
+        var polygon2 = new Polygon();
        
         var map2;
         //var panes;
@@ -124,6 +123,42 @@ var div=this.div_;
                 angular.element(div).css('top',ne.y + 'px');
                 angular.element(div).css('width',(ne.x - sw.x) + 'px');
                 angular.element(div).css('height', (sw.y - ne.y) + 'px');
+            };
+
+            scope.drawNewPolygon = function(){
+                var isClosed = false;
+                var poly = new google.maps.Polyline({ map: map2, path: [], strokeColor: "#FF0000", strokeOpacity: 1.0, strokeWeight: 2 });
+
+                google.maps.event.addListener(map2, 'click', first);
+                function first (clickEvent) {
+                    var markerIndex = poly.getPath().length;
+                    var isFirstMarker = markerIndex === 0;
+                    var marker = new google.maps.Marker({ map: map2, position: clickEvent.latLng, draggable: true });
+                    if (isFirstMarker) {
+                        google.maps.event.addListener(marker, 'click', second);
+                    }
+                    poly.getPath().push(clickEvent.latLng);
+                    if (isClosed){
+                        return;
+                    }
+                }
+                function second () {
+                    var path = poly.getPath();
+                    poly.setMap(null);
+                    poly = new google.maps.Polygon({ map: map2, path: path, strokeColor: "#FFF000", strokeOpacity: 0.8, strokeWeight: 2, fillColor: "#FF0000", fillOpacity: 0.35 });
+                    isClosed = true;
+                    if (isClosed){
+                        var coordinatesArray = [];
+                        for(var i = 0; i<path.getArray().length;i++){
+                            coordinatesArray.push([poly.getPath().getArray()[i].lng(),poly.getPath().getArray()[i].lat()]);
+                            //polygon.coordinates[i] = [poly.getPath().getArray()[i].lng(),poly.getPath().getArray()[i].lat()];
+                        }
+                        coordinatesArray.push(coordinatesArray[0]);
+                        polygon2.coordinates.push(coordinatesArray);
+                        $log.log(polygon2);
+                        return;
+                    }
+                }
             };
 
        
