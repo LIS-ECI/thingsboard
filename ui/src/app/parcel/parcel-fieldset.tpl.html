@@ -214,10 +214,30 @@
                             </md-tabs>
                         </md-content>
                         <md-content class="md-padding">
-                        <button ng-click="drawNewPolygon()">Draw Polygon</button>
-                        <div style="min-height: 1000px;">
-                            <div id="mapa2"  style="height: 450px; width: 450px;"></div>
-                        </div>
+                            <label>
+                                <input type="radio" ng-model="photoType" ng-click="changeImageType()" value="GRE">
+                                GRE
+                            </label>
+                            <label>
+                                <input type="radio" ng-model="photoType" ng-click="changeImageType()" value="NIR">
+                                NIR
+                            </label>
+                            <label>
+                                <input type="radio" ng-model="photoType" ng-click="changeImageType()" value="RED">
+                                RED
+                            </label>
+                            <label>
+                                <input type="radio" ng-model="photoType" ng-click="changeImageType()" value="REG">
+                                REG
+                            </label>
+                            <label>
+                                <input type="radio" ng-model="photoType" ng-click="changeImageType()" value="RGB">
+                                RGB
+                            </label><br/>
+                            <button ng-click="drawNewPolygon()">Draw Polygon</button>
+                            <div style="min-height: 1000px;">
+                                <div id="mapa2"  style="height: 450px; width: 450px;"></div>
+                            </div>
                         </md-content>
                     </div>
                 </md-content>

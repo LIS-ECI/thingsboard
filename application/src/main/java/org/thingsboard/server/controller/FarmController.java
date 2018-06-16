@@ -19,6 +19,7 @@ import java.net.URL;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.io.FileUtils;
 import org.codehaus.jackson.map.util.JSONPObject;
 import org.springframework.http.HttpStatus;
@@ -52,6 +53,7 @@ import org.thingsboard.server.dao.model.nosql.TenantEntity;
 import org.thingsboard.server.exception.ThingsboardErrorCode;
 import org.thingsboard.server.exception.ThingsboardException;
 import org.thingsboard.server.service.security.model.SecurityUser;
+import org.bson.Document;
 
 import javax.imageio.ImageIO;
 
@@ -155,7 +157,6 @@ public class FarmController extends BaseController {
     @ResponseStatus(value = HttpStatus.OK)
     public void uploadFile(MultipartHttpServletRequest request, @PathVariable(FARM_ID) String farmId) throws ThingsboardException {
         try {
-            System.out.println("Entró al back-end");
             Iterator<String> itr = request.getFileNames();
             HashMap<String,String> metadata = new HashMap<>();
             while (itr.hasNext()) {
@@ -168,21 +169,18 @@ public class FarmController extends BaseController {
                 fos.write(file.getBytes());
                 fos.close();
                 metadata.put("FarmId",farmId);
-                System.out.println("Antes de la conversión");
                 File filetemp;
-                if (file.getOriginalFilename().endsWith(".tif")){
+                String temp = file.getOriginalFilename().toUpperCase();
+                if (temp.endsWith(".TIF")){
                     final BufferedImage tif = ImageIO.read(imagen);
-                    String temp= file.getOriginalFilename().replace(".tif",".png");
-                    filetemp= new File(temp);
+                    String temp1 = temp.replace(".TIF",".png");
+                    filetemp= new File(temp1);
                     ImageIO.write(tif, "png", filetemp);
                 }
                 else{
                     filetemp=imagen;
                 }
-                System.out.println("Antes de enviar al mongo");
                 mongoService.getMongodbimage().uploadFile(filetemp,metadata);
-
-                System.out.println("Después de que mongo guardo la imagen");
                 filetemp.delete();
             }
         } catch (Exception e) {
@@ -196,13 +194,35 @@ public class FarmController extends BaseController {
     @ResponseStatus(value = HttpStatus.OK)
     public void uploadMultipleImage(@RequestParam(value = "uploadedFile", required = false) MultipartFile[] request) throws ThingsboardException {
         try {
+            Map<String,Document> tempInfo = new HashMap();
             for(MultipartFile f: request){
                 File imagen = new File(f.getOriginalFilename());
                 imagen.createNewFile();
                 FileOutputStream fos = new FileOutputStream(imagen);
                 fos.write(f.getBytes());
                 fos.close();
-                mongoService.getMongodbimage().uploadMultipleFiles(imagen);
+                String temp = f.getOriginalFilename().toUpperCase();
+                if (temp.endsWith(".JPG")){
+                    mongoService.getMongodbimage().uploadMultipleFiles(imagen,tempInfo);
+                }
+            }
+            for(MultipartFile f: request){
+                File imagen = new File(f.getOriginalFilename());
+                imagen.createNewFile();
+                FileOutputStream fos = new FileOutputStream(imagen);
+                fos.write(f.getBytes());
+                fos.close();
+                File filetemp;
+                String temp = f.getOriginalFilename().toUpperCase();
+                if (temp.endsWith(".TIF")){
+                    final BufferedImage tif = ImageIO.read(imagen);
+                    String temp1 = temp.replace(".TIF",".png");
+                    filetemp= new File(temp1);
+                    ImageIO.write(tif, "png", filetemp);
+                    mongoService.getMongodbimage().uploadMultipleFiles(filetemp,tempInfo);
+                    filetemp.delete();
+                }
+                imagen.delete();
             }
         } catch (Exception e) {
             throw handleException(e);

@@ -77,33 +77,43 @@ public class MongoDbImage extends MongoConnection {
         }
     }
 
-    public void uploadMultipleFiles(File file) throws Exception {
+    public void uploadMultipleFiles(File file,Map<String,Document> tempInfo) throws Exception {
         if(!findFilesStores(file.getName())){
             InputStream streamToUploadFrom = new FileInputStream(file);
-            Image i = new Image();
-            Metadata metadata = JpegMetadataReader.readMetadata(file);
-            i = setImageValues(metadata,i);
-            List<Double> coord = new ArrayList<>();
-            coord.add(toDecimalResult(i.getLongitude().replaceAll(",",".")));
-            coord.add(toDecimalResult(i.getLatitude().replaceAll(",",".")));
-            i.setCoordinates(coord);
-            System.out.println(i.toString());
-            Point point = new Point(coord,"Point");
-            SpatialParcel sp = spatialParcel.findNearestParcel(point);
-            System.out.println(sp.toString());
-            Document doc = new Document();
-            doc.append("parcelId",sp.getId());
-            String dateString = i.getModifiedDate().replace(":","/");
-            dateString = dateString.split(" ")[0];
-            String reportDate = dateString;
-            System.out.println(reportDate);
-            doc.append("date",reportDate);
-
-            GridFSUploadOptions options = new GridFSUploadOptions()
-                    .chunkSizeBytes(1048576*2)
-                    .metadata(doc);
-            ObjectId fileId = getGridFSDatabase().uploadFromStream(file.getName(), streamToUploadFrom, options);
-            System.out.println("Archivo ya subido!!");
+            if(file.getName().contains("RGB")){
+                Image i = new Image();
+                Metadata metadata = JpegMetadataReader.readMetadata(file);
+                i = setImageValues(metadata,i);
+                List<Double> coord = new ArrayList<>();
+                coord.add(toDecimalResult(i.getLongitude().replaceAll(",",".")));
+                coord.add(toDecimalResult(i.getLatitude().replaceAll(",",".")));
+                i.setCoordinates(coord);
+                System.out.println(i.toString());
+                Point point = new Point(coord,"Point");
+                SpatialParcel sp = spatialParcel.findNearestParcel(point);
+                System.out.println(sp.toString());
+                Document doc = new Document();
+                doc.append("parcelId",sp.getId());
+                String dateString = i.getModifiedDate().replace(":","/");
+                dateString = dateString.split(" ")[0];
+                String reportDate = dateString;
+                doc.append("date",reportDate);
+                doc.append("coordinates",i.getCoordinates());
+                GridFSUploadOptions options = new GridFSUploadOptions()
+                        .chunkSizeBytes(1048576*2)
+                        .metadata(doc);
+                tempInfo.put(file.getName().replace("RGB.JPG",""),doc);
+                ObjectId fileId = getGridFSDatabase().uploadFromStream(file.getName(), streamToUploadFrom, options);
+                System.out.println("Archivo ya subido!!");
+            }else{
+                if(tempInfo.containsKey(file.getName().subSequence(0,file.getName().length()-7))){
+                    GridFSUploadOptions options = new GridFSUploadOptions()
+                            .chunkSizeBytes(1048576*2)
+                            .metadata(tempInfo.get(file.getName().subSequence(0,file.getName().length()-7)));
+                    ObjectId fileId = getGridFSDatabase().uploadFromStream(file.getName(), streamToUploadFrom, options);
+                    System.out.println("Archivo ya subido!!");
+                }
+            }
         }else{
             throw new MongoDBException("File already exist!");
         }
@@ -176,14 +186,8 @@ public class MongoDbImage extends MongoConnection {
                 } else {
                     System.out.println("no existe el archivo");
                 }
-
-                Metadata metadata = JpegMetadataReader.readMetadata(f);
-
-                image=setImageValues(metadata,image);
-                List<Double> coord = new ArrayList<>();
-                coord.add(toDecimalResult(image.getLongitude().replaceAll(",",".")));
-                coord.add(toDecimalResult(image.getLatitude().replaceAll(",",".")));
-                image.setCoordinates(coord);
+                image.setCoordinates((List<Double>) gridFSFile.getMetadata().get("coordinates"));
+                image.setName(gridFSFile.getFilename());
                 image.setSrc(resultBase64Encoded);
                 System.out.println(image.toString());
                 data.add(image);

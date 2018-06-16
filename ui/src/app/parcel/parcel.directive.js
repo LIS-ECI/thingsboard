@@ -79,7 +79,10 @@ export default function ParcelDirective($compile, $templateCache, toast, $transl
 
         //-----------------------------------------------------------------------------------------------------------------
 
-
+        scope.photoType = "";
+        scope.changeImageType = function(){
+          $log.log(scope.photoType);
+        };
 
         
         var delta =[0.00010,0.00010,-0.00010,-0.00010]
@@ -194,28 +197,7 @@ var div=this.div_;
                        new DebugOverlay(boundstemp, srcImagetemp, map2);
             
                     }
-                       //var neBoundtemp = new google.maps.LatLng(4.79918+delta[0], -74.044581+delta[1]);
-                         //                  var swBoundtemp = new google.maps.LatLng(4.79918+delta[2], -74.044581+delta[3]);
-
-
-
-                    //var srcImagetemp = 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/UEFA-Women%27s_Cup_Final_2005_at_Potsdam_1.jpg/220px-UEFA-Women%27s_Cup_Final_2005_at_Potsdam_1.jpg';
-                    //var over1= new DebugOverlay(boundstemp, srcImagetemp, map2);
-                      //    $log.log(over1);
-                    //neBoundtemp = new google.maps.LatLng(4.799164+delta[0], -74.044658+delta[1]);
-                      //                     swBoundtemp = new google.maps.LatLng(4.799164+delta[2], -74.044658+delta[3]);
-
-
-                        //                   boundstemp = new google.maps.LatLngBounds(swBoundtemp, neBoundtemp);
-
-                        //                   var srcImagetemp = 'data:image/*;base64,'+response[ima].src;
-                    //srcImagetemp = 'http://olasperu.com.pe/multimedia/publicaciones/fotos/18102016-2-1.jpg';
-                      //                     var over2 = new DebugOverlay(boundstemp, srcImagetemp, map2);
-                    //$log.log(over2);
-                    
-
                 });
-
             }
         });
 
