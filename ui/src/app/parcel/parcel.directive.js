@@ -79,10 +79,8 @@ export default function ParcelDirective($compile, $templateCache, toast, $transl
 
         //-----------------------------------------------------------------------------------------------------------------
 
-        scope.photoType = "";
-        scope.changeImageType = function(){
-          $log.log(scope.photoType);
-        };
+        scope.photoType = "RGB";
+
 
         
         var delta =[0.00010,0.00010,-0.00010,-0.00010]
@@ -188,15 +186,19 @@ var div=this.div_;
                 $log.log(scope.selectedDate);
                 scope.getAllImage = parcelService.getImagesByParcelId(scope.parcel.id.id,value).then(function(response){
                     $log.log(response);
-                    for (var ima=0; ima<response.length; ima++){
-                       var neBoundtemp = new google.maps.LatLng(response[ima].coordinates[1]+delta[0], response[ima].coordinates[0]+delta[1]);
-                       var swBoundtemp = new google.maps.LatLng(response[ima].coordinates[1]+delta[2], response[ima].coordinates[0]+delta[3]);
+                    scope.changeImageType = function(){
+                        for (var ima=0; ima<response.length; ima++){
+                            if(response[ima].name.includes(scope.photoType)){
+                                var neBoundtemp = new google.maps.LatLng(response[ima].coordinates[1]+delta[0], response[ima].coordinates[0]+delta[1]);
+                                var swBoundtemp = new google.maps.LatLng(response[ima].coordinates[1]+delta[2], response[ima].coordinates[0]+delta[3]);
 
-                       var boundstemp = new google.maps.LatLngBounds(swBoundtemp, neBoundtemp);
-                       var srcImagetemp = 'data:image/*;base64,'+response[ima].src;
-                       new DebugOverlay(boundstemp, srcImagetemp, map2);
-            
-                    }
+                                var boundstemp = new google.maps.LatLngBounds(swBoundtemp, neBoundtemp);
+                                var srcImagetemp = 'data:image/*;base64,'+response[ima].src;
+                                new DebugOverlay(boundstemp, srcImagetemp, map2);
+                            }
+                        }
+                    };
+                    scope.changeImageType();
                 });
             }
         });
