@@ -45,7 +45,7 @@ import thingsboardAdmin from '../admin';
 import thingsboardProfile from '../profile';
 import thingsboardAsset from '../asset';
 import thingsboardFarm from '../farms';
-import thingsboardParcel from '../parcel';
+import thingsboardLandlot from '../landlot';
 import thingsboardDevice from '../device';
 import thingsboardWidgetLibrary from '../widget';
 import thingsboardDashboard from '../dashboard';
@@ -83,7 +83,7 @@ export default angular.module('thingsboard.home', [
     thingsboardDashboard,
     thingsboardPlugin,
     thingsboardFarm,
-    thingsboardParcel,
+    thingsboardLandlot,
     thingsboardRule,
     thingsboardJsonForm,
     thingsboardApiDevice,

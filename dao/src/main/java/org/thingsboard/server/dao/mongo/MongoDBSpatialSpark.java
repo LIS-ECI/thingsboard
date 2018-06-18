@@ -57,9 +57,9 @@ public class MongoDBSpatialSpark extends MongoConnectionPOJO<SparkDevice> implem
 
 
 
-    public List<SparkDevice> getSparkDevicesByParcelId(@PathVariable("parcelId") String strParcelId){
+    public List<SparkDevice> getSparkDevicesByLandlotId(@PathVariable("landlotId") String strLandlotId){
         List<SparkDevice> resultSet = new CopyOnWriteArrayList<>();
-        FindIterable<SparkDevice> devices=this.getCollectionDependClass().find(eq("idParcel", strParcelId));
+        FindIterable<SparkDevice> devices=this.getCollectionDependClass().find(eq("idLandlot", strLandlotId));
         devices.forEach((Block<SparkDevice>) device -> {
             resultSet.add(device);
         });

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.thingsboard.server.dao.parcel;
+package org.thingsboard.server.dao.landlot;
 
 import java.util.List;
 import javax.annotation.Nullable;
@@ -14,10 +14,10 @@ import lombok.Data;
  * @author German Lopez
  */
 @Data
-public class ParcelTypeFilter {
+public class LandlotTypeFilter {
     @Nullable
     private String relationType;
     @Nullable
-    private List<String> parcelTypes;
+    private List<String> landlotTypes;
 }
 

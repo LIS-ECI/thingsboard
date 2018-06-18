@@ -1,52 +1,52 @@
 
 
 <md-button ng-click="onMakePublic({event: $event})"
-           ng-show="!isEdit && parcelScope === 'tenant' && !isAssignedToCustomer && !isPublic"
-           class="md-raised md-primary">{{ 'parcel.make-public' | translate }}</md-button>
+           ng-show="!isEdit && landlotScope === 'tenant' && !isAssignedToCustomer && !isPublic"
+           class="md-raised md-primary">{{ 'landlot.make-public' | translate }}</md-button>
 <md-button ng-click="onAssignToCustomer({event: $event})"
-           ng-show="!isEdit && parcelScope === 'tenant' && !isAssignedToCustomer"
-           class="md-raised md-primary">{{ 'parcel.assign-to-customer' | translate }}</md-button>
+           ng-show="!isEdit && landlotScope === 'tenant' && !isAssignedToCustomer"
+           class="md-raised md-primary">{{ 'landlot.assign-to-customer' | translate }}</md-button>
 <md-button ng-click="onUnassignFromCustomer({event: $event, isPublic: isPublic})"
-           ng-show="!isEdit && (parcelScope === 'customer' || parcelScope === 'tenant') && isAssignedToCustomer"
-           class="md-raised md-primary">{{ isPublic ? 'parcel.make-private' : 'parcel.unassign-from-customer' | translate }}</md-button>
-<md-button ng-click="onDeleteParcel({event: $event})"
-           ng-show="!isEdit && parcelScope === 'tenant'"
-           class="md-raised md-primary">{{ 'parcel.delete' | translate }}</md-button>
+           ng-show="!isEdit && (landlotScope === 'customer' || landlotScope === 'tenant') && isAssignedToCustomer"
+           class="md-raised md-primary">{{ isPublic ? 'landlot.make-private' : 'landlot.unassign-from-customer' | translate }}</md-button>
+<md-button ng-click="onDeleteLandlot({event: $event})"
+           ng-show="!isEdit && landlotScope === 'tenant'"
+           class="md-raised md-primary">{{ 'landlot.delete' | translate }}</md-button>
 
 <div layout="row">
     <md-button ngclipboard data-clipboard-action="copy"
-               ngclipboard-success="onParcelIdCopied(e)"
-               data-clipboard-text="{{parcel.id.id}}" ng-show="!isEdit"
+               ngclipboard-success="onLandlotIdCopied(e)"
+               data-clipboard-text="{{landlot.id.id}}" ng-show="!isEdit"
                class="md-raised">
         <md-icon md-svg-icon="mdi:clipboard-arrow-left"></md-icon>
-        <span translate>parcel.copyId</span>
+        <span translate>landlot.copyId</span>
     </md-button>
 </div>
 
 <md-content class="md-padding" layout="column">
     <md-input-container class="md-block"
-                        ng-show="!isEdit && isAssignedToCustomer && !isPublic && parcelScope === 'tenant'">
-        <label translate>parcel.assignedToCustomer</label>
+                        ng-show="!isEdit && isAssignedToCustomer && !isPublic && landlotScope === 'tenant'">
+        <label translate>landlot.assignedToCustomer</label>
         <input ng-model="assignedCustomer.title" disabled>
     </md-input-container>
     <div class="tb-small" style="padding-bottom: 10px; padding-left: 2px;"
-         ng-show="!isEdit && isPublic && (parcelScope === 'customer' || parcelScope === 'tenant')">
-        {{ 'parcel.parcel-public' | translate }}
+         ng-show="!isEdit && isPublic && (landlotScope === 'customer' || landlotScope === 'tenant')">
+        {{ 'landlot.landlot-public' | translate }}
     </div>
     <fieldset ng-disabled="$root.loading || !isEdit">
         <md-tabs  md-dynamic-height md-border-bottom>
-            <md-tab label="{{ 'Parcel Details' | translate }}">
+            <md-tab label="{{ 'Landlot Details' | translate }}">
                 <md-content class="md-padding">
                     <md-input-container class="md-block">
-                        <label translate>parcel.name</label>
-                        <input required name="name" ng-model="parcel.name">
+                        <label translate>landlot.name</label>
+                        <input required name="name" ng-model="landlot.name">
                         <div ng-messages="theForm.name.$error">
-                            <div translate ng-message="required">parcel.name-required</div>
+                            <div translate ng-message="required">landlot.name-required</div>
                         </div>
                     </md-input-container>
                     <md-input-container style="margin-right: 10px;">
                         <label>Farm</label>
-                        <md-select ng-model="parcel.farmId">
+                        <md-select ng-model="landlot.farmId">
                             <md-option ng-repeat="farm in farms" value="{{farm.id.id}}">{{farm.name}}</md-option>
                         </md-select>
                     </md-input-container>
@@ -54,12 +54,12 @@
                             ng-disabled="$root.loading || !isEdit"
                             tb-required="true"
                             the-form="theForm"
-                            ng-model="parcel.type"
-                            entity-type="types.entityType.parcel">
+                            ng-model="landlot.type"
+                            entity-type="types.entityType.landlot">
                     </tb-entity-subtype-autocomplete>
                     <md-input-container class="md-block">
-                        <label translate>parcel.description</label>
-                        <textarea ng-model="parcel.additionalInfo.description" rows="2"></textarea>
+                        <label translate>landlot.description</label>
+                        <textarea ng-model="landlot.additionalInfo.description" rows="2"></textarea>
                     </md-input-container>
                     <div style="min-height: 1000px;">
                         <div id="mapa"  style="height: 450px; width: 450px;"></div>
@@ -67,14 +67,14 @@
                     <div layout-gt-sm="row">
 
                         <md-input-container class="md-block">
-                            <label translate>parcel.totalArea</label>
-                            <input name="Area" ng-model="parcel.totalArea.extension" required="true" ng-pattern="/^[0-9]+\.?[0-9]*$/" >
+                            <label translate>landlot.totalArea</label>
+                            <input name="Area" ng-model="landlot.totalArea.extension" required="true" ng-pattern="/^[0-9]+\.?[0-9]*$/" >
 
                         </md-input-container>
 
                         <md-input-container style="margin-right: 10px;">
-                            <label translate>parcel.UnitOfMeasurement</label>
-                            <md-select ng-model="parcel.totalArea.symbol" >
+                            <label translate>landlot.UnitOfMeasurement</label>
+                            <md-select ng-model="landlot.totalArea.symbol" >
                                 <md-option ng-repeat="sym in symbol" value="{{sym}}">{{sym}}</md-option>
                             </md-select>
                         </md-input-container>
@@ -83,19 +83,19 @@
                     <div style="min-height: 1000px;">
                         <md-input-container class="md-block">
                             <label translate>ground.density</label>
-                            <textarea ng-model="parcel.groundFeatures.density" rows="2"></textarea>
+                            <textarea ng-model="landlot.groundFeatures.density" rows="2"></textarea>
                         </md-input-container>
                         <md-input-container class="md-block">
                             <label translate>ground.compaction</label>
-                            <textarea ng-model="parcel.groundFeatures.compaction" rows="2"></textarea>
+                            <textarea ng-model="landlot.groundFeatures.compaction" rows="2"></textarea>
                         </md-input-container>
                         <md-input-container class="md-block">
                             <label translate>ground.inclination</label>
-                            <textarea ng-model="parcel.groundFeatures.inclination" rows="2"></textarea>
+                            <textarea ng-model="landlot.groundFeatures.inclination" rows="2"></textarea>
                         </md-input-container>
                         <md-input-container class="md-block">
                             <label translate>ground.higrologicData</label>
-                            <textarea ng-model="parcel.groundFeatures.higrologicData" rows="2"></textarea>
+                            <textarea ng-model="landlot.groundFeatures.higrologicData" rows="2"></textarea>
                         </md-input-container>
                     </div>
                 </md-content>
@@ -105,26 +105,26 @@
                     <md-tab label="{{ 'Current Crop' | translate }}">
                         <md-content class="md-padding">
                                 <button ng-click="finishCrop()">Finish Crop</button>
-                                <div style="min-height: 1000px;" ng-disable="!parcel.crop.finish">
+                                <div style="min-height: 1000px;" ng-disable="!landlot.crop.finish">
                                     <md-input-container class="md-block">
                                         <label translate>Name</label>
-                                        <textarea ng-model="parcel.crop.name" rows="2"></textarea>
+                                        <textarea ng-model="landlot.crop.name" rows="2"></textarea>
                                     </md-input-container>
                                     <md-input-container class="md-block">
                                         <label translate>¿Why this crop?</label>
-                                        <textarea ng-model="parcel.crop.why" rows="2"></textarea>
+                                        <textarea ng-model="landlot.crop.why" rows="2"></textarea>
                                     </md-input-container>
                                     <md-input-container class="md-block">
                                         <label translate>Cause</label>
-                                        <textarea ng-model="parcel.crop.cause" rows="2"></textarea>
+                                        <textarea ng-model="landlot.crop.cause" rows="2"></textarea>
                                     </md-input-container>
                                     <md-input-container class="md-block">
                                         <label translate>Initial Conditions</label>
-                                        <textarea ng-model="parcel.crop.initialConditions" rows="2"></textarea>
+                                        <textarea ng-model="landlot.crop.initialConditions" rows="2"></textarea>
                                     </md-input-container>
                                     <md-input-container class="md-block">
                                         <label translate>Crop State</label>
-                                        <textarea ng-model="parcel.crop.state" rows="2"></textarea>
+                                        <textarea ng-model="landlot.crop.state" rows="2"></textarea>
                                     </md-input-container>
                                 </div>
                         </md-content>
@@ -132,7 +132,7 @@
                     <md-tab label="{{ 'Crop History' | translate }}">
                         <md-content class="md-padding">
                             <div style="min-height: 1000px;">
-                                <md-card md-theme="{{ showDarkTheme ? 'dark-grey' : 'default' }}" md-theme-watch ng-repeat="crop in parcel.cropsHistory">
+                                <md-card md-theme="{{ showDarkTheme ? 'dark-grey' : 'default' }}" md-theme-watch ng-repeat="crop in landlot.cropsHistory">
                                     <md-card-title>
                                         <md-card-title-text>
                                             <span class="md-headline">{{crop.name}}</span>
@@ -155,7 +155,7 @@
                             </div>
                             <md-input-container style="margin-right: 10px;"  >
                                 <div flex="50" ng-repeat="prac in practices">
-                                    <md-checkbox ng-checked="exists(prac, parcel.crop.practices)" ng-click= "toggle(prac, parcel.crop.practices)" >
+                                    <md-checkbox ng-checked="exists(prac, landlot.crop.practices)" ng-click= "toggle(prac, landlot.crop.practices)" >
                                         {{prac}}
                                     </md-checkbox>
                                 </div>
@@ -171,14 +171,14 @@
                                 </md-input-container>
                                 <button ng-click="addActionCrop()">Add Action</button>
                                 <ul>
-                                    <li ng-repeat="actionCrop in parcel.crop.actions">{{actionCrop.action}} -- {{actionCrop.actionDate |date :  "dd/MM/y"}}</li>
+                                    <li ng-repeat="actionCrop in landlot.crop.actions">{{actionCrop.action}} -- {{actionCrop.actionDate |date :  "dd/MM/y"}}</li>
                                 </ul>
                             </div>
                         </md-content>
                     </md-tab>
                 </md-tabs>
             </md-tab>
-            <md-tab label="{{ 'Parcel Tags' | translate }}">
+            <md-tab label="{{ 'Landlot Tags' | translate }}">
                 <md-content class="md-padding">
                     <div style="min-height: 1000px;">
                         <div layout-gt-xs="row">

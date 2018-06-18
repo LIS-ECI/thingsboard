@@ -21,9 +21,9 @@ import lombok.ToString;
 import org.thingsboard.server.common.data.crop.Crop;
 import org.thingsboard.server.common.data.farm.Area;
 import org.thingsboard.server.common.data.id.DeviceId;
-import org.thingsboard.server.common.data.parcel.GroundFeatures;
-import org.thingsboard.server.common.data.parcel.Parcel;
-import org.thingsboard.server.common.data.id.ParcelId;
+import org.thingsboard.server.common.data.landlot.GroundFeatures;
+import org.thingsboard.server.common.data.landlot.Landlot;
+import org.thingsboard.server.common.data.id.LandlotId;
 import org.thingsboard.server.common.data.id.CustomerId;
 import org.thingsboard.server.common.data.id.TenantId;
 import org.thingsboard.server.dao.model.SearchTextEntity;
@@ -35,10 +35,10 @@ import static org.thingsboard.server.dao.model.ModelConstants.*;
  *
  * @author German Lopez
  */
-@Table(name = PARCEL_COLUMN_FAMILY_NAME)
+@Table(name = LANDLOT_COLUMN_FAMILY_NAME)
 @EqualsAndHashCode
 @ToString
-public final class ParcelEntity implements SearchTextEntity<Parcel> {
+public final class LandlotEntity implements SearchTextEntity<Landlot> {
 
 
     public String getFarmId() {
@@ -54,71 +54,71 @@ public final class ParcelEntity implements SearchTextEntity<Parcel> {
     private UUID id;
 
     @PartitionKey(value = 1)
-    @Column(name = PARCEL_TENANT_ID_PROPERTY)
+    @Column(name = LANDLOT_TENANT_ID_PROPERTY)
     private UUID tenantId;
 
     @PartitionKey(value = 2)
-    @Column(name = PARCEL_CUSTOMER_ID_PROPERTY)
+    @Column(name = LANDLOT_CUSTOMER_ID_PROPERTY)
     private UUID customerId;
 
     @PartitionKey(value = 3)
-    @Column(name = PARCEL_TYPE_PROPERTY)
+    @Column(name = LANDLOT_TYPE_PROPERTY)
     private String type;
 
-    @Column(name = PARCEL_NAME_PROPERTY)
+    @Column(name = LANDLOT_NAME_PROPERTY)
     private String name;
     
-    @Column(name = PARCEL_FARMID_PROPERTY)
+    @Column(name = LANDLOT_FARMID_PROPERTY)
     private String farmId;
 
     @Column(name = SEARCH_TEXT_PROPERTY)
     private String searchText;
 
-    @com.datastax.driver.mapping.annotations.Column(name = PARCEL_ADDITIONAL_INFO_PROPERTY, codec = JsonCodec.class)
+    @com.datastax.driver.mapping.annotations.Column(name = LANDLOT_ADDITIONAL_INFO_PROPERTY, codec = JsonCodec.class)
     private JsonNode additionalInfo;
 
-    @Column(name = PARCEL_CROP)
+    @Column(name = LANDLOT_CROP)
     private String crop;
 
-    @Column(name = PARCEL_CROPS_HISTORY)
+    @Column(name = LANDLOT_CROPS_HISTORY)
     private String cropsHistory;
 
-    @Column(name = PARCEL_TOTAL_AREA)
+    @Column(name = LANDLOT_TOTAL_AREA)
     private String totalArea;
 
     @Column(name = GROUND_FEATURES)
     private String groundFeatures;
 
-    @Column(name = PARCEL_DEVICES)
+    @Column(name = LANDLOT_DEVICES)
     private String devices;
 
 
 
-    public ParcelEntity() {
+    public LandlotEntity() {
         super();
     }
 
-    public ParcelEntity(Parcel parcel) {
-        if (parcel.getId() != null) {
-            this.id = parcel.getId().getId();
+    public LandlotEntity(Landlot landlot) {
+        if (landlot.getId() != null) {
+            this.id = landlot.getId().getId();
         }
-        if (parcel.getTenantId() != null) {
-            this.tenantId = parcel.getTenantId().getId();
+        if (landlot.getTenantId() != null) {
+            this.tenantId = landlot.getTenantId().getId();
         }
-        if (parcel.getCustomerId() != null) {
-            this.customerId = parcel.getCustomerId().getId();
+        if (landlot.getCustomerId() != null) {
+            this.customerId = landlot.getCustomerId().getId();
         }
-        this.name = parcel.getName();
-        this.type = parcel.getType();
-        this.farmId = parcel.getFarmId();
-        this.additionalInfo = parcel.getAdditionalInfo();
+        this.name = landlot.getName();
+        this.type = landlot.getType();
+        this.farmId = landlot.getFarmId();
+        this.additionalInfo = landlot.getAdditionalInfo();
         try {
             ObjectMapper mapper = new ObjectMapper();
-            this.crop = mapper.writeValueAsString(parcel.getCrop());
-            this.cropsHistory = mapper.writeValueAsString(parcel.getCropsHistory());
-            this.totalArea = mapper.writeValueAsString(parcel.getTotalArea());
-            this.groundFeatures = mapper.writeValueAsString(parcel.getGroundFeatures());
-            this.setDevices(mapper.writeValueAsString(parcel.getDevices()));
+            this.crop = mapper.writeValueAsString(landlot.getCrop());
+            this.cropsHistory = mapper.writeValueAsString(landlot.getCropsHistory());
+            this.totalArea = mapper.writeValueAsString(landlot.getTotalArea());
+            this.groundFeatures = mapper.writeValueAsString(landlot.getGroundFeatures());
+            this.setDevices(mapper.writeValueAsString(landlot.getDevices()));
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
@@ -187,31 +187,31 @@ public final class ParcelEntity implements SearchTextEntity<Parcel> {
     }
 
     @Override
-    public Parcel toData() {
-        Parcel parcel = new Parcel(new ParcelId(id));
-        parcel.setCreatedTime(UUIDs.unixTimestamp(id));
+    public Landlot toData() {
+        Landlot landlot = new Landlot(new LandlotId(id));
+        landlot.setCreatedTime(UUIDs.unixTimestamp(id));
         if (tenantId != null) {
-            parcel.setTenantId(new TenantId(tenantId));
+            landlot.setTenantId(new TenantId(tenantId));
         }
         if (customerId != null) {
-            parcel.setCustomerId(new CustomerId(customerId));
+            landlot.setCustomerId(new CustomerId(customerId));
         }
-        parcel.setName(name);
-        parcel.setType(getType());
-        parcel.setFarmId(farmId);
-        parcel.setAdditionalInfo(additionalInfo);
+        landlot.setName(name);
+        landlot.setType(getType());
+        landlot.setFarmId(farmId);
+        landlot.setAdditionalInfo(additionalInfo);
         try {
             ObjectMapper mapper = new ObjectMapper();
-            parcel.setCrop(mapper.readValue(crop, Crop.class));
-            parcel.setCropsHistory(mapper.readValue(cropsHistory, mapper.getTypeFactory().constructParametricType(List.class, Crop.class)));
-            parcel.setTotalArea(mapper.readValue(totalArea, Area.class));
-            parcel.setGroundFeatures(mapper.readValue(groundFeatures, GroundFeatures.class));
-            parcel.setDevices(mapper.readValue(getDevices(), mapper.getTypeFactory().constructParametricType(List.class, UUID.class)));
+            landlot.setCrop(mapper.readValue(crop, Crop.class));
+            landlot.setCropsHistory(mapper.readValue(cropsHistory, mapper.getTypeFactory().constructParametricType(List.class, Crop.class)));
+            landlot.setTotalArea(mapper.readValue(totalArea, Area.class));
+            landlot.setGroundFeatures(mapper.readValue(groundFeatures, GroundFeatures.class));
+            landlot.setDevices(mapper.readValue(getDevices(), mapper.getTypeFactory().constructParametricType(List.class, UUID.class)));
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return parcel;
+        return landlot;
     }
 
 

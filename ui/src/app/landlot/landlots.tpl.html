@@ -1,24 +1,24 @@
 
-<tb-grid grid-configuration="vm.parcelGridConfig">
-    <details-buttons tb-help="'parcels'" help-container-id="help-container">
+<tb-grid grid-configuration="vm.landlotGridConfig">
+    <details-buttons tb-help="'landlots'" help-container-id="help-container">
         <div id="help-container"></div>
     </details-buttons>
     <md-tabs ng-class="{'tb-headless': vm.grid.detailsConfig.isDetailsEditMode}"
              id="tabs" md-border-bottom flex class="tb-absolute-fill">
-        <md-tab label="{{ 'parcel.details' | translate }}">
-            <tb-parcel  parcel="vm.grid.operatingItem()"
+        <md-tab label="{{ 'landlot.details' | translate }}">
+            <tb-landlot  landlot="vm.grid.operatingItem()"
                        is-edit="vm.grid.detailsConfig.isDetailsEditMode"
-                       parcel-scope="vm.parcelsScope"
+                       landlot-scope="vm.landlotsScope"
                        the-form="vm.grid.detailsForm"
                        on-assign-to-customer="vm.assignToCustomer(event, [ vm.grid.detailsConfig.currentItem.id.id ])"
                        on-make-public="vm.makePublic(event, vm.grid.detailsConfig.currentItem)"
                        on-unassign-from-customer="vm.unassignFromCustomer(event, vm.grid.detailsConfig.currentItem, isPublic)"
-                       on-delete-parcel="vm.grid.deleteItem(event, vm.grid.detailsConfig.currentItem)"></tb-parcel>
+                       on-delete-landlot="vm.grid.deleteItem(event, vm.grid.detailsConfig.currentItem)"></tb-landlot>
         </md-tab>
         <md-tab ng-if="!vm.grid.detailsConfig.isDetailsEditMode" md-on-select="vm.grid.triggerResize()" label="{{ 'attribute.attributes' | translate }}">
             <tb-attribute-table flex
                                 entity-id="vm.grid.operatingItem().id.id"
-                                entity-type="{{vm.types.entityType.parcel}}"
+                                entity-type="{{vm.types.entityType.landlot}}"
                                 entity-name="vm.grid.operatingItem().name"
                                 default-attribute-scope="{{vm.types.attributesScope.server.value}}">
             </tb-attribute-table>
@@ -26,19 +26,19 @@
         <md-tab ng-if="!vm.grid.detailsConfig.isDetailsEditMode" md-on-select="vm.grid.triggerResize()" label="{{ 'attribute.latest-telemetry' | translate }}">
             <tb-attribute-table flex
                                 entity-id="vm.grid.operatingItem().id.id"
-                                entity-type="{{vm.types.entityType.parcel}}"
+                                entity-type="{{vm.types.entityType.landlot}}"
                                 entity-name="vm.grid.operatingItem().name"
                                 default-attribute-scope="{{vm.types.latestTelemetry.value}}"
                                 disable-attribute-scope-selection="true">
             </tb-attribute-table>
         </md-tab>
         <md-tab ng-if="!vm.grid.detailsConfig.isDetailsEditMode" md-on-select="vm.grid.triggerResize()" label="{{ 'alarm.alarms' | translate }}">
-            <tb-alarm-table flex entity-type="vm.types.entityType.parcel"
+            <tb-alarm-table flex entity-type="vm.types.entityType.landlot"
                             entity-id="vm.grid.operatingItem().id.id">
             </tb-alarm-table>
         </md-tab>
-        <md-tab ng-if="!vm.grid.detailsConfig.isDetailsEditMode" md-on-select="vm.grid.triggerResize()" label="{{ 'parcel.events' | translate }}">
-            <tb-event-table flex entity-type="vm.types.entityType.parcel"
+        <md-tab ng-if="!vm.grid.detailsConfig.isDetailsEditMode" md-on-select="vm.grid.triggerResize()" label="{{ 'landlot.events' | translate }}">
+            <tb-event-table flex entity-type="vm.types.entityType.landlot"
                             entity-id="vm.grid.operatingItem().id.id"
                             tenant-id="vm.grid.operatingItem().tenantId.id"
                             default-event-type="{{vm.types.eventType.error.value}}">
@@ -47,14 +47,14 @@
         <md-tab ng-if="!vm.grid.detailsConfig.isDetailsEditMode" md-on-select="vm.grid.triggerResize()" label="{{ 'relation.relations' | translate }}">
             <tb-relation-table flex
                                entity-id="vm.grid.operatingItem().id.id"
-                               entity-type="{{vm.types.entityType.parcel}}">
+                               entity-type="{{vm.types.entityType.landlot}}">
             </tb-relation-table>
         </md-tab>
         <md-tab ng-if="!vm.grid.detailsConfig.isDetailsEditMode" md-on-select="vm.grid.triggerResize()" label="{{ 'crop.crops' | translate }}">
 
         </md-tab>
         <md-tab ng-if="!vm.grid.detailsConfig.isDetailsEditMode && vm.grid.isTenantAdmin()" md-on-select="vm.grid.triggerResize()" label="{{ 'audit-log.audit-logs' | translate }}">
-            <tb-audit-log-table flex entity-type="vm.types.entityType.parcel"
+            <tb-audit-log-table flex entity-type="vm.types.entityType.landlot"
                                 entity-id="vm.grid.operatingItem().id.id"
                                 audit-log-mode="{{vm.types.auditLogMode.entity}}">
             </tb-audit-log-table>

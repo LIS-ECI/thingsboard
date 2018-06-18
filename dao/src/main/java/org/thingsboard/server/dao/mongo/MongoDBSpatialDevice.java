@@ -67,9 +67,9 @@ public class MongoDBSpatialDevice extends MongoConnectionPOJO<SpatialDevice> imp
         return null;
     }
 
-    public List<SpatialDevice> getDevicesByParcelId(String strParcelId){
+    public List<SpatialDevice> getDevicesByLandlotId(String strLandlotId){
         List<SpatialDevice> resultSet = new CopyOnWriteArrayList<>();
-        FindIterable<SpatialDevice> devices=this.getCollectionDependClass().find(eq("device_Parcel_FK", strParcelId));
+        FindIterable<SpatialDevice> devices=this.getCollectionDependClass().find(eq("device_Landlot_FK", strLandlotId));
         devices.forEach((Block<SpatialDevice>) device -> {
             resultSet.add(device);
         });

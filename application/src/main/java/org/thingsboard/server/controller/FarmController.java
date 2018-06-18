@@ -43,12 +43,12 @@ import org.thingsboard.server.common.data.id.FarmId;
 import org.thingsboard.server.common.data.id.TenantId;
 import org.thingsboard.server.common.data.page.TextPageData;
 import org.thingsboard.server.common.data.page.TextPageLink;
-import org.thingsboard.server.common.data.parcel.Parcel;
+import org.thingsboard.server.common.data.landlot.Landlot;
 import org.thingsboard.server.common.data.security.Authority;
 import org.thingsboard.server.dao.exception.IncorrectParameterException;
 import org.thingsboard.server.dao.model.ModelConstants;
 import org.thingsboard.server.dao.model.nosql.FarmEntity;
-import org.thingsboard.server.dao.model.nosql.ParcelEntity;
+import org.thingsboard.server.dao.model.nosql.LandlotEntity;
 import org.thingsboard.server.dao.model.nosql.TenantEntity;
 import org.thingsboard.server.exception.ThingsboardErrorCode;
 import org.thingsboard.server.exception.ThingsboardException;
@@ -526,22 +526,22 @@ public class FarmController extends BaseController {
     }
 
     @PreAuthorize("hasAnyAuthority('TENANT_ADMIN', 'CUSTOMER_USER')")
-    @RequestMapping(value = "/farm/{farmId}/parcels", method = RequestMethod.GET)
+    @RequestMapping(value = "/farm/{farmId}/landlots", method = RequestMethod.GET)
     @ResponseBody
-    public List<SpatialParcel> getParcelByFarmId(@PathVariable(FARM_ID) String farmId) throws ThingsboardException{
-        List<SpatialParcel> parcelsFarmId = new ArrayList<>();
+    public List<SpatialLandlot> getLandlotByFarmId(@PathVariable(FARM_ID) String farmId) throws ThingsboardException{
+        List<SpatialLandlot> landlotsFarmId = new ArrayList<>();
         try {
-            List<ParcelEntity> parcelType = parcelService.allParcels().get();
-            List<Parcel> parcels = new ArrayList<>();
-            for(ParcelEntity p : parcelType){
+            List<LandlotEntity> landlotType = landlotService.allLandlots().get();
+            List<Landlot> landlots = new ArrayList<>();
+            for(LandlotEntity p : landlotType){
                 if(p.toData().getFarmId().equals(farmId)){
-                    parcels.add(p.toData());
+                    landlots.add(p.toData());
                 }
             }
-            for(Parcel pa: parcels){
-                parcelsFarmId.add(mongoService.getMongodbparcel().findById(pa.getId().getId().toString()));
+            for(Landlot pa: landlots){
+                landlotsFarmId.add(mongoService.getMongodblandlot().findById(pa.getId().getId().toString()));
             }
-            return parcelsFarmId;
+            return landlotsFarmId;
 
         } catch (Exception e) {
             throw handleException(e);

@@ -54,7 +54,7 @@ import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
-import org.thingsboard.server.common.data.parcel.Parcel;
+import org.thingsboard.server.common.data.landlot.Landlot;
 import org.thingsboard.server.common.data.farm.Farm;
 
 @Slf4j
@@ -332,8 +332,8 @@ public final class PluginProcessingContext implements PluginContext {
                 case FARM:
                     validateFarm(ctx, entityId, callback);
                     return;
-                case PARCEL:
-                    validateParcel(ctx, entityId, callback);
+                case LANDLOT:
+                    validateLandlot(ctx, entityId, callback);
                     return;
                 case RULE:
                     validateRule(ctx, entityId, callback);
@@ -419,19 +419,19 @@ public final class PluginProcessingContext implements PluginContext {
         }
     }
     
-    private void validateParcel(final PluginApiCallSecurityContext ctx, EntityId entityId, ValidationCallback callback) {
+    private void validateLandlot(final PluginApiCallSecurityContext ctx, EntityId entityId, ValidationCallback callback) {
         if (ctx.isSystemAdmin()) {
             callback.onSuccess(this, ValidationResult.accessDenied(SYSTEM_ADMINISTRATOR_IS_NOT_ALLOWED_TO_PERFORM_THIS_OPERATION));
         } else {
-            ListenableFuture<Parcel> parcelFuture = pluginCtx.parcelService.findParcelByIdAsync(new ParcelId(entityId.getId()));
-            Futures.addCallback(parcelFuture, getCallback(callback, parcel -> {
-                if (parcel == null) {
-                    return ValidationResult.entityNotFound("Parcel with requested id wasn't found!");
+            ListenableFuture<Landlot> landlotFuture = pluginCtx.landlotService.findLandlotByIdAsync(new LandlotId(entityId.getId()));
+            Futures.addCallback(landlotFuture, getCallback(callback, landlot -> {
+                if (landlot == null) {
+                    return ValidationResult.entityNotFound("Landlot with requested id wasn't found!");
                 } else {
-                    if (!parcel.getTenantId().equals(ctx.getTenantId())) {
-                        return ValidationResult.accessDenied("Parcel doesn't belong to the current Tenant!");
-                    } else if (ctx.isCustomerUser() && !parcel.getCustomerId().equals(ctx.getCustomerId())) {
-                        return ValidationResult.accessDenied("Parcel doesn't belong to the current Customer!");
+                    if (!landlot.getTenantId().equals(ctx.getTenantId())) {
+                        return ValidationResult.accessDenied("Landlot doesn't belong to the current Tenant!");
+                    } else if (ctx.isCustomerUser() && !landlot.getCustomerId().equals(ctx.getCustomerId())) {
+                        return ValidationResult.accessDenied("Landlot doesn't belong to the current Customer!");
                     } else {
                         return ValidationResult.ok();
                     }

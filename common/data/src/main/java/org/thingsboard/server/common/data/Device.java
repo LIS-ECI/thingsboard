@@ -30,7 +30,7 @@ public class Device extends SearchTextBasedWithAdditionalInfo<DeviceId> implemen
     private CustomerId customerId;
     private String name;
     private String type;
-    private String parcelId;
+    private String landlotId;
     private Point location;
     private String topic;
 
@@ -106,24 +106,24 @@ public class Device extends SearchTextBasedWithAdditionalInfo<DeviceId> implemen
         builder.append(createdTime);
         builder.append(", id=");
         builder.append(id);
-        builder.append(", parcelId=");
-        builder.append(parcelId);
+        builder.append(", landlotId=");
+        builder.append(landlotId);
         builder.append("]");
         return builder.toString();
     }
 
     /**
-     * @return the parcelId
+     * @return the landlotId
      */
-    public String getParcelId() {
-        return parcelId;
+    public String getLandlotId() {
+        return landlotId;
     }
 
     /**
-     * @param parcelId the parcelId to set
+     * @param landlotId the landlotId to set
      */
-    public void setParcelId(String parcelId) {
-        this.parcelId = parcelId;
+    public void setLandlotId(String landlotId) {
+        this.landlotId = landlotId;
     }
 
     /**

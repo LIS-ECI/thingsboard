@@ -1,13 +1,13 @@
-import parcelFieldsetTemplate from './parcel-fieldset.tpl.html';
+import landlotFieldsetTemplate from './landlot-fieldset.tpl.html';
 import Action from './action';
 
 /* eslint-enable import/no-unresolved, import/default */
 /*global google*/
 /*@ngInject*/
-export default function ParcelDirective($compile, $templateCache, toast, $translate, types, parcelService, farmService, dashboardService, customerService, $log) {
+export default function LandlotDirective($compile, $templateCache, toast, $translate, types, landlotService, farmService, dashboardService, customerService, $log) {
     "use strict"
     var linker = function (scope, element) {
-        var template = $templateCache.get(parcelFieldsetTemplate);
+        var template = $templateCache.get(landlotFieldsetTemplate);
         element.html(template);
 
         scope.types = types;
@@ -20,11 +20,11 @@ export default function ParcelDirective($compile, $templateCache, toast, $transl
             scope.farms=result;
         });
 
-        scope.$watch('parcel', function(newVal) {
+        scope.$watch('landlot', function(newVal) {
             if (newVal) {
-                if (scope.parcel.customerId && scope.parcel.customerId.id !== types.id.nullUid) {
+                if (scope.landlot.customerId && scope.landlot.customerId.id !== types.id.nullUid) {
                     scope.isAssignedToCustomer = true;
-                    customerService.getShortCustomerInfo(scope.parcel.customerId.id).then(
+                    customerService.getShortCustomerInfo(scope.landlot.customerId.id).then(
                         function success(customer) {
                             scope.assignedCustomer = customer;
                             scope.isPublic = customer.isPublic;
@@ -42,8 +42,8 @@ export default function ParcelDirective($compile, $templateCache, toast, $transl
             }
         });
 
-        scope.onParcelIdCopied = function() {
-            toast.showSuccess($translate.instant('parcel.idCopiedMessage'), 750, angular.element(element).parent().parent(), 'bottom left');
+        scope.onLandlotIdCopied = function() {
+            toast.showSuccess($translate.instant('landlot.idCopiedMessage'), 750, angular.element(element).parent().parent(), 'bottom left');
         };
 
 
@@ -169,9 +169,9 @@ var div=this.div_;
         scope.practices=["The field should be free of trash, papers,plastics and empty containers","Check there is no risk of water contamination","Be acquainted with the type of pests, diseases and weeds that exist, mainly in the crop area.","Check on possible contamination sources from neighboring plots.","Signpost the place where the crop will be planted with the number of the lot or name of the crop.","With the support of the technician analyze the type of soil and its depth for good growth of the roots.","Consider the slope of the field where the planting will be done.","Avoid soil erosion and compression","Install rubbish bins in strategic zones of the field and throw the rubbish in them once the working day is over","Sow at an adequate distance"];
 
         scope.finishCrop = function(){
-            scope.parcel.crop.finish = true;
-            scope.parcel.cropsHistory.push(scope.parcel.crop);
-            scope.parcel.crop = new Crop();
+            scope.landlot.crop.finish = true;
+            scope.landlot.cropsHistory.push(scope.landlot.crop);
+            scope.landlot.crop = new Crop();
         };
 
         scope.startDate = new Date();
@@ -184,7 +184,7 @@ var div=this.div_;
                 var updatedDate = scope.startDate;
                 scope.selectedDate = new Date(updatedDate.setTime(value));
                 $log.log(scope.selectedDate);
-                scope.getAllImage = parcelService.getImagesByParcelId(scope.parcel.id.id,value).then(function(response){
+                scope.getAllImage = landlotService.getImagesByLandlotId(scope.landlot.id.id,value).then(function(response){
                     $log.log(response);
                     scope.changeImageType = function(){
                         for (var ima=0; ima<response.length; ima++){
@@ -273,14 +273,14 @@ var div=this.div_;
             scope.selectedDate = scope.startDate;
             scope.maxDate = scope.finishDate.getTime();
             scope.minDate = scope.startDate.getTime();
-            parcelService.getFilesDates(scope.minDate,scope.maxDate).then(function(response){
+            landlotService.getFilesDates(scope.minDate,scope.maxDate).then(function(response){
                 $log.log("Fechas en long");
                 $log.log(scope.minDate);
                 $log.log(scope.maxDate);
                 scope.fechas = response;
                 $log.log(scope.fechas);
             });
-            parcelService.getHistoricalValues(scope.parcel.id.id,scope.minDate,scope.maxDate).then(function(result){
+            landlotService.getHistoricalValues(scope.landlot.id.id,scope.minDate,scope.maxDate).then(function(result){
                 $log.log(result);
                 scope.tabs.length = 0;
                 dataTelemetryUpdated.length = 0;
@@ -328,16 +328,16 @@ var div=this.div_;
         scope.addActionCrop = function(){
             var newAction = new Action();
             newAction.action = scope.action;
-            scope.parcel.crop.actions.push(newAction);
+            scope.landlot.crop.actions.push(newAction);
             scope.action = '';
         };
 
 
         scope.someCrop = function(){
             var crop = false;
-            if(scope.parcel.name == null) {
-                scope.parcel.crop = new Crop();
-                scope.parcel.cropsHistory = [];
+            if(scope.landlot.name == null) {
+                scope.landlot.crop = new Crop();
+                scope.landlot.cropsHistory = [];
             }else{
                 crop = true;
             }
@@ -346,14 +346,14 @@ var div=this.div_;
 
         var map;
         var drawMapFarm = [];
-        var drawMapParcel = [];
+        var drawMapLandlot = [];
         function Polygon() {
             this.coordinates = [];
             this.type = 'Polygon';
         }
-        scope.$watch("parcel",function(newVal){
-            if(scope.parcel.id != null && newVal){
-                scope.cropFarm = farmService.getFarm(scope.parcel.farmId).then(function(result){
+        scope.$watch("landlot",function(newVal){
+            if(scope.landlot.id != null && newVal){
+                scope.cropFarm = farmService.getFarm(scope.landlot.farmId).then(function(result){
                     var polygon = new Polygon();
                     scope.tempLatitude = -34.397;
                     scope.tempLongitude = 150.644;
@@ -366,12 +366,12 @@ var div=this.div_;
                             drawMapFarm.push({lat: scope.cropFarm.location.coordinates[0][i][1],lng:  scope.cropFarm.location.coordinates[0][i][0]});
                         }
                         //drawMapFarm.push({lat: scope.cropFarm.location.coordinates[0][1],lng:  scope.cropFarm.location.coordinates[0][0]});
-                        if(scope.parcel.location != null){
-                            for(var j = 0 ; j < scope.parcel.location.coordinates[0].length; j++){
-                                drawMapParcel.push({lat: scope.parcel.location.coordinates[0][j][1],lng: scope.parcel.location.coordinates[0][j][0]});
+                        if(scope.landlot.location != null){
+                            for(var j = 0 ; j < scope.landlot.location.coordinates[0].length; j++){
+                                drawMapLandlot.push({lat: scope.landlot.location.coordinates[0][j][1],lng: scope.landlot.location.coordinates[0][j][0]});
                             }
                         }
-                        $log.log(drawMapParcel);
+                        $log.log(drawMapLandlot);
                     }
 
                     
@@ -400,16 +400,16 @@ $log.log(scope.tempLatitude+" "+scope.tempLongitude);
                     }).setMap(map);
                     drawMapFarm = [];
 
-                    if(scope.parcel.location != null){
+                    if(scope.landlot.location != null){
                         new google.maps.Polygon({
-                            paths: drawMapParcel,
+                            paths: drawMapLandlot,
                             strokeColor: '#FF0000',
                             strokeOpacity: 0.8,
                             strokeWeight: 2,
                             fillColor: '#FF0000',
                             fillOpacity: 0.35
                         }).setMap(map);
-                        drawMapParcel=[];
+                        drawMapLandlot=[];
                     }
 
 
@@ -442,7 +442,7 @@ $log.log(scope.tempLatitude+" "+scope.tempLongitude);
                             }
                             coordinatesArray.push(coordinatesArray[0]);
                             polygon.coordinates.push(coordinatesArray);
-                            scope.parcel.location = polygon;
+                            scope.landlot.location = polygon;
                             return;
                         }
                     }
@@ -451,7 +451,7 @@ $log.log(scope.tempLatitude+" "+scope.tempLongitude);
             }
         });
 
-        /*scope.mostrarMapaParcel = function (){
+        /*scope.mostrarMapaLandlot = function (){
             direction();
             map = new google.maps.Map(angular.element('#mapa')[0], {
                 center: {lat: scope.tempLatitude, lng: scope.tempLongitude},
@@ -472,14 +472,14 @@ $log.log(scope.tempLatitude+" "+scope.tempLongitude);
             drawMap = [];
         }*/
 
-        if(scope.parcel.totalArea == null){
-            scope.parcel.totalArea = new Area();
+        if(scope.landlot.totalArea == null){
+            scope.landlot.totalArea = new Area();
         }
-        if(scope.parcel.devices == null){
-            scope.parcel.devices = [];
+        if(scope.landlot.devices == null){
+            scope.landlot.devices = [];
         }
-        if(scope.parcel.groundFeatures == null){
-            scope.parcel.groundFeatures = new GroundFeatures();
+        if(scope.landlot.groundFeatures == null){
+            scope.landlot.groundFeatures = new GroundFeatures();
         }
         if (scope.data== null){
             scope.data={};
@@ -494,7 +494,7 @@ $log.log(scope.tempLatitude+" "+scope.tempLongitude);
             for (var i = 0; i < scope.labels.length; i++) {
                 polygon.coordinates[i]=[parseFloat(scope.longitudes[i]),parseFloat(scope.latitudes[i])];
             }
-            scope.parcel.location = polygon;
+            scope.landlot.location = polygon;
         };*/
 
         //----------------------------------------------------------------------------
@@ -503,14 +503,14 @@ $log.log(scope.tempLatitude+" "+scope.tempLongitude);
         restrict: "E",
         link: linker,
         scope: {
-            parcel: '=',
+            landlot: '=',
             isEdit: '=',
-            parcelScope: '=',
+            landlotScope: '=',
             theForm: '=',
             onAssignToCustomer: '&',
             onMakePublic: '&',
             onUnassignFromCustomer: '&',
-            onDeleteParcel: '&'
+            onDeleteLandlot: '&'
         }
     };
 }

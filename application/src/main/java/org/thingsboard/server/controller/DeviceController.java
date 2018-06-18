@@ -26,7 +26,7 @@ import org.thingsboard.server.common.data.*;
 import org.thingsboard.server.common.data.audit.ActionStatus;
 import org.thingsboard.server.common.data.audit.ActionType;
 import org.thingsboard.server.common.data.kv.TsKvEntry;
-import org.thingsboard.server.common.data.parcel.Parcel;
+import org.thingsboard.server.common.data.landlot.Landlot;
 import org.thingsboard.server.common.data.device.DeviceSearchQuery;
 import org.thingsboard.server.common.data.farm.Farm;
 import org.thingsboard.server.common.data.id.*;
@@ -41,8 +41,8 @@ import org.thingsboard.server.common.data.widget.WidgetType;
 import org.thingsboard.server.common.data.widget.WidgetsBundle;
 import org.thingsboard.server.dao.exception.IncorrectParameterException;
 import org.thingsboard.server.dao.model.ModelConstants;
-import org.thingsboard.server.dao.model.nosql.ParcelEntity;
-import org.thingsboard.server.dao.parcel.ParcelService;
+import org.thingsboard.server.dao.model.nosql.LandlotEntity;
+import org.thingsboard.server.dao.landlot.LandlotService;
 import org.thingsboard.server.dao.timeseries.TimeseriesService;
 import org.thingsboard.server.exception.ThingsboardErrorCode;
 import org.thingsboard.server.exception.ThingsboardException;
@@ -66,7 +66,7 @@ public class DeviceController extends BaseController {
     private TimeseriesService tsService;
 
     @Autowired
-    protected ParcelService parcelService;
+    protected LandlotService landlotService;
 
     @PreAuthorize("hasAnyAuthority('TENANT_ADMIN', 'CUSTOMER_USER')")
     @RequestMapping(value = "/device/{deviceId}", method = RequestMethod.GET)
@@ -82,13 +82,13 @@ public class DeviceController extends BaseController {
     }
 
     @PreAuthorize("hasAnyAuthority('TENANT_ADMIN', 'CUSTOMER_USER')")
-    @RequestMapping(value = "/device/devicesbyparcel/{parcelId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/device/devicesbylandlot/{landlotId}", method = RequestMethod.GET)
     @ResponseBody
-    public List<SpatialDevice> getDevicesByParcelId(@PathVariable("parcelId") String strParcelId) throws ThingsboardException {
-        checkParameter("parcelId", strParcelId);
+    public List<SpatialDevice> getDevicesByLandlotId(@PathVariable("landlotId") String strLandlotId) throws ThingsboardException {
+        checkParameter("landlotId", strLandlotId);
         List<SpatialDevice> devices = new ArrayList<>();
         try {
-            devices = mongoService.getMongodbDevice().getDevicesByParcelId(strParcelId);
+            devices = mongoService.getMongodbDevice().getDevicesByLandlotId(strLandlotId);
         } catch (Exception e) {
             throw handleException(e);
         }
@@ -97,13 +97,13 @@ public class DeviceController extends BaseController {
 
 
     @PreAuthorize("hasAnyAuthority('TENANT_ADMIN', 'CUSTOMER_USER')")
-    @RequestMapping(value = "/device/sparkbyparcel/{parcelId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/device/sparkbylandlot/{landlotId}", method = RequestMethod.GET)
     @ResponseBody
-    public List<SparkDevice> getSparkDevicesByParcelId(@PathVariable("parcelId") String strParcelId) throws ThingsboardException {
-        checkParameter("parcelId", strParcelId);
+    public List<SparkDevice> getSparkDevicesByLandlotId(@PathVariable("landlotId") String strLandlotId) throws ThingsboardException {
+        checkParameter("landlotId", strLandlotId);
         List<SparkDevice> devices = new ArrayList<>();
         try {
-            devices = mongoService.getMongodbspark().getSparkDevicesByParcelId(strParcelId);
+            devices = mongoService.getMongodbspark().getSparkDevicesByLandlotId(strLandlotId);
         } catch (Exception e) {
             throw handleException(e);
         }
@@ -128,15 +128,15 @@ public class DeviceController extends BaseController {
 
             Device savedDevice = checkNotNull(deviceService.saveDevice(device));
             if (savedDevice.getType().toLowerCase().equals("spark")) {
-                SparkDevice sparkDevice = new SparkDevice(savedDevice.getId().toString(), savedDevice.getParcelId(), device.getTopic(),deviceCredentialsService.findDeviceCredentialsByDeviceId(savedDevice.getId()).getCredentialsId());
+                SparkDevice sparkDevice = new SparkDevice(savedDevice.getId().toString(), savedDevice.getLandlotId(), device.getTopic(),deviceCredentialsService.findDeviceCredentialsByDeviceId(savedDevice.getId()).getCredentialsId());
                 mongoService.getMongodbDevice().saveSparkDevice(sparkDevice);
             } else {
                 if (device.getLocation() != null) {
-                    if (mongoService.getMongodbparcel().checkDeviceInParcel(device.getLocation(), device.getParcelId())) {
-                        SpatialDevice spatialDevice = new SpatialDevice(savedDevice.getId().getId().toString(), savedDevice.getParcelId(), device.getLocation());
+                    if (mongoService.getMongodblandlot().checkDeviceInLandlot(device.getLocation(), device.getLandlotId())) {
+                        SpatialDevice spatialDevice = new SpatialDevice(savedDevice.getId().getId().toString(), savedDevice.getLandlotId(), device.getLocation());
                         mongoService.getMongodbDevice().save(spatialDevice);
                     } else {
-                        throw new IncorrectParameterException("Device not contains in parcel!");
+                        throw new IncorrectParameterException("Device not contains in landlot!");
                     }
                 }
             }
@@ -147,18 +147,18 @@ public class DeviceController extends BaseController {
             BasicTsKvEntry tsKvEntry = new BasicTsKvEntry(millis, value);
             tsService.save(savedDevice.getId(), tsKvEntry);*/
 
-            ParcelId parcelId = ParcelId.fromString(savedDevice.getParcelId());
-            Parcel parcel = parcelService.findParcelById(parcelId);
-            List<UUID> devices = parcel.getDevices();
+            LandlotId landlotId = LandlotId.fromString(savedDevice.getLandlotId());
+            Landlot landlot = landlotService.findLandlotById(landlotId);
+            List<UUID> devices = landlot.getDevices();
             devices.add(savedDevice.getId().getId());
-            parcel.setDevices(devices);
-            parcelService.saveParcel(parcel);
+            landlot.setDevices(devices);
+            landlotService.saveLandlot(landlot);
 
             //----------------------------------------------------------------
             /*ObjectMapper mapper = new ObjectMapper();
-            ParcelId parcelId = new ParcelId(UUID.fromString(savedDevice.getParcelId()));
-            Parcel parcel = parcelService.findParcelById(parcelId);
-            FarmId farmId = new FarmId(UUID.fromString(parcel.getFarmId()));
+            LandlotId landlotId = new LandlotId(UUID.fromString(savedDevice.getLandlotId()));
+            Landlot landlot = landlotService.findLandlotById(landlotId);
+            FarmId farmId = new FarmId(UUID.fromString(landlot.getFarmId()));
             Farm farm = farmService.findFarmById(farmId);
             DashboardId dashboardId = new DashboardId(UUID.fromString(farm.getDashboardId()));
             Dashboard dashboard = dashboardService.findDashboardById(dashboardId);

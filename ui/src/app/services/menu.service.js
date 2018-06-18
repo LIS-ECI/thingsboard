@@ -201,9 +201,9 @@ function Menu(userService, $state, $rootScope) {
                             icon: 'domain'
                         },
                         {
-                            name: 'parcel.parcels',
+                            name: 'landlot.landlots',
                             type: 'link',
-                            state: 'home.parcels',
+                            state: 'home.landlots',
                             icon: 'domain'
                         },
                         {

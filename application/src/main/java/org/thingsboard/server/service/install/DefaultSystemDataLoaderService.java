@@ -56,8 +56,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
-import org.thingsboard.server.common.data.parcel.Parcel;
-import org.thingsboard.server.common.data.id.ParcelId;
+import org.thingsboard.server.common.data.landlot.Landlot;
+import org.thingsboard.server.common.data.id.LandlotId;
 
 @Service
 @Profile("install")
@@ -272,13 +272,13 @@ public class DefaultSystemDataLoaderService implements SystemDataLoaderService {
                                 String name,
                                 String accessToken,
                                 String description,
-                                String parcelId) {
+                                String landlotId) {
         Device device = new Device();
         device.setTenantId(tenantId);
         device.setCustomerId(customerId);
         device.setType(type);
         device.setName(name);
-        device.setParcelId(parcelId);
+        device.setLandlotId(landlotId);
         if (description != null) {
             ObjectNode additionalInfo = objectMapper.createObjectNode();
             additionalInfo.put("description", description);

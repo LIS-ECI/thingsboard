@@ -28,7 +28,7 @@ import org.thingsboard.server.common.data.page.TextPageLink;
 
 import java.util.List;
 import java.util.Optional;
-import org.thingsboard.server.common.data.id.ParcelId;
+import org.thingsboard.server.common.data.id.LandlotId;
 import org.thingsboard.server.dao.model.nosql.DeviceEntity;
 
 public interface DeviceService {

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.thingsboard.server.common.data.parcel;
+package org.thingsboard.server.common.data.landlot;
 
 import java.util.Collections;
 import java.util.List;
@@ -19,18 +19,18 @@ import org.thingsboard.server.common.data.relation.RelationsSearchParameters;
  * @German Lopez
  */
 @Data
-public class ParcelSearchQuery {
+public class LandlotSearchQuery {
     
     private RelationsSearchParameters parameters;
     private String relationType;
-    private List<String> parcelTypes;
+    private List<String> landlotTypes;
 
     public EntityRelationsQuery toEntitySearchQuery() {
         EntityRelationsQuery query = new EntityRelationsQuery();
         query.setParameters(parameters);
         query.setFilters(
                 Collections.singletonList(new EntityTypeFilter(relationType == null ? EntityRelation.CONTAINS_TYPE : relationType,
-                        Collections.singletonList(EntityType.PARCEL))));
+                        Collections.singletonList(EntityType.LANDLOT))));
         return query;
     }
     

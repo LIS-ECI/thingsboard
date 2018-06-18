@@ -5,7 +5,7 @@
  */
 package org.thingsboard.server.dao.mongo;
 
-import org.thingsboard.server.common.data.SpatialParcel;
+import org.thingsboard.server.common.data.SpatialLandlot;
 import org.thingsboard.server.common.data.SpatialDevice;
 import org.thingsboard.server.common.data.SpatialFarm;
 
@@ -19,9 +19,9 @@ public interface SpatialIndexes {
     
     public SpatialFarm findFarmsByDeviceId(String device_id) throws MongoDBException;
     
-    public SpatialParcel findParcelsByDeviceId(String device_id) throws MongoDBException;
+    public SpatialLandlot findLandlotsByDeviceId(String device_id) throws MongoDBException;
     
     public SpatialDevice getCoordenatesByDeviceId(String device_id) throws MongoDBException;
 
-    public String getTokenByIdParcelTopic(String idParcel, String topic) throws MongoDBException;
+    public String getTokenByIdLandlotTopic(String idLandlot, String topic) throws MongoDBException;
 }

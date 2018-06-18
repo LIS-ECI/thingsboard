@@ -104,7 +104,7 @@ function DashboardLayoutController($scope, $rootScope, $translate, $window, hotk
     var Map;
     var tempLatitude = -34.397;
     var tempLongitude = 150.644;
-    var drawMapsParcels = [];
+    var drawMapsLandlots = [];
     var alarm= false;
 
     function showMap() {
@@ -115,7 +115,7 @@ function DashboardLayoutController($scope, $rootScope, $translate, $window, hotk
         var drawMap = [];
         dashboardService.getFarmByDashboardId($window.sessionStorage.getItem('dashboardId')).then(
             function success(farm) {
-                var parcelsFarm = [];
+                var landlotsFarm = [];
                 $log.log("esta es la finca farm:");
                 $log.log(farm);
 
@@ -155,17 +155,17 @@ function DashboardLayoutController($scope, $rootScope, $translate, $window, hotk
         
                 drawPolygon();
 
-                farmService.getParcelsByFarmId(farm.id).then(function(result){
-                    parcelsFarm = result;
-                    $log.log("parcelfarms");
+                farmService.getLandlotsByFarmId(farm.id).then(function(result){
+                    landlotsFarm = result;
+                    $log.log("landlotfarms");
                     $log.log(result);
-                    if(parcelsFarm.length > 0){
-                        for(var i = 0;i< parcelsFarm.length; i++){
-                            verifyspark(parcelsFarm[i]);
+                    if(landlotsFarm.length > 0){
+                        for(var i = 0;i< landlotsFarm.length; i++){
+                            verifyspark(landlotsFarm[i]);
                         }
-                        for(var k = 0;k< parcelsFarm.length; k++){
+                        for(var k = 0;k< landlotsFarm.length; k++){
 
-                            dashboardService.getDevicesByParcelId(parcelsFarm[k].id).then(function(result2){
+                            dashboardService.getDevicesByLandlotId(landlotsFarm[k].id).then(function(result2){
                                 for(var m = 0;m< result2.length; m++){
                                     if (result2[m].point !== null){
                                         verifyalarms(result2[m]);
@@ -185,14 +185,14 @@ function DashboardLayoutController($scope, $rootScope, $translate, $window, hotk
 
     showMap();
 
-    function verifyspark(Parcel){
+    function verifyspark(Landlot){
         $log.log("verify spark ");
-        $log.log(Parcel);
-        dashboardService.getSparkDevicesByParcelId(Parcel.id).then(function(sparkdevice){
+        $log.log(Landlot);
+        dashboardService.getSparkDevicesByLandlotId(Landlot.id).then(function(sparkdevice){
         if (sparkdevice.length>0){
            for(var y = 0;y< sparkdevice.length; y++){
                 if (!alarm){
-                    addsparkalerts(Parcel,sparkdevice[y].id);
+                    addsparkalerts(Landlot,sparkdevice[y].id);
                 }
                 else{
                     break;
@@ -203,60 +203,60 @@ function DashboardLayoutController($scope, $rootScope, $translate, $window, hotk
         
         }
         else{
-            for(var yy = 0; yy < Parcel.polygons.coordinates[0].length;yy++){
-                    drawMapsParcels.push({lat: Parcel.polygons.coordinates[0][yy][1],lng: Parcel.polygons.coordinates[0][yy][0]});
+            for(var yy = 0; yy < Landlot.polygons.coordinates[0].length;yy++){
+                    drawMapsLandlots.push({lat: Landlot.polygons.coordinates[0][yy][1],lng: Landlot.polygons.coordinates[0][yy][0]});
                 }
                 $log.log("no hay spark devices ");
-                $log.log(Parcel.id);
+                $log.log(Landlot.id);
                 new google.maps.Polygon({
-                paths: drawMapsParcels,
+                paths: drawMapsLandlots,
                 strokeColor: '#F00000',
                 strokeOpacity: 0.8,
                 strokeWeight: 2,
                 fillOpacity: 0.35
             }).setMap(Map);
-            drawMapsParcels = [];
+            drawMapsLandlots = [];
         }
 
         });
     }
 
 
-   function addsparkalerts(parcel,sparkdeviceid){
+   function addsparkalerts(landlot,sparkdeviceid){
 
         alarmService.getHighestAlarmSeverity("DEVICE",sparkdeviceid).then(function(severity){
             if (severity!==""){
-                for(var h = 0; h < parcel.polygons.coordinates[0].length;h++){
-                    drawMapsParcels.push({lat: parcel.polygons.coordinates[0][h][1],lng: parcel.polygons.coordinates[0][h][0]});
+                for(var h = 0; h < landlot.polygons.coordinates[0].length;h++){
+                    drawMapsLandlots.push({lat: landlot.polygons.coordinates[0][h][1],lng: landlot.polygons.coordinates[0][h][0]});
                 }
-                $log.log("entroooo alertaaaa en el parcel ");
-                $log.log(parcel.id);
+                $log.log("entroooo alertaaaa en el landlot ");
+                $log.log(landlot.id);
                 new google.maps.Polygon({
-                paths: drawMapsParcels,
+                paths: drawMapsLandlots,
                 strokeColor: '#F00000',
                 strokeOpacity: 0.8,
                 strokeWeight: 2,
                 fillColor: '#F00000',
                 fillOpacity: 0.35
                 }).setMap(Map);
-                    drawMapsParcels = [];
+                    drawMapsLandlots = [];
                 alarm=true;
             }
 
             else{
-                for(var hh = 0; hh < parcel.polygons.coordinates[0].length;hh++){
-                    drawMapsParcels.push({lat: parcel.polygons.coordinates[0][hh][1],lng: parcel.polygons.coordinates[0][hh][0]});
+                for(var hh = 0; hh < landlot.polygons.coordinates[0].length;hh++){
+                    drawMapsLandlots.push({lat: landlot.polygons.coordinates[0][hh][1],lng: landlot.polygons.coordinates[0][hh][0]});
                 }
                 $log.log("no hay alerta ");
-                $log.log(parcel.id);
+                $log.log(landlot.id);
                 new google.maps.Polygon({
-                paths: drawMapsParcels,
+                paths: drawMapsLandlots,
                 strokeColor: '#F00000',
                 strokeOpacity: 0.8,
                 strokeWeight: 2,
                 fillOpacity: 0.35
             }).setMap(Map);
-            drawMapsParcels = [];
+            drawMapsLandlots = [];
             
             }
         });

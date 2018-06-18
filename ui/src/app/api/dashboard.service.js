@@ -44,8 +44,8 @@ function DashboardService($rootScope, $http, $q, $location, $filter) {
         makeDashboardPublic: makeDashboardPublic,
         makeDashboardPrivate: makeDashboardPrivate,
         getPublicDashboardLink: getPublicDashboardLink,
-        getDevicesByParcelId: getDevicesByParcelId,
-        getSparkDevicesByParcelId :getSparkDevicesByParcelId
+        getDevicesByLandlotId: getDevicesByLandlotId,
+        getSparkDevicesByLandlotId :getSparkDevicesByLandlotId
     }
 
     return service;
@@ -150,9 +150,9 @@ function DashboardService($rootScope, $http, $q, $location, $filter) {
         return deferred.promise;
     }
 
-    function getDevicesByParcelId(parcelId) {
+    function getDevicesByLandlotId(landlotId) {
         var deferred = $q.defer();
-        var url = '/api/device/devicesbyparcel/' + parcelId;
+        var url = '/api/device/devicesbylandlot/' + landlotId;
         $http.get(url, null).then(function success(response) {
             deferred.resolve(prepareDashboard(response.data));
         }, function fail() {
@@ -161,9 +161,9 @@ function DashboardService($rootScope, $http, $q, $location, $filter) {
         return deferred.promise;
     }
 
-    function getSparkDevicesByParcelId(parcelId) {
+    function getSparkDevicesByLandlotId(landlotId) {
         var deferred = $q.defer();
-        var url = '/api/device/sparkbyparcel/' + parcelId;
+        var url = '/api/device/sparkbylandlot/' + landlotId;
         $http.get(url, null).then(function success(response) {
             deferred.resolve(prepareDashboard(response.data));
         }, function fail() {

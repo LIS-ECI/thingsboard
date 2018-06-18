@@ -1,36 +1,36 @@
 
 
-export default angular.module('thingsboard.api.parcel', [])
-    .factory('parcelService', ParcelService)
+export default angular.module('thingsboard.api.landlot', [])
+    .factory('landlotService', LandlotService)
     .name;
 
 /*@ngInject*/
-function ParcelService($http, $q, customerService, userService, $log) {
+function LandlotService($http, $q, customerService, userService, $log) {
 
     var service = {
-        getParcel: getParcel,
-        getParcels: getParcels,
-        getAllparcels: getAllparcels,
-        saveParcel: saveParcel,
-        deleteParcel: deleteParcel,
-        assignParcelToCustomer: assignParcelToCustomer,
-        unassignParcelFromCustomer: unassignParcelFromCustomer,
-        makeParcelPublic: makeParcelPublic,
-        getTenantParcels: getTenantParcels,
-        getCustomerParcels: getCustomerParcels,
+        getLandlot: getLandlot,
+        getLandlots: getLandlots,
+        getAlllandlots: getAlllandlots,
+        saveLandlot: saveLandlot,
+        deleteLandlot: deleteLandlot,
+        assignLandlotToCustomer: assignLandlotToCustomer,
+        unassignLandlotFromCustomer: unassignLandlotFromCustomer,
+        makeLandlotPublic: makeLandlotPublic,
+        getTenantLandlots: getTenantLandlots,
+        getCustomerLandlots: getCustomerLandlots,
         findByQuery: findByQuery,
-        fetchParcelsByNameFilter: fetchParcelsByNameFilter,
-        getParcelTypes: getParcelTypes,
+        fetchLandlotsByNameFilter: fetchLandlotsByNameFilter,
+        getLandlotTypes: getLandlotTypes,
         getHistoricalValues: getHistoricalValues,
-        getImagesByParcelId: getImagesByParcelId,
+        getImagesByLandlotId: getImagesByLandlotId,
         getFilesDates: getFilesDates
     }
 
     return service;
 
-    function getParcel(parcelId, ignoreErrors, config) {
+    function getLandlot(landlotId, ignoreErrors, config) {
         var deferred = $q.defer();
-        var url = '/api/parcel/' + parcelId;
+        var url = '/api/landlot/' + landlotId;
         if (!config) {
             config = {};
         }
@@ -43,39 +43,39 @@ function ParcelService($http, $q, customerService, userService, $log) {
         return deferred.promise;
     }
 
-    function getParcels(parcelIds, config) {
+    function getLandlots(landlotIds, config) {
         var deferred = $q.defer();
         var ids = '';
-        for (var i=0;i<parcelIds.length;i++) {
+        for (var i=0;i<landlotIds.length;i++) {
             if (i>0) {
                 ids += ',';
             }
-            ids += parcelIds[i];
+            ids += landlotIds[i];
         }
-        var url = '/api/parcels?parcelIds=' + ids;
+        var url = '/api/landlots?landlotIds=' + ids;
         $http.get(url, config).then(function success(response) {
-            var parcels = response.data;
-            parcels.sort(function (parcel1, parcel2) {
-                var id1 =  parcel1.id.id;
-                var id2 =  parcel2.id.id;
-                var index1 = parcelIds.indexOf(id1);
-                var index2 = parcelIds.indexOf(id2);
+            var landlots = response.data;
+            landlots.sort(function (landlot1, landlot2) {
+                var id1 =  landlot1.id.id;
+                var id2 =  landlot2.id.id;
+                var index1 = landlotIds.indexOf(id1);
+                var index2 = landlotIds.indexOf(id2);
                 return index1 - index2;
             });
-            deferred.resolve(parcels);
+            deferred.resolve(landlots);
         }, function fail() {
             deferred.reject();
         });
         return deferred.promise;
     }
 
-    function getAllparcels(config) {
+    function getAlllandlots(config) {
         var deferred = $q.defer();
-        var parcels;
-        var url = '/api/Allparcels';
+        var landlots;
+        var url = '/api/Alllandlots';
         $http.get(url,config).then(function success(response) {
-            parcels=response.data;
-            deferred.resolve(parcels);
+            landlots=response.data;
+            deferred.resolve(landlots);
         }, function fail() {
             deferred.reject();
         });
@@ -85,7 +85,7 @@ function ParcelService($http, $q, customerService, userService, $log) {
     function getFilesDates(startDate,finishDate,config) {
         $log.log("Entró a getFilesDates");
         var deferred = $q.defer();
-        var url = '/api/parcel/files/'+startDate+"/"+finishDate;
+        var url = '/api/landlot/files/'+startDate+"/"+finishDate;
         $http.get(url,config).then(function success(response) {
             deferred.resolve(response.data);
         }, function fail() {
@@ -95,9 +95,9 @@ function ParcelService($http, $q, customerService, userService, $log) {
     }
 
 
-    function getImagesByParcelId(parcelId,date,config) {
+    function getImagesByLandlotId(landlotId,date,config) {
         var deferred = $q.defer();
-        var url = '/api/parcel/image/'+parcelId+"/"+date;
+        var url = '/api/landlot/image/'+landlotId+"/"+date;
         $http.get(url,config).then(function success(response) {
             deferred.resolve(response.data);
         }, function fail() {
@@ -107,15 +107,15 @@ function ParcelService($http, $q, customerService, userService, $log) {
         return deferred.promise;
     }
 
-    function saveParcel(parcel, ignoreErrors, config) {
-        $log.log(parcel);
+    function saveLandlot(landlot, ignoreErrors, config) {
+        $log.log(landlot);
         var deferred = $q.defer();
-        var url = '/api/parcel';
+        var url = '/api/landlot';
         if (!config) {
             config = {};
         }
         config = Object.assign(config, { ignoreErrors: ignoreErrors });
-        $http.post(url, parcel, config).then(function success(response) {
+        $http.post(url, landlot, config).then(function success(response) {
             deferred.resolve(response.data);
         }, function fail() {
             deferred.reject();
@@ -123,9 +123,9 @@ function ParcelService($http, $q, customerService, userService, $log) {
         return deferred.promise;
     }
 
-    function deleteParcel(parcelId, ignoreErrors, config) {
+    function deleteLandlot(landlotId, ignoreErrors, config) {
         var deferred = $q.defer();
-        var url = '/api/parcel/' + parcelId;
+        var url = '/api/landlot/' + landlotId;
         if (!config) {
             config = {};
         }
@@ -138,9 +138,9 @@ function ParcelService($http, $q, customerService, userService, $log) {
         return deferred.promise;
     }
 
-    function assignParcelToCustomer(customerId, parcelId, ignoreErrors, config) {
+    function assignLandlotToCustomer(customerId, landlotId, ignoreErrors, config) {
         var deferred = $q.defer();
-        var url = '/api/customer/' + customerId + '/parcel/' + parcelId;
+        var url = '/api/customer/' + customerId + '/landlot/' + landlotId;
         if (!config) {
             config = {};
         }
@@ -153,9 +153,9 @@ function ParcelService($http, $q, customerService, userService, $log) {
         return deferred.promise;
     }
 
-    function unassignParcelFromCustomer(parcelId, ignoreErrors, config) {
+    function unassignLandlotFromCustomer(landlotId, ignoreErrors, config) {
         var deferred = $q.defer();
-        var url = '/api/customer/parcel/' + parcelId;
+        var url = '/api/customer/landlot/' + landlotId;
         if (!config) {
             config = {};
         }
@@ -168,9 +168,9 @@ function ParcelService($http, $q, customerService, userService, $log) {
         return deferred.promise;
     }
 
-    function makeParcelPublic(parcelId, ignoreErrors, config) {
+    function makeLandlotPublic(landlotId, ignoreErrors, config) {
         var deferred = $q.defer();
-        var url = '/api/customer/public/parcel/' + parcelId;
+        var url = '/api/customer/public/landlot/' + landlotId;
         if (!config) {
             config = {};
         }
@@ -183,9 +183,9 @@ function ParcelService($http, $q, customerService, userService, $log) {
         return deferred.promise;
     }
 
-    function getTenantParcels(pageLink, applyCustomersInfo, config, type) {
+    function getTenantLandlots(pageLink, applyCustomersInfo, config, type) {
         var deferred = $q.defer();
-        var url = '/api/tenant/parcels?limit=' + pageLink.limit;
+        var url = '/api/tenant/landlots?limit=' + pageLink.limit;
         if (angular.isDefined(pageLink.textSearch)) {
             url += '&textSearch=' + pageLink.textSearch;
         }
@@ -218,9 +218,9 @@ function ParcelService($http, $q, customerService, userService, $log) {
         return deferred.promise;
     }
 
-    function getCustomerParcels(customerId, pageLink, applyCustomersInfo, config, type) {
+    function getCustomerLandlots(customerId, pageLink, applyCustomersInfo, config, type) {
         var deferred = $q.defer();
-        var url = '/api/customer/' + customerId + '/parcels?limit=' + pageLink.limit;
+        var url = '/api/customer/' + customerId + '/landlots?limit=' + pageLink.limit;
         if (angular.isDefined(pageLink.textSearch)) {
             url += '&textSearch=' + pageLink.textSearch;
         }
@@ -256,7 +256,7 @@ function ParcelService($http, $q, customerService, userService, $log) {
 
     function findByQuery(query, ignoreErrors, config) {
         var deferred = $q.defer();
-        var url = '/api/parcels';
+        var url = '/api/landlots';
         if (!config) {
             config = {};
         }
@@ -269,16 +269,16 @@ function ParcelService($http, $q, customerService, userService, $log) {
         return deferred.promise;
     }
 
-    function fetchParcelsByNameFilter(parcelNameFilter, limit, applyCustomersInfo, config) {
+    function fetchLandlotsByNameFilter(landlotNameFilter, limit, applyCustomersInfo, config) {
         var deferred = $q.defer();
         var user = userService.getCurrentUser();
         var promise;
-        var pageLink = {limit: limit, textSearch: parcelNameFilter};
+        var pageLink = {limit: limit, textSearch: landlotNameFilter};
         if (user.authority === 'CUSTOMER_USER') {
             var customerId = user.customerId;
-            promise = getCustomerParcels(customerId, pageLink, applyCustomersInfo, config);
+            promise = getCustomerLandlots(customerId, pageLink, applyCustomersInfo, config);
         } else {
-            promise = getTenantParcels(pageLink, applyCustomersInfo, config);
+            promise = getTenantLandlots(pageLink, applyCustomersInfo, config);
         }
         promise.then(
             function success(result) {
@@ -295,9 +295,9 @@ function ParcelService($http, $q, customerService, userService, $log) {
         return deferred.promise;
     }
 
-    function getParcelTypes(config) {
+    function getLandlotTypes(config) {
         var deferred = $q.defer();
-        var url = '/api/parcel/types';
+        var url = '/api/landlot/types';
         $http.get(url, config).then(function success(response) {
             deferred.resolve(response.data);
         }, function fail() {
@@ -306,9 +306,9 @@ function ParcelService($http, $q, customerService, userService, $log) {
         return deferred.promise;
     }
 
-    function getHistoricalValues(parcelId, minDate, maxDate, ignoreErrors, config) {
+    function getHistoricalValues(landlotId, minDate, maxDate, ignoreErrors, config) {
         var deferred = $q.defer();
-        var url = '/api/parcel/historical/' + parcelId+'/'+String(minDate)+'/'+String(maxDate);
+        var url = '/api/landlot/historical/' + landlotId+'/'+String(minDate)+'/'+String(maxDate);
         if (!config) {
             config = {};
         }

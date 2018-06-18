@@ -25,13 +25,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.thingsboard.server.common.data.id.EntityId;
-import org.thingsboard.server.common.data.id.ParcelId;
+import org.thingsboard.server.common.data.id.LandlotId;
 import org.thingsboard.server.common.data.kv.AttributeKvEntry;
 import org.thingsboard.server.common.data.kv.BaseAttributeKvEntry;
-import org.thingsboard.server.common.data.parcel.Parcel;
+import org.thingsboard.server.common.data.landlot.Landlot;
 import org.thingsboard.server.dao.model.ModelConstants;
 import org.thingsboard.server.dao.nosql.CassandraAbstractAsyncDao;
-import org.thingsboard.server.dao.parcel.ParcelService;
+import org.thingsboard.server.dao.landlot.LandlotService;
 import org.thingsboard.server.dao.timeseries.CassandraBaseTimeseriesDao;
 import org.thingsboard.server.dao.util.NoSqlDao;
 
@@ -57,7 +57,7 @@ public class CassandraBaseAttributesDao extends CassandraAbstractAsyncDao implem
     private PreparedStatement saveStmt;
 
     @Autowired
-    protected ParcelService parcelService;
+    protected LandlotService landlotService;
 
     @PostConstruct
     public void init() {
@@ -106,7 +106,7 @@ public class CassandraBaseAttributesDao extends CassandraAbstractAsyncDao implem
     }
 
     @Override
-    public Map<String, TreeMap<Long, Double>> getHistoricalValues(String parcelId, long date) {
+    public Map<String, TreeMap<Long, Double>> getHistoricalValues(String landlotId, long date) {
         long dayts = 86400000L;
         Map<String, TreeMap<Long, Double>> data = new HashMap<>();
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -118,11 +118,11 @@ public class CassandraBaseAttributesDao extends CassandraAbstractAsyncDao implem
             long tsTime1 = timestampmin.getTime();
             long tsTime2 = tsTime1 + dayts;
 
-            //Obtener el parcel
-            ParcelId parcelIdUUID = ParcelId.fromString(parcelId);
-            Parcel parcel = parcelService.findParcelById(parcelIdUUID);
-            List<UUID> devices = parcel.getDevices();
-            //Por cada elemento del arreglo del parcel ir acumulando
+            //Obtener el landlot
+            LandlotId landlotIdUUID = LandlotId.fromString(landlotId);
+            Landlot landlot = landlotService.findLandlotById(landlotIdUUID);
+            List<UUID> devices = landlot.getDevices();
+            //Por cada elemento del arreglo del landlot ir acumulando
             for (UUID device_id : devices) {
 
                 Select select = select(KEY_COLUMN, TS_COLUMN, STRING_VALUE_COLUMN).from(TS_KV_CF).allowFiltering();

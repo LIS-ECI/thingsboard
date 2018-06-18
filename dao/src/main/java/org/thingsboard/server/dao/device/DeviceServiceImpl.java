@@ -52,7 +52,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.thingsboard.server.common.data.CacheConstants.DEVICE_CACHE;
-import org.thingsboard.server.common.data.id.ParcelId;
+import org.thingsboard.server.common.data.id.LandlotId;
 import static org.thingsboard.server.dao.DaoUtil.toUUIDs;
 import static org.thingsboard.server.dao.model.ModelConstants.NULL_UUID;
 import org.thingsboard.server.dao.model.nosql.DeviceEntity;

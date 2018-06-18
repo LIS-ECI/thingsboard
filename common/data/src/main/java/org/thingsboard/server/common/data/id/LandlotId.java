@@ -15,22 +15,22 @@ import org.thingsboard.server.common.data.EntityType;
  *
  * @author German Lopez
  */
-public class ParcelId extends UUIDBased implements EntityId {
+public class LandlotId extends UUIDBased implements EntityId {
 
     private static final long serialVersionUID = 1L;
 
     @JsonCreator
-    public ParcelId(@JsonProperty("id") UUID id) {
+    public LandlotId(@JsonProperty("id") UUID id) {
         super(id);
     }
 
-    public static ParcelId fromString(String parcelId) {
-        return new ParcelId(UUID.fromString(parcelId));
+    public static LandlotId fromString(String landlotId) {
+        return new LandlotId(UUID.fromString(landlotId));
     }
 
     @JsonIgnore
     @Override
     public EntityType getEntityType() {
-        return EntityType.PARCEL;
+        return EntityType.LANDLOT;
     }
 }

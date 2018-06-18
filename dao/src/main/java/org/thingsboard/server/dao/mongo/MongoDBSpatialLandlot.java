@@ -18,20 +18,20 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.thingsboard.server.common.data.Point;
-import org.thingsboard.server.common.data.SpatialParcel;
+import org.thingsboard.server.common.data.SpatialLandlot;
 
 /**
  *
  * @author Carlos Ramirez
  */
-public class MongoDBSpatialParcel extends MongoConnectionPOJO<SpatialParcel> implements DaoMongo<SpatialParcel> {
+public class MongoDBSpatialLandlot extends MongoConnectionPOJO<SpatialLandlot> implements DaoMongo<SpatialLandlot> {
 
-    public MongoDBSpatialParcel(){
+    public MongoDBSpatialLandlot(){
         getCollectionDependClass().createIndex(Indexes.geo2dsphere("polygons"));
     }
 
-    public SpatialParcel findNearestParcel(Point p){
-        SpatialParcel nearSp = null;
+    public SpatialLandlot findNearestLandlot(Point p){
+        SpatialLandlot nearSp = null;
         getCollectionDependClass().createIndex(Indexes.geo2dsphere("polygons"));
         Document doc = new Document("polygons",new Document("$near",new Document("$geometry",new Document("type", "Point").append("coordinates", p.getCoordinates()))));
         nearSp = getCollectionDependClass().find(doc).first();
@@ -39,33 +39,33 @@ public class MongoDBSpatialParcel extends MongoConnectionPOJO<SpatialParcel> imp
     }
 
     @Override
-    public MongoCollection<SpatialParcel> getCollectionDependClass() {
-        return this.getMongoDatabase().getCollection("Parcels", SpatialParcel.class);
+    public MongoCollection<SpatialLandlot> getCollectionDependClass() {
+        return this.getMongoDatabase().getCollection("Landlots", SpatialLandlot.class);
     }
 
     @Override
-    public List<SpatialParcel> find() {
-        MongoCollection<SpatialParcel> farmCollection = getCollectionDependClass();
-        List<SpatialParcel> resultSet = new CopyOnWriteArrayList<>();
-        farmCollection.find().forEach((Block<SpatialParcel>) parcel -> {
-            resultSet.add(parcel);
+    public List<SpatialLandlot> find() {
+        MongoCollection<SpatialLandlot> farmCollection = getCollectionDependClass();
+        List<SpatialLandlot> resultSet = new CopyOnWriteArrayList<>();
+        farmCollection.find().forEach((Block<SpatialLandlot>) landlot -> {
+            resultSet.add(landlot);
         });
         return resultSet;
     }
 
     @Override
-    public SpatialParcel findById(String id) {
+    public SpatialLandlot findById(String id) {
         return getCollectionDependClass().find(eq("_id", id)).first();
     }
     
-    public boolean checkDeviceInParcel(Point point, String farmId) {
-        List<SpatialParcel> resultSet = new CopyOnWriteArrayList<>();
-        getCollectionDependClass().find(Filters.geoIntersects("polygons", new Document("type", "Point").append("coordinates", point.getCoordinates()))).forEach((Block<SpatialParcel>) crop -> {
+    public boolean checkDeviceInLandlot(Point point, String farmId) {
+        List<SpatialLandlot> resultSet = new CopyOnWriteArrayList<>();
+        getCollectionDependClass().find(Filters.geoIntersects("polygons", new Document("type", "Point").append("coordinates", point.getCoordinates()))).forEach((Block<SpatialLandlot>) crop -> {
             if(crop.getId().equals(farmId)){
                 resultSet.add(crop);
             }
         });
-        for (SpatialParcel spatialCrop : resultSet) {
+        for (SpatialLandlot spatialCrop : resultSet) {
             if(spatialCrop.getId().equals(farmId)){
                 return true;
             }
@@ -75,7 +75,7 @@ public class MongoDBSpatialParcel extends MongoConnectionPOJO<SpatialParcel> imp
 
     @Override
     //Revisar que poligono del lote este contenido en el poligono de la finca
-    public SpatialParcel save(SpatialParcel t){
+    public SpatialLandlot save(SpatialLandlot t){
         try{
             if(this.findById(t.getId()) == null){
                 getCollectionDependClass().insertOne(t);
@@ -84,7 +84,7 @@ public class MongoDBSpatialParcel extends MongoConnectionPOJO<SpatialParcel> imp
             }
             return t;
         }catch(MongoWriteException ex){
-            System.out.println("No fue posible agregar el parcel");
+            System.out.println("No fue posible agregar el landlot");
             
         }
         return null;

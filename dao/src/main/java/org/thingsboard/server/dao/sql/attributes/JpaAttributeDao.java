@@ -116,7 +116,7 @@ public class JpaAttributeDao extends JpaAbstractDaoListeningExecutorService impl
     }
 
     @Override
-    public HashMap<String, TreeMap<Long, Double>> getHistoricalValues(String parcelId, long date) {
+    public HashMap<String, TreeMap<Long, Double>> getHistoricalValues(String landlotId, long date) {
         HashMap<String, TreeMap<Long, Double>> data= new HashMap<>();
         return data;
     }

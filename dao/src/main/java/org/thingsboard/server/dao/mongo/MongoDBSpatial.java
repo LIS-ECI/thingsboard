@@ -7,7 +7,7 @@ package org.thingsboard.server.dao.mongo;
 
 import com.mongodb.Block;
 import org.thingsboard.server.common.data.SparkDevice;
-import org.thingsboard.server.common.data.SpatialParcel;
+import org.thingsboard.server.common.data.SpatialLandlot;
 import org.thingsboard.server.common.data.SpatialDevice;
 import org.thingsboard.server.common.data.SpatialFarm;
 import static com.mongodb.client.model.Filters.and;
@@ -21,22 +21,22 @@ import java.util.List;
  */
 public class MongoDBSpatial extends MongoConnection implements SpatialIndexes {
 
-    private final MongoDBSpatialParcel mongodbparcel;
+    private final MongoDBSpatialLandlot mongodblandlot;
     private final MongoDBSpatialFarm mongodbFarm;
     private final MongoDBSpatialDevice mongodbDevice;
     private final MongoDBSpatialSpark mongodbspark;
     private final MongoDbImage mongodbimage;
 
     public MongoDBSpatial() {
-        mongodbparcel = new MongoDBSpatialParcel();
+        mongodblandlot = new MongoDBSpatialLandlot();
         mongodbFarm = new MongoDBSpatialFarm();
         mongodbDevice = new MongoDBSpatialDevice();
         mongodbspark = new MongoDBSpatialSpark();
-        mongodbimage = new MongoDbImage(mongodbparcel);
+        mongodbimage = new MongoDbImage(mongodblandlot);
     }
 
-    public MongoDBSpatialParcel getMongodbparcel() {
-        return mongodbparcel;
+    public MongoDBSpatialLandlot getMongodblandlot() {
+        return mongodblandlot;
     }
 
     public MongoDBSpatialFarm getMongodbFarm() {
@@ -55,20 +55,20 @@ public class MongoDBSpatial extends MongoConnection implements SpatialIndexes {
     public SpatialFarm findFarmsByDeviceId(String device_id) throws MongoDBException {
         try {
             SpatialDevice sdt = mongodbDevice.findById(device_id);
-            SpatialParcel sct = mongodbparcel.findById(sdt.getDevice_Parcel_FK());
-            return mongodbFarm.findById(sct.getParcel_Farm_FK());
+            SpatialLandlot sct = mongodblandlot.findById(sdt.getDevice_Landlot_FK());
+            return mongodbFarm.findById(sct.getLandlot_Farm_FK());
         } catch (NullPointerException ex) {
             throw new MongoDBException("It wasn´t posible to load the farm associated with device!!");
         }
     }
 
     @Override
-    public SpatialParcel findParcelsByDeviceId(String device_id) throws MongoDBException {
+    public SpatialLandlot findLandlotsByDeviceId(String device_id) throws MongoDBException {
         try {
             SpatialDevice sdt = mongodbDevice.findById(device_id);
-            return mongodbparcel.findById(sdt.getDevice_Parcel_FK());
+            return mongodblandlot.findById(sdt.getDevice_Landlot_FK());
         } catch (NullPointerException ex) {
-            throw new MongoDBException("It wasn´t posible to load the parcel associated with device!!");
+            throw new MongoDBException("It wasn´t posible to load the landlot associated with device!!");
         }
     }
 
@@ -78,10 +78,10 @@ public class MongoDBSpatial extends MongoConnection implements SpatialIndexes {
     }
 
     @Override
-    public String getTokenByIdParcelTopic(String idParcel, String topic) throws MongoDBException {
+    public String getTokenByIdLandlotTopic(String idLandlot, String topic) throws MongoDBException {
         StringBuilder token = new StringBuilder();
-        System.out.println("get token: idParcel:"+idParcel+" topic: "+topic);
-        mongodbspark.getCollectionDependClass().find(and(eq("idParcel",idParcel),eq("topic",topic))).forEach((Block<SparkDevice>) sparkDevice -> {
+        System.out.println("get token: idLandlot:"+idLandlot+" topic: "+topic);
+        mongodbspark.getCollectionDependClass().find(and(eq("idLandlot",idLandlot),eq("topic",topic))).forEach((Block<SparkDevice>) sparkDevice -> {
             token.append(sparkDevice.getId());
         });
         return token.toString();

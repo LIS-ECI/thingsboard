@@ -9,17 +9,17 @@ package org.thingsboard.server.common.data;
  *
  * @author Carlos Ramirez
  */
-public class SpatialParcel {
+public class SpatialLandlot {
 
-    private String id, parcel_Farm_FK;
+    private String id, landlot_Farm_FK;
     private Polygon polygons;
 
-    public SpatialParcel() {
+    public SpatialLandlot() {
     }
 
-    public SpatialParcel(String id, String parcel_Farm_FK, Polygon polygons) {
+    public SpatialLandlot(String id, String landlot_Farm_FK, Polygon polygons) {
         this.id = id;
-        this.parcel_Farm_FK = parcel_Farm_FK;
+        this.landlot_Farm_FK = landlot_Farm_FK;
         this.polygons = polygons;
     }
 
@@ -31,12 +31,12 @@ public class SpatialParcel {
         this.id = id;
     }
 
-    public String getParcel_Farm_FK() {
-        return parcel_Farm_FK;
+    public String getLandlot_Farm_FK() {
+        return landlot_Farm_FK;
     }
 
-    public void setParcel_Farm_FK(String parcel_Farm_FK) {
-        this.parcel_Farm_FK = parcel_Farm_FK;
+    public void setLandlot_Farm_FK(String landlot_Farm_FK) {
+        this.landlot_Farm_FK = landlot_Farm_FK;
     }
 
     public Polygon getPolygons() {
@@ -49,7 +49,7 @@ public class SpatialParcel {
     
     @Override
     public String toString(){
-        return ("ParcelId: "+id+" ,parcel_Farm_FK: "+parcel_Farm_FK+" ,polygon: "+polygons.getCoordinates());
+        return ("LandlotId: "+id+" ,landlot_Farm_FK: "+landlot_Farm_FK+" ,polygon: "+polygons.getCoordinates());
     }
 
 }

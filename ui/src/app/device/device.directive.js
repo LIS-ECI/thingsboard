@@ -21,7 +21,7 @@ import deviceFieldsetTemplate from './device-fieldset.tpl.html';
 
 /* global google */
 /*@ngInject*/
-export default function DeviceDirective($compile, $templateCache, toast, $translate, types, clipboardService, parcelService, deviceService, dashboardService, farmService, alarmService, customerService, $log) {
+export default function DeviceDirective($compile, $templateCache, toast, $translate, types, clipboardService, landlotService, deviceService, dashboardService, farmService, alarmService, customerService, $log) {
     var linker = function (scope, element) {
         var template = $templateCache.get(deviceFieldsetTemplate);
         element.html(template);
@@ -30,8 +30,8 @@ export default function DeviceDirective($compile, $templateCache, toast, $transl
         scope.isAssignedToCustomer = false;
         scope.isPublic = false;
         scope.assignedCustomer = null;
-        parcelService.getAllparcels().then(function(result){
-            scope.parcels=result
+        landlotService.getAlllandlots().then(function(result){
+            scope.landlots=result
         });
 
         scope.$watch('device', function(newVal) {
@@ -81,15 +81,15 @@ export default function DeviceDirective($compile, $templateCache, toast, $transl
 
         var map;
         var markerDevice;
-        scope.$watch('device.parcelId', function(newVal) {
+        scope.$watch('device.landlotId', function(newVal) {
             if (newVal[0] || newVal[1]) {
                 var drawMapFarm = [];
-                var drawMapParcel = [];
-                for(var i = 0 ; i < scope.parcels.length ; i++){
-                    if(scope.parcels[i].id.id === newVal){
-                        if(scope.parcels[i].location !== null){
+                var drawMapLandlot = [];
+                for(var i = 0 ; i < scope.landlots.length ; i++){
+                    if(scope.landlots[i].id.id === newVal){
+                        if(scope.landlots[i].location !== null){
                             map = new google.maps.Map(angular.element('#mapa')[0], {
-                                center: {lat: scope.parcels[i].location.coordinates[0][0][1], lng: scope.parcels[i].location.coordinates[0][0][0]},
+                                center: {lat: scope.landlots[i].location.coordinates[0][0][1], lng: scope.landlots[i].location.coordinates[0][0][0]},
                                 zoom: 12
                             });
                             
@@ -120,7 +120,7 @@ export default function DeviceDirective($compile, $templateCache, toast, $transl
                                 
                             });
 
-                            farmService.getFarm(scope.parcels[i].farmId).then(
+                            farmService.getFarm(scope.landlots[i].farmId).then(
                                 function success(farm) {
                                     for(var j = 0; j < farm.location.coordinates[0].length; j++){
                                         drawMapFarm.push({lat: farm.location.coordinates[0][j][1],lng:  farm.location.coordinates[0][j][0]});
@@ -136,18 +136,18 @@ export default function DeviceDirective($compile, $templateCache, toast, $transl
                                 }
                             );
 
-                            for(var k = 0; k < scope.parcels[i].location.coordinates[0].length; k++){
-                                drawMapParcel.push({lat: scope.parcels[i].location.coordinates[0][k][1],lng: scope.parcels[i].location.coordinates[0][k][0]});
+                            for(var k = 0; k < scope.landlots[i].location.coordinates[0].length; k++){
+                                drawMapLandlot.push({lat: scope.landlots[i].location.coordinates[0][k][1],lng: scope.landlots[i].location.coordinates[0][k][0]});
                             }
                             new google.maps.Polyline({
-                                path: drawMapParcel,
+                                path: drawMapLandlot,
                                 geodesic: true,
                                 strokeColor: '#FF0000',
                                 strokeOpacity: 1.0,
                                 strokeWeight: 2
                             }).setMap(map);
                             
-                            dashboardService.getDevicesByParcelId(scope.parcels[i].id.id).then(
+                            dashboardService.getDevicesByLandlotId(scope.landlots[i].id.id).then(
                                 function success(devices) {
                                     $log.log("Estos son los devices");
                                     $log.log(devices);

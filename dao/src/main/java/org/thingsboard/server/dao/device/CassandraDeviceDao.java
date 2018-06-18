@@ -40,7 +40,7 @@ import java.util.*;
 
 import static com.datastax.driver.core.querybuilder.QueryBuilder.*;
 import static org.thingsboard.server.dao.model.ModelConstants.*;
-import org.thingsboard.server.dao.model.nosql.ParcelEntity;
+import org.thingsboard.server.dao.model.nosql.LandlotEntity;
 
 @Component
 @Slf4j

@@ -70,9 +70,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import org.thingsboard.server.common.data.parcel.Parcel;
+import org.thingsboard.server.common.data.landlot.Landlot;
 import org.thingsboard.server.common.data.farm.Farm;
-import org.thingsboard.server.dao.parcel.ParcelService;
+import org.thingsboard.server.dao.landlot.LandlotService;
 import org.thingsboard.server.dao.farm.FarmService;
 import org.thingsboard.server.dao.mongo.MongoDBSpatial;
 
@@ -104,7 +104,7 @@ public abstract class BaseController {
     protected FarmService farmService;
     
     @Autowired
-    protected ParcelService parcelService;
+    protected LandlotService landlotService;
 
     @Autowired
     protected AlarmService alarmService;
@@ -318,8 +318,8 @@ public abstract class BaseController {
                 case FARM:
                     checkFarm(farmService.findFarmById(new FarmId(entityId.getId())));
                     return;
-                case PARCEL:
-                    checkParcel(parcelService.findParcelById(new ParcelId(entityId.getId())));
+                case LANDLOT:
+                    checkLandlot(landlotService.findLandlotById(new LandlotId(entityId.getId())));
                     return;
                 case DASHBOARD:
                     checkDashboardId(new DashboardId(entityId.getId()));
@@ -393,23 +393,23 @@ public abstract class BaseController {
         }
     }
     
-    Parcel checkParcelId(ParcelId parcelId) throws ThingsboardException {
+    Landlot checkLandlotId(LandlotId landlotId) throws ThingsboardException {
         try {
-            validateId(parcelId, "Incorrect parcelId " + parcelId);
-            Parcel parcel = parcelService.findParcelById(parcelId);
-            parcel.setLocation(mongoService.getMongodbparcel().findById(parcelId.getId().toString()).getPolygons());
-            checkParcel(parcel);
-            return parcel;
+            validateId(landlotId, "Incorrect landlotId " + landlotId);
+            Landlot landlot = landlotService.findLandlotById(landlotId);
+            landlot.setLocation(mongoService.getMongodblandlot().findById(landlotId.getId().toString()).getPolygons());
+            checkLandlot(landlot);
+            return landlot;
         } catch (Exception e) {
             throw handleException(e, false);
         }
     }
 
-    protected void checkParcel(Parcel parcel) throws ThingsboardException {
-        checkNotNull(parcel);
-        checkTenantId(parcel.getTenantId());
-        if (parcel.getCustomerId() != null && !parcel.getCustomerId().getId().equals(ModelConstants.NULL_UUID)) {
-            checkCustomerId(parcel.getCustomerId());
+    protected void checkLandlot(Landlot landlot) throws ThingsboardException {
+        checkNotNull(landlot);
+        checkTenantId(landlot.getTenantId());
+        if (landlot.getCustomerId() != null && !landlot.getCustomerId().getId().equals(ModelConstants.NULL_UUID)) {
+            checkCustomerId(landlot.getCustomerId());
         }
     }
 

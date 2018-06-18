@@ -9,7 +9,7 @@ function FarmService($http, $q, customerService, userService, $log) {
         getFarm: getFarm,
         getFarms: getFarms,
         getAllFarms : getAllFarms,
-        getParcelsByFarmId: getParcelsByFarmId,
+        getLandlotsByFarmId: getLandlotsByFarmId,
         saveFarm: saveFarm,
         getFarmClimatology: getFarmClimatology,
         deleteFarm: deleteFarm,
@@ -84,13 +84,13 @@ function FarmService($http, $q, customerService, userService, $log) {
         return deferred.promise;
     }
 
-    function getParcelsByFarmId(farmId,config){
+    function getLandlotsByFarmId(farmId,config){
         var deferred = $q.defer();
-        var parcels;
-        var url = '/api/farm/'+farmId+"/parcels";
+        var landlots;
+        var url = '/api/farm/'+farmId+"/landlots";
         $http.get(url,config).then(function success(response){
-            parcels=response.data;
-            deferred.resolve(parcels);
+            landlots=response.data;
+            deferred.resolve(landlots);
         }, function fail(){
             deferred.reject();
         });

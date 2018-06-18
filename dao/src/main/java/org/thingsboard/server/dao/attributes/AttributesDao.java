@@ -42,11 +42,11 @@ public interface AttributesDao {
     ListenableFuture<List<Void>> removeAll(EntityId entityId, String attributeType, List<String> keys);
 
     /**
-     * get all the device data in an specific date of the parcel
+     * get all the device data in an specific date of the landlot
      *
-     * @param parcelId the parcel_id
+     * @param landlotId the landlot_id
      * @param date the timeseries date
-     * @return saved parcel object
+     * @return saved landlot object
      */
-    Map<String, TreeMap<Long,Double>> getHistoricalValues(String parcelId, long date);
+    Map<String, TreeMap<Long,Double>> getHistoricalValues(String landlotId, long date);
 }

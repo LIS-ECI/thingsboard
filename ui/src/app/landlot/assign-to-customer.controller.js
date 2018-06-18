@@ -3,7 +3,7 @@
 
 
 /*@ngInject*/
-export default function AssignParcelToCustomerController(customerService, parcelService, $mdDialog, $q, parcelIds, customers) {
+export default function AssignLandlotToCustomerController(customerService, landlotService, $mdDialog, $q, landlotIds, customers) {
 
     var vm = this;
 
@@ -66,8 +66,8 @@ export default function AssignParcelToCustomerController(customerService, parcel
 
     function assign() {
         var tasks = [];
-        for (var i=0;i<parcelIds.length;i++) {
-            tasks.push(parcelService.assignParcelToCustomer(vm.customers.selection.id.id, parcelIds[i]));
+        for (var i=0;i<landlotIds.length;i++) {
+            tasks.push(landlotService.assignLandlotToCustomer(vm.customers.selection.id.id, landlotIds[i]));
         }
         $q.all(tasks).then(function () {
             $mdDialog.hide();

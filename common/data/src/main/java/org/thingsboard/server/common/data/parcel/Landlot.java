@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.thingsboard.server.common.data.parcel;
+package org.thingsboard.server.common.data.landlot;
 
 import lombok.EqualsAndHashCode;
 import org.thingsboard.server.common.data.HasName;
@@ -12,7 +12,7 @@ import org.thingsboard.server.common.data.SearchTextBasedWithAdditionalInfo;
 import org.thingsboard.server.common.data.crop.Crop;
 import org.thingsboard.server.common.data.farm.Area;
 import org.thingsboard.server.common.data.id.DeviceId;
-import org.thingsboard.server.common.data.id.ParcelId;
+import org.thingsboard.server.common.data.id.LandlotId;
 import org.thingsboard.server.common.data.id.CustomerId;
 import org.thingsboard.server.common.data.id.TenantId;
 
@@ -24,7 +24,7 @@ import java.util.UUID;
  * @author German Lopez
  */
 @EqualsAndHashCode(callSuper = true)
-public class Parcel extends SearchTextBasedWithAdditionalInfo<ParcelId> implements HasName {
+public class Landlot extends SearchTextBasedWithAdditionalInfo<LandlotId> implements HasName {
 
     private static final long serialVersionUID = 2807343040519543363L;
 
@@ -41,26 +41,26 @@ public class Parcel extends SearchTextBasedWithAdditionalInfo<ParcelId> implemen
     private List<UUID> devices;
 
 
-    public Parcel() {
+    public Landlot() {
         super();
     }
 
-    public Parcel(ParcelId id) {
+    public Landlot(LandlotId id) {
         super(id);
     }
     
-    public Parcel(Parcel parcel){
-        super(parcel);
-        this.tenantId = parcel.getTenantId();
-        this.customerId = parcel.getCustomerId();
-        this.name = parcel.getName();
-        this.type = parcel.getType();
-        this.farmId = parcel.getFarmId();
-        this.setCrop(parcel.getCrop());
-        this.cropsHistory = parcel.getCropsHistory();
-        this.totalArea = parcel.getTotalArea();
-        this.groundFeatures = parcel.getGroundFeatures();
-        this.devices=parcel.getDevices();
+    public Landlot(Landlot landlot){
+        super(landlot);
+        this.tenantId = landlot.getTenantId();
+        this.customerId = landlot.getCustomerId();
+        this.name = landlot.getName();
+        this.type = landlot.getType();
+        this.farmId = landlot.getFarmId();
+        this.setCrop(landlot.getCrop());
+        this.cropsHistory = landlot.getCropsHistory();
+        this.totalArea = landlot.getTotalArea();
+        this.groundFeatures = landlot.getGroundFeatures();
+        this.devices=landlot.getDevices();
     }
 
     public TenantId getTenantId() {
@@ -104,7 +104,7 @@ public class Parcel extends SearchTextBasedWithAdditionalInfo<ParcelId> implemen
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("Parcel [tenantId=");
+        builder.append("Landlot [tenantId=");
         builder.append(tenantId);
         builder.append(", customerId=");
         builder.append(customerId);

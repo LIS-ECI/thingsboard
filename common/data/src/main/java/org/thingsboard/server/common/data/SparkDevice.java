@@ -3,15 +3,15 @@ package org.thingsboard.server.common.data;
 public class SparkDevice {
 
     private String id;
-    private String idParcel;
+    private String idLandlot;
     private String topic;
     private String token;
 
     public SparkDevice(){}
 
-    public SparkDevice(String id,String idParcel,String topic,String token){
+    public SparkDevice(String id,String idLandlot,String topic,String token){
         this.setId(id);
-        this.setIdParcel(idParcel);
+        this.setIdLandlot(idLandlot);
         this.setTopic(topic);
         this.setToken(token);
     }
@@ -30,12 +30,12 @@ public class SparkDevice {
         this.id = id;
     }
 
-    public String getIdParcel() {
-        return idParcel;
+    public String getIdLandlot() {
+        return idLandlot;
     }
 
-    public void setIdParcel(String idParcel) {
-        this.idParcel = idParcel;
+    public void setIdLandlot(String idLandlot) {
+        this.idLandlot = idLandlot;
     }
 
     public String getTopic() {

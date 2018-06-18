@@ -65,9 +65,9 @@
 	    	</div>				
 		</md-input-container>
         <md-input-container style="margin-right: 10px;">
-            <label>Parcel</label>
-            <md-select ng-model="device.parcelId">
-                <md-option ng-repeat="parcel in parcels" value="{{parcel.id.id}}">{{parcel.name}}</md-option>
+            <label>Landlot</label>
+            <md-select ng-model="device.landlotId">
+                <md-option ng-repeat="landlot in landlots" value="{{landlot.id.id}}">{{landlot.name}}</md-option>
             </md-select>
         </md-input-container>
         <tb-entity-subtype-autocomplete

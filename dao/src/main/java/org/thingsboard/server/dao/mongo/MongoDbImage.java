@@ -39,7 +39,7 @@ import org.thingsboard.server.common.data.Image;
 import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.imaging.jpeg.JpegProcessingException;
 import org.thingsboard.server.common.data.Point;
-import org.thingsboard.server.common.data.SpatialParcel;
+import org.thingsboard.server.common.data.SpatialLandlot;
 
 import static sun.security.krb5.Confounder.bytes;
 //import org.apache.commons.io;
@@ -50,13 +50,13 @@ import static sun.security.krb5.Confounder.bytes;
  */
 public class MongoDbImage extends MongoConnection {
 
-    private MongoDBSpatialParcel spatialParcel;
+    private MongoDBSpatialLandlot spatialLandlot;
 
     public MongoDbImage() {
     }
 
-    public MongoDbImage(MongoDBSpatialParcel spatialParcel){
-        this.spatialParcel = spatialParcel;
+    public MongoDbImage(MongoDBSpatialLandlot spatialLandlot){
+        this.spatialLandlot = spatialLandlot;
     }
 
     public void uploadFile(File file, HashMap<String,String> metadata) throws Exception {
@@ -90,10 +90,10 @@ public class MongoDbImage extends MongoConnection {
                 i.setCoordinates(coord);
                 System.out.println(i.toString());
                 Point point = new Point(coord,"Point");
-                SpatialParcel sp = spatialParcel.findNearestParcel(point);
+                SpatialLandlot sp = spatialLandlot.findNearestLandlot(point);
                 System.out.println(sp.toString());
                 Document doc = new Document();
-                doc.append("parcelId",sp.getId());
+                doc.append("landlotId",sp.getId());
                 String dateString = i.getModifiedDate().replace(":","/");
                 dateString = dateString.split(" ")[0];
                 String reportDate = dateString;
@@ -167,10 +167,10 @@ public class MongoDbImage extends MongoConnection {
         }
     }
 
-    public List<Image> downloadMapsFile(String parcelId, long date) throws Exception {
+    public List<Image> downloadMapsFile(String landlotId, long date) throws Exception {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
         String reportDate = dateFormat.format(date);
-        GridFSFindIterable gridFSFiles = getGridFSDatabase().find(Filters.and(Filters.eq("metadata.parcelId", parcelId),Filters.eq("metadata.date", reportDate)));
+        GridFSFindIterable gridFSFiles = getGridFSDatabase().find(Filters.and(Filters.eq("metadata.landlotId", landlotId),Filters.eq("metadata.date", reportDate)));
         List<Image> data = new ArrayList<>();
         for (GridFSFile gridFSFile: gridFSFiles){
             try {
@@ -264,7 +264,7 @@ public class MongoDbImage extends MongoConnection {
         return fileNames.contains(fileName);
     }
 
-    public List<Long> datesOfFilesParcel(long startDate,long finishDate) {
+    public List<Long> datesOfFilesLandlot(long startDate,long finishDate) {
         List<Long> dates = new ArrayList<>();
         SimpleDateFormat f = new SimpleDateFormat("yyyy/MM/dd");
         getGridFSDatabase().find().forEach(
