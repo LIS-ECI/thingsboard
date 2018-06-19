@@ -175,18 +175,18 @@ export default function LandlotDirective($compile, $templateCache, $mdDialog, to
 
         scope.tagLandLot = "";
 
-        function addTagLandLot(){
+         scope.addTagLandLot = function(){
             var taglandlot = new TagLandlot();
             if(polygon2.coordinates.length > 0 && scope.tagLandLot.length > 0){
                 taglandlot.idLandlot = scope.landlot.id.id;
                 taglandlot.tag = scope.tagLandLot;
-                taglandlot.date = scope.selectedDate;
+                taglandlot.date = scope.selectedDate.getTime();
                 taglandlot.tagPolygon = polygon2;
                 $log.log("Este es el tag");
                 $log.log(taglandlot);
             }
             landlotService.saveTagLandlot(taglandlot);
-        }
+        };
         
 
         //---------
