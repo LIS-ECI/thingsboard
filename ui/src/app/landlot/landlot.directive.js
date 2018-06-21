@@ -4,7 +4,7 @@ import Action from './action';
 /* eslint-enable import/no-unresolved, import/default */
 /*global google*/
 /*@ngInject*/
-export default function LandlotDirective($compile, $templateCache, toast, $translate, types, landlotService, farmService, dashboardService, customerService, $log) {
+export default function LandlotDirective($compile, $templateCache, $mdDialog, toast, $translate, types, landlotService, farmService, dashboardService, customerService, $log) {
     "use strict"
     var linker = function (scope, element) {
         var template = $templateCache.get(landlotFieldsetTemplate);
@@ -77,6 +77,13 @@ export default function LandlotDirective($compile, $templateCache, toast, $trans
             this.higrologicData = '';
         }
 
+        function TagLandlot(){
+            this.idLandlot = '';
+            this.tag = '';
+            this.date = 0;
+            this.tagPolygon = new Polygon();
+        }
+
         //-----------------------------------------------------------------------------------------------------------------
 
         scope.photoType = "RGB";
@@ -95,7 +102,7 @@ export default function LandlotDirective($compile, $templateCache, toast, $trans
         //var img;
             
         DebugOverlay.prototype = new google.maps.OverlayView();
-function DebugOverlay(bounds, image, map) {
+            function DebugOverlay(bounds, image, map) {
                 this.bounds_ = bounds;
                 this.image_ = image;
                 this.map_ = map;
@@ -103,14 +110,14 @@ function DebugOverlay(bounds, image, map) {
                 this.setMap(map);
             }
 
-DebugOverlay.prototype.onAdd = function() {
+            DebugOverlay.prototype.onAdd = function() {
 
                 var div = angular.element('<div style="borderStyle:none;borderWidth:0px;position:absolute"></div>');
               
                 var img = angular.element('<img src=\"'+this.image_ +'\" style="width:100%;height:100%;opacity:0.5;position:absolute"/>');
            
                 angular.element(div).append(img);
-this.div_ = div;
+                this.div_ = div;
                 var panes = this.getPanes();
                 angular.element(panes.overlayLayer).append(div);
             };
@@ -119,7 +126,7 @@ this.div_ = div;
                 var overlayProjection = this.getProjection();
                 var sw = overlayProjection.fromLatLngToDivPixel(this.bounds_.getSouthWest());
                 var ne  = overlayProjection.fromLatLngToDivPixel(this.bounds_.getNorthEast());
-var div=this.div_;
+                var div=this.div_;
                 angular.element(div).css('left',sw.x + 'px');
                 angular.element(div).css('top',ne.y + 'px');
                 angular.element(div).css('width',(ne.x - sw.x) + 'px');
@@ -162,7 +169,27 @@ var div=this.div_;
                 }
             };
 
-       
+        //---------
+
+
+
+        scope.tagLandLot = "";
+
+         scope.addTagLandLot = function(){
+            var taglandlot = new TagLandlot();
+            if(polygon2.coordinates.length > 0 && scope.tagLandLot.length > 0){
+                taglandlot.idLandlot = scope.landlot.id.id;
+                taglandlot.tag = scope.tagLandLot;
+                taglandlot.date = scope.selectedDate.getTime();
+                taglandlot.tagPolygon = polygon2;
+                $log.log("Este es el tag");
+                $log.log(taglandlot);
+            }
+            landlotService.saveTagLandlot(taglandlot);
+        };
+        
+
+        //---------
 
 
         scope.symbol = ['ha','fg'];
@@ -377,11 +404,12 @@ var div=this.div_;
                     
 
 
-map2 = new google.maps.Map(angular.element('#mapa2')[0], {
+                    map2 = new google.maps.Map(angular.element('#mapa2')[0], {
                         center: {lat:scope.tempLatitude , lng: scope.tempLongitude},
                         zoom: 15
                     });
-$log.log(scope.tempLatitude+" "+scope.tempLongitude);
+
+                    $log.log(scope.tempLatitude+" "+scope.tempLongitude);
 
                     map = new google.maps.Map(angular.element('#mapa')[0], {
                         center: {lat: scope.tempLatitude, lng: scope.tempLongitude},

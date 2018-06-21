@@ -135,6 +135,17 @@ public class LandlotController extends BaseController {
             throw handleException(e);
         }
     }
+    
+    @PreAuthorize("hasAnyAuthority('TENANT_ADMIN', 'CUSTOMER_USER')")
+    @RequestMapping(value = "/landlot/tag", method = RequestMethod.POST)
+    @ResponseBody
+    public TagLandlot saveTagLandlot(@RequestBody TagLandlot tagLandlot) throws ThingsboardException {
+        if(tagLandlot != null){
+            return mongoService.getMongodbTag().save(tagLandlot);
+        }else{
+            throw new ThingsboardException("The landlot tag is null",ThingsboardErrorCode.BAD_REQUEST_PARAMS);
+        }
+    }
 
     @PreAuthorize("hasAuthority('TENANT_ADMIN')")
     @RequestMapping(value = "/landlot/{landlotId}", method = RequestMethod.DELETE)

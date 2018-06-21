@@ -12,6 +12,7 @@ function LandlotService($http, $q, customerService, userService, $log) {
         getLandlots: getLandlots,
         getAlllandlots: getAlllandlots,
         saveLandlot: saveLandlot,
+        saveTagLandlot: saveTagLandlot,
         deleteLandlot: deleteLandlot,
         assignLandlotToCustomer: assignLandlotToCustomer,
         unassignLandlotFromCustomer: unassignLandlotFromCustomer,
@@ -116,6 +117,21 @@ function LandlotService($http, $q, customerService, userService, $log) {
         }
         config = Object.assign(config, { ignoreErrors: ignoreErrors });
         $http.post(url, landlot, config).then(function success(response) {
+            deferred.resolve(response.data);
+        }, function fail() {
+            deferred.reject();
+        });
+        return deferred.promise;
+    }
+
+    function saveTagLandlot(tagLandlot, ignoreErrors, config) {
+        var deferred = $q.defer();
+        var url = '/api/landlot/tag';
+        if (!config) {
+            config = {};
+        }
+        config = Object.assign(config, { ignoreErrors: ignoreErrors });
+        $http.post(url, tagLandlot, config).then(function success(response) {
             deferred.resolve(response.data);
         }, function fail() {
             deferred.reject();

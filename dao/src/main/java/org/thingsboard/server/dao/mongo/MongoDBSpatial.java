@@ -26,6 +26,7 @@ public class MongoDBSpatial extends MongoConnection implements SpatialIndexes {
     private final MongoDBSpatialDevice mongodbDevice;
     private final MongoDBSpatialSpark mongodbspark;
     private final MongoDbImage mongodbimage;
+    private final MongoDBTagLandlot mongodbTag;
 
     public MongoDBSpatial() {
         mongodblandlot = new MongoDBSpatialLandlot();
@@ -33,6 +34,7 @@ public class MongoDBSpatial extends MongoConnection implements SpatialIndexes {
         mongodbDevice = new MongoDBSpatialDevice();
         mongodbspark = new MongoDBSpatialSpark();
         mongodbimage = new MongoDbImage(mongodblandlot);
+        mongodbTag = new MongoDBTagLandlot();
     }
 
     public MongoDBSpatialLandlot getMongodblandlot() {
@@ -49,7 +51,14 @@ public class MongoDBSpatial extends MongoConnection implements SpatialIndexes {
     public MongoDBSpatialSpark getMongodbspark() {
         return mongodbspark;
     }
-    public MongoDbImage getMongodbimage() { return mongodbimage; }
+    
+    public MongoDbImage getMongodbimage() { 
+        return mongodbimage; 
+    }
+
+    public MongoDBTagLandlot getMongodbTag() {
+        return mongodbTag;
+    }
 
     @Override
     public SpatialFarm findFarmsByDeviceId(String device_id) throws MongoDBException {

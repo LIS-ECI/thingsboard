@@ -235,9 +235,13 @@
                                 RGB
                             </label><br/>
                             <button ng-click="drawNewPolygon()">Draw Polygon</button>
-                            <div style="min-height: 1000px;">
+                            <div style="min-height: 450px;">
                                 <div id="mapa2"  style="height: 450px; width: 450px;"></div>
                             </div>
+                            <textarea rows="4" cols="50" ng-model="tagLandLot" placeholder="Describe the problem founded in map"></textarea>                                
+                            <md-button ng-click="addTagLandLot()" class="md-raised md-primary">
+                                Create Landlot Tag
+                            </md-button>
                         </md-content>
                     </div>
                 </md-content>
