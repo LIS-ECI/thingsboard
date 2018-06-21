@@ -101,6 +101,11 @@
             <groupId>org.eclipse.paho</groupId>
             <artifactId>org.eclipse.paho.client.mqttv3</artifactId>
         </dependency>
+    <dependency>
+       <groupId>org.thingsboard.extensions</groupId>
+        <artifactId>extension-kafka</artifactId>
+        <version>${project.version}</version>
+    </dependency>
         <dependency>
             <groupId>org.cassandraunit</groupId>
             <artifactId>cassandra-unit</artifactId>
