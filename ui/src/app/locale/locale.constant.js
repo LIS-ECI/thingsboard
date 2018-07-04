@@ -345,6 +345,20 @@ export default angular.module('thingsboard.locale', [])
                     "enter-password": "Enter password",
                     "enter-search": "Enter search"
                 },
+                "crop": {
+                    "add-actions": "Add Action",
+                    "actions": "Actions",
+                    "action": "Action",
+                    "current": "Current Crop",
+                    "history": "Crop History",
+                    "finish-crop":"Finish Crop",
+                    "name":"Name",
+                    "why-crop": "Why this crop?",
+                    "cause": "Cause",
+                    "initial-conditions": "Initial Conditions",
+                    "state": "Crop State",
+                    "good-practices": "Good Practices"
+                },
                 "customer": {
                     "customer": "Customer",
                     "customers": "Customers",
@@ -905,6 +919,7 @@ export default angular.module('thingsboard.locale', [])
                 },
                 "farm": {
                     "accessWay": "Access way",
+                    "addIrrigationSystem": "Add Irrigation Sytem",
                     "addCoordinate": "Add coordinate",
                     "farm": "Farm",
                     "farms": "Farms",
@@ -916,6 +931,7 @@ export default angular.module('thingsboard.locale', [])
                     "assign-farm-to-customer-text": "Please select the farms to assign to the customer",
                     "basicInformation": "Basic Information",
                     "no-farms-text": "No farms found",
+                    "currentClimatologyData": "Current Climatology Data",
                     "assign-to-customer-text": "Please select the customer to assign the farm(s)",
                     "public": "Public",
                     "assignedToCustomer": "Assigned to customer",
@@ -923,9 +939,11 @@ export default angular.module('thingsboard.locale', [])
                     "make-private": "Make farm private",
                     "unassign-from-customer": "Unassign from customer",
                     "delete": "Delete farm",
+                    "destinationLabel": "Destination",
                     "farm-public": "Farm is public",
                     "farm-type": "Farm type",
                     "farm-type-required": "Farm type is required.",
+                    "irrigationSystems": "Irrigation Systems",
                     "location_description": "Description of the location",
                     "select-farm-type": "Select farm type",
                     "enter-farm-type": "Enter farm type",
@@ -942,6 +960,7 @@ export default angular.module('thingsboard.locale', [])
                     "events": "Events",
                     "add-farm-text": "Add new farm",
                     "farm-details": "Farm details",
+                    "localClimatology": "Local Climatology",
                     "loadFrontagePicture": "Load frontage picture",
                     "assign-farms": "Assign farms",
                     "assign-farms-text": "Assign { count, select, 1 {1 farm} other {# farms} } to customer",
@@ -949,6 +968,7 @@ export default angular.module('thingsboard.locale', [])
                     "unassign-farms": "Unassign farms",
                     "environment": "Environment",
                     "totalArea": "Total area",
+                    "municipalDistanceInKM": "Municipal Distance in Km",
                     "UnitOfMeasurement": "Units of measurement",
                     "use_details": "Use details",
                     "productionTransport": "Production Transport",
@@ -994,12 +1014,20 @@ export default angular.module('thingsboard.locale', [])
                         "kitchen": "Kitchen details"
                     },
                     "person":{
-                        "birthplace": "Birthplace"
+                        "addPerson": "Add person",
+                        "name": "Name",
+                        "birthdate": "Bithdate",
+                        "birthplace": "Birthplace",
+                        "ethnicGroup": "Ethnic Group",
+                        "maritalStatus": "Marital Status",
+                        "relation": "Relation"
                     },
-                    "maritalStatus": "Marital Status",
-                    "ethnicGroup": "Ethnic group",
                     "relation": "Owner farm relation",
                     "RoadState": "Road state"
+                },
+                "farmDetails": {
+                    "homeInformation": "Home Information",
+                    "peopleInformation": "People Information"
                 },
                 "fullscreen": {
                     "expand": "Expand to fullscreen",
@@ -1096,6 +1124,15 @@ export default angular.module('thingsboard.locale', [])
                 "landlot": {
                     "landlot": "Land lot",
                     "landlots": "Land lots",
+                    "tag-landlot-placeholder": "Describe the problem founded in map",
+                    "start-date": "Start Date",
+                    "finish-date": "Finish Date",
+                    "update-dates-btn": "Update Dates",
+                    "draw-polygon": "Draw Polygon",
+                    "create-landlot-tag": "Create Landlot Tag",
+                    "details-title": "Landlot Details",
+                    "crops-title": "Crops",
+                    "tags-title": "Landlot Tags",
                     "management": "Land lot management",
                     "view-landlots": "View Land lots",
                     "add": "Add Land lot",
@@ -1126,6 +1163,7 @@ export default angular.module('thingsboard.locale', [])
                     "type-required": "Type is required.",
                     "details": "Details",
                     "events": "Events",
+                    "ground-features": "Ground Features",
                     "add-landlot-text": "Add new land lot",
                     "landlot-details": "Land lot details",
                     "assign-landlots": "Assign land lots",
@@ -1312,6 +1350,12 @@ export default angular.module('thingsboard.locale', [])
                 "rule-plugin": {
                     "management": "Rules and plugins management"
                 },
+                "sensors": {
+                    "temperature": "Temperature",
+                    "humidity": "Humidity",
+                    "pressure": "Pressure",
+                    "windSpeed": "Wind Speed"
+                },
                 "tenant": {
                     "tenant": "Tenant",
                     "tenants": "Tenants",
@@ -1423,7 +1467,11 @@ export default angular.module('thingsboard.locale', [])
                 "waterPoint":{
                     "title": "Water Points",
                     "number": "WaterPoint number",
-                    "resolution": "WaterPoint resolution"
+                    "resolution": "WaterPoint resolution",
+                    "numberColumn": "Number",
+                    "resolutionColumn": "Resolution",
+                    "dateColumn": "Date",
+                    "addWaterPoint": "Add water point"
                 },
                 "widget": {
                     "widget-library": "Widgets Library",

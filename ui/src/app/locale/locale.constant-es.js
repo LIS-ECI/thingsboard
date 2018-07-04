@@ -152,6 +152,20 @@
               "enter-password": "Ingresa la contraseña",
               "enter-search": "Ingresa búsqueda"
         },
+        "crop": {
+              "add-action": "Agregar Acción",
+              "actions": "Acciones",
+              "action": "Acción",
+              "current": "Cultivo Actual",
+              "history": "Historia del cultivo",
+              "finish-crop":"Terminar Cultivo",
+              "name": "Nombre",
+              "why-crop":"¿Porqué este cultivo?",
+              "cause": "Causa",
+              "initial-conditions": "Condiciones Iniciales",
+              "state": "Estado del cultivo",
+              "good-practices": "Buenas Prácticas"
+        },
         "customer": {
               "customers": "Clientes",
               "management": "Gestión de Clientes",
@@ -432,6 +446,7 @@
               "errors-occurred": "Ocurrieron errores"
         },
         "farm": {
+            "addIrrigationSystem": "Agregar Sistema de Riego",
             "accessWay": "Vía de acceso",
             "addCoordinate": "Agregar coordenada",
             "farm": "Finca",
@@ -455,6 +470,7 @@
             "farm-public": "La finca es pública",
             "farm-type": "Tipo de finca",
             "farm-type-required": "El tipo de finca es requerida.",
+            "irrigationSystems": "Sistemas de Riego",
             "location_description": "Descripción de la localización",
             "select-farm-type": "Seleccione el tipo de finca",
             "enter-farm-type": "Ingresar tipo de finca",
@@ -470,13 +486,16 @@
             "events": "Eventos",
             "add-farm-text": "Agregar nueva finca",
             "farm-details": "Detalles de la finca",
+            "localClimatology": "Climatología Local",
+            "currentClimatologyData": "Datos de climatología actual",
             "loadFrontagePicture": "Cargar foto de la fachada",
             "assign-farms": "Asignar fincas",
             "assign-farms-text": "Asignar { count, select, 1 {1 farm} other {# farms} } al cliente",
             "delete-farms": "Eliminar fincas",
             "unassign-farms": "Desasignar fincas",
-            "enviroment": "Entorno",
+            "environment": "Entorno",
             "totalArea": "Área total",
+            "municipalDistanceInKM": "Distancia a la cabecera municipal in Km",
             "UnitOfMeasurement": "Unidades de medición",
             "use_details": "Detalles de uso",
             "productionTransport": "Transporte para la producción",
@@ -517,17 +536,26 @@
                   "floorMaterial": "Material del piso de la construcción",
                   "rooms": "Número de habitaciones",
                   "dependingPeople": "Número de personas que dependen de la finca",
-                  "workers": "Numero de trabajadores",
+                  "workers": "Número de trabajadores",
                   "bathroom": "Detalles de los baños",
                   "kitchen": "Detalles de la cocina"
             },
             "person":{
-                "birthplace": "Lugar de nacimiento"
+                  "addPerson": "Agregar Persona",
+                  "name": "Nombre",
+                  "birthdate": "Fecha de nacimiento",
+                  "birthplace": "Lugar de nacimiento",
+                  "ethnicGroup": "Grupo Étnico",
+                  "maritalStatus": "Estado Civil",
+                  "relation": "Relación"
             },
-            "maritalStatus": "Estado civil",
             "ethnicGroup": "Grupo étnico",
             "relation": "Relación con el propietario de la finca",
             "RoadState": "Estado de la carretera"
+        },
+        "farmDetails": {
+            "homeInformation": "Información de la finca",
+            "peopleInformation": "Información de las personas"
         },
         "fullscreen": {
               "expand": "Expandir a Pantalla Completa",
@@ -586,6 +614,15 @@
         "landlot": {
             "landlot": "Lote",
             "landlots": "Lotes",
+            "tag-landlot-placeholder": "Describa el problema encontrado en el mapa",
+            "start-date": "Fecha Inicial",
+            "finish-date": "Fecha Final",
+            "update-dates-btn": "Actualizar modelo con fechas",
+            "draw-polygon": "Dibujar polígono",
+            "create-landlot-tag": "Crear etiqueta del lote",
+            "details-title": "Detalles del lote",
+            "crops-title": "Cultivos",
+            "tags-title": "Etiquetas del lote",
             "management": "Administración de lote",
             "view-landlots": "Ver lotes",
             "add": "Agregar lote",
@@ -616,6 +653,7 @@
             "type-required": "El tipo es requerido.",
             "details": "Detalles",
             "events": "Eventos",
+            "ground-features": "Características del Suelo",
             "add-landlot-text": "Agregar nuevo lote",
             "landlot-details": "Detalles del lote",
             "assign-landlots": "Asignar lotes",
@@ -825,6 +863,12 @@
               "last": "Últimos",
               "time-period": "Período de tiempo"
         },
+        "sensors": {
+            "temperature": "Temperatura",
+            "humidity": "Humedad",
+            "pressure": "Presión Atmosférica",
+            "windSpeed": "Velocidad del viento"
+        },
         "user": {
               "users": "Usuarios",
               "customer-users": "Usuarios del Cliente",
@@ -870,7 +914,11 @@
         "waterPoint":{
             "title": "Puntos de agua",
             "number": "Número del punto de agua",
-            "resolution": "Resolución del punto de agua"
+            "resolution": "Resolución del punto de agua",
+            "numberColumn": "Número",
+            "resolutionColumn": "Resolución",
+            "dateColumn": "Fecha",
+            "addWaterPoint": "Agregar punto de agua"
         },
         "widget": {
               "widget-library": "Bibloteca de Widgets",
