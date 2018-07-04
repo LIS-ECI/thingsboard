@@ -55,6 +55,8 @@
                     </md-input-container>
                     <md-button ng-click="addCoordinate()" background-color="grey">Add Coordinate</md-button>
                     <md-button ng-click="deleteCoordinate()" background-color="grey">Remove Coordinate</md-button><br>
+                    <label>Longitud</label>
+                    <label>Latitud</label><br>
                     <div style="min-height: 200px;">
                         <label ng-repeat-start="label in labels">{{label}}</label>
                         <input ng-model='longitudes[$index]' type='text' value='' />
@@ -78,7 +80,7 @@
                         </md-input-container>
                     </div>
                     <div style="min-height: 500px;">
-                        <div id="mapa"  style="height: 450px; width: 450px;"></div>
+                        <div id="mapa"  style="height: 450px; width: 90%;"></div>
                     </div>
                 </md-content>
             </md-tab>

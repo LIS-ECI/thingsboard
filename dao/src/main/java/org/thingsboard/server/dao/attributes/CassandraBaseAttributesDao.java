@@ -130,7 +130,11 @@ public class CassandraBaseAttributesDao extends CassandraAbstractAsyncDao implem
                 query.and(eq(ENTITY_ID_COLUMN, device_id));
                 query.and(gte(TS_COLUMN, tsTime1));
                 query.and(lte(TS_COLUMN, tsTime2));
+                System.out.println("DEVICE_ID: "+device_id.toString());
+                System.out.println("TS_TIME1: "+tsTime1);
+                System.out.println("TS_TIME2: "+tsTime2);
                 ResultSetFuture resp = executeAsyncRead(query);
+                System.out.println("RESP: "+resp.toString());
                 ResultSet resp2 = resp.getUninterruptibly();
                 List<Row> rows = resp2.all();
                 for (Row r : rows) {
