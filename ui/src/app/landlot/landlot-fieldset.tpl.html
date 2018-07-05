@@ -35,7 +35,7 @@
     </div>
     <fieldset ng-disabled="$root.loading || !isEdit">
         <md-tabs  md-dynamic-height md-border-bottom>
-            <md-tab label="{{ 'Landlot Details' | translate }}">
+            <md-tab label="{{ 'landlot.details-title' | translate }}">
                 <md-content class="md-padding">
                     <md-input-container class="md-block">
                         <label translate>landlot.name</label>
@@ -62,7 +62,7 @@
                         <textarea ng-model="landlot.additionalInfo.description" rows="2"></textarea>
                     </md-input-container>
                     <div style="min-height: 1000px;">
-                        <div id="mapa"  style="height: 450px; width: 450px;"></div>
+                        <div id="mapa"  style="height: 450px; width: 90%;"></div>
                     </div>
                     <div layout-gt-sm="row">
 
@@ -79,7 +79,7 @@
                             </md-select>
                         </md-input-container>
                     </div>
-                    <label>Ground Features</label>
+                    <label>{{ 'landlot.ground-features' | translate }}</label>
                     <div style="min-height: 1000px;">
                         <md-input-container class="md-block">
                             <label translate>ground.density</label>
@@ -100,36 +100,36 @@
                     </div>
                 </md-content>
             </md-tab>
-            <md-tab label="{{ 'Crops' | translate }}" ng-show="someCrop()">
+            <md-tab label="{{ 'landlot.crops-title' | translate }}" ng-show="someCrop()">
                 <md-tabs md-dynamic-height md-border-bottom>
-                    <md-tab label="{{ 'Current Crop' | translate }}">
+                    <md-tab label="{{ 'crop.current' | translate }}">
                         <md-content class="md-padding">
-                                <button ng-click="finishCrop()">Finish Crop</button>
+                                <button ng-click="finishCrop()">{{ 'crop.finish-crop' | translate }}</button>
                                 <div style="min-height: 1000px;" ng-disable="!landlot.crop.finish">
                                     <md-input-container class="md-block">
-                                        <label translate>Name</label>
+                                        <label translate>{{ 'crop.name' | translate }}</label>
                                         <textarea ng-model="landlot.crop.name" rows="2"></textarea>
                                     </md-input-container>
                                     <md-input-container class="md-block">
-                                        <label translate>¿Why this crop?</label>
+                                        <label translate>{{ 'crop.why-crop' | translate }}</label>
                                         <textarea ng-model="landlot.crop.why" rows="2"></textarea>
                                     </md-input-container>
                                     <md-input-container class="md-block">
-                                        <label translate>Cause</label>
+                                        <label translate>{{ 'crop.cause' | translate }}</label>
                                         <textarea ng-model="landlot.crop.cause" rows="2"></textarea>
                                     </md-input-container>
                                     <md-input-container class="md-block">
-                                        <label translate>Initial Conditions</label>
+                                        <label translate>{{ 'crop.initial-conditions' | translate }}</label>
                                         <textarea ng-model="landlot.crop.initialConditions" rows="2"></textarea>
                                     </md-input-container>
                                     <md-input-container class="md-block">
-                                        <label translate>Crop State</label>
+                                        <label translate>{{ 'crop.state' | translate }}</label>
                                         <textarea ng-model="landlot.crop.state" rows="2"></textarea>
                                     </md-input-container>
                                 </div>
                         </md-content>
                     </md-tab>
-                    <md-tab label="{{ 'Crop History' | translate }}">
+                    <md-tab label="{{ 'crop.history' | translate }}">
                         <md-content class="md-padding">
                             <div style="min-height: 1000px;">
                                 <md-card md-theme="{{ showDarkTheme ? 'dark-grey' : 'default' }}" md-theme-watch ng-repeat="crop in landlot.cropsHistory">
@@ -146,7 +146,7 @@
                             </div>
                         </md-content>
                     </md-tab>
-                    <md-tab label="{{ 'Good Practices' | translate }}" ng-show="someCrop()">
+                    <md-tab label="{{ 'crop.good-practices' | translate }}" ng-show="someCrop()">
                         <md-content class="md-padding">
                             <div flex="50" ng-repeat="prac in practices">
                                 <md-checkbox ng-model="prac">
@@ -162,14 +162,14 @@
                             </md-input-container>
                         </md-content>
                     </md-tab>
-                    <md-tab label="{{ 'Actions' | translate }}">
+                    <md-tab label="{{ 'crop.actions' | translate }}">
                         <md-content class="md-padding">
                             <div style="min-height: 1000px;">
                                 <md-input-container class="md-block">
-                                    <label translate>Action</label>
+                                    <label translate>{{ 'crop.action' | translate }}</label>
                                     <textarea ng-model="action"></textarea>
                                 </md-input-container>
-                                <button ng-click="addActionCrop()">Add Action</button>
+                                <button ng-click="addActionCrop()">{{ 'crop.add-action' | translate }}</button>
                                 <ul>
                                     <li ng-repeat="actionCrop in landlot.crop.actions">{{actionCrop.action}} -- {{actionCrop.actionDate |date :  "dd/MM/y"}}</li>
                                 </ul>
@@ -178,20 +178,20 @@
                     </md-tab>
                 </md-tabs>
             </md-tab>
-            <md-tab label="{{ 'Landlot Tags' | translate }}">
+            <md-tab label="{{ 'landlot.tags-title' | translate }}">
                 <md-content class="md-padding">
                     <div style="min-height: 1000px;">
                         <div layout-gt-xs="row">
                             <div flex-gt-xs>
-                                <label>Start Date</label>
+                                <label>{{ 'landlot.start-date' | translate }}</label>
                                 <md-datepicker ng-model="startDate" md-current-view="year" md-placeholder="Enter date"></md-datepicker>
                             </div>
                             <div flex-gt-xs>
-                                <label>Finish Date</label>
+                                <label>{{ 'landlot.finish-date' | translate }}</label>
                                 <md-datepicker ng-model="finishDate" md-current-view="year" md-placeholder="Enter date"></md-datepicker>
                             </div>
                         </div>
-                        <md-button ng-click="updateSelectedDate()">Update Dates</md-button>
+                        <md-button ng-click="updateSelectedDate()">{{ 'landlot.update-dates-btn' | translate }}</md-button>
                         <div>
                             <input ng-model="slider" type="range" min="{{minDate}}" max="{{maxDate}}" style="width:1000px" list="tickmarks">
                             <datalist id="tickmarks">
@@ -234,13 +234,13 @@
                                 <input type="radio" ng-model="photoType" ng-click="changeImageType()" value="RGB">
                                 RGB
                             </label><br/>
-                            <button ng-click="drawNewPolygon()">Draw Polygon</button>
+                            <button ng-click="drawNewPolygon()">{{ 'landlot.draw-polygon' | translate }}</button>
                             <div style="min-height: 450px;">
-                                <div id="mapa2"  style="height: 450px; width: 450px;"></div>
+                                <div id="mapa2"  style="height: 450px; width: 90%;"></div>
                             </div>
-                            <textarea rows="4" cols="50" ng-model="tagLandLot" placeholder="Describe the problem founded in map"></textarea>                                
+                            <textarea rows="4" cols="50" ng-model="tagLandLot" placeholder="{{ 'landlot.tag-landlot-placeholder' | translate }}"></textarea>                                
                             <md-button ng-click="addTagLandLot()" class="md-raised md-primary">
-                                Create Landlot Tag
+                                {{ 'landlot.create-landlot-tag' | translate }}
                             </md-button>
                         </md-content>
                     </div>

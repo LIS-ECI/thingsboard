@@ -31,4 +31,6 @@ public class EntityTypeFilter {
     private String relationType;
 
     private List<EntityType> entityTypes;
+
+
 }

@@ -193,7 +193,8 @@ export default function LandlotDirective($compile, $templateCache, $mdDialog, to
 
 
         scope.symbol = ['ha','fg'];
-        scope.practices=["The field should be free of trash, papers,plastics and empty containers","Check there is no risk of water contamination","Be acquainted with the type of pests, diseases and weeds that exist, mainly in the crop area.","Check on possible contamination sources from neighboring plots.","Signpost the place where the crop will be planted with the number of the lot or name of the crop.","With the support of the technician analyze the type of soil and its depth for good growth of the roots.","Consider the slope of the field where the planting will be done.","Avoid soil erosion and compression","Install rubbish bins in strategic zones of the field and throw the rubbish in them once the working day is over","Sow at an adequate distance"];
+        //scope.practices=["The field should be free of trash, papers,plastics and empty containers","Check there is no risk of water contamination","Be acquainted with the type of pests, diseases and weeds that exist, mainly in the crop area.","Check on possible contamination sources from neighboring plots.","Signpost the place where the crop will be planted with the number of the lot or name of the crop.","With the support of the technician analyze the type of soil and its depth for good growth of the roots.","Consider the slope of the field where the planting will be done.","Avoid soil erosion and compression","Install rubbish bins in strategic zones of the field and throw the rubbish in them once the working day is over","Sow at an adequate distance"];
+        scope.practices=["El predio debe estar libre de basuras, papeles, plásticos y envases vacíos","Ver que no haya riesgos de contaminación de aguas","Conocer los tipos de plagas, enfermedades y malezas existentes, principalmente en el área de cultivo","Revisar posibles fuentes de contaminación desde terrenos vecinos","Señalizar el lugar donde se sembrará el cultivo con números de lote o nombre del cultivo","Realizar análisis de suelo y registrar los resultados que permitan conocer algunas propiedades físicas y químicas para programar un plan de aplicación de cal, abono orgánico o compost y fertilizantes.","Considerar la pendiente del predio donde se va a cultivar","Evitar la erosión y compactación","Instalar basureros en zonas estratégicas del predio y arrojar la basura en éstos una vez terminado el día de trabajo","Sembrar a distancia adecuada"];
 
         scope.finishCrop = function(){
             scope.landlot.crop.finish = true;
@@ -372,13 +373,38 @@ export default function LandlotDirective($compile, $templateCache, $mdDialog, to
         };
 
         var map;
-        var drawMapFarm = [];
-        var drawMapLandlot = [];
+
         function Polygon() {
             this.coordinates = [];
             this.type = 'Polygon';
         }
+
+      /*  map = new google.maps.Map(angular.element('#mapa')[0], {
+            center: {lat: scope.tempLatitude, lng: scope.tempLongitude},
+            zoom: 15
+        });
+
+        scope.$watch("landlot.location",function(newVal){
+           var drawPolygonLandlot = [];
+           $log.log("Coordenadas");
+           $log.log(newVal);
+           if(newVal != null){
+               for(var j = 0 ; j < scope.landlot.location.coordinates[0].length; j++){
+                   drawPolygonLandlot.push({lat: scope.landlot.location.coordinates[0][j][1],lng: scope.landlot.location.coordinates[0][j][0]});
+               }
+
+               new google.maps.Polyline({
+                   path: drawPolygonLandlot,
+                   geodesic: true,
+                   strokeColor: '#FF0000',
+                   strokeOpacity: 1.0,
+                   strokeWeight: 2
+               }).setMap(map);
+           }
+        });*/
         scope.$watch("landlot",function(newVal){
+            var drawMapFarm = [];
+            var drawMapLandlot = [];
             if(scope.landlot.id != null && newVal){
                 scope.cropFarm = farmService.getFarm(scope.landlot.farmId).then(function(result){
                     var polygon = new Polygon();
@@ -409,14 +435,10 @@ export default function LandlotDirective($compile, $templateCache, $mdDialog, to
                         zoom: 15
                     });
 
-                    $log.log(scope.tempLatitude+" "+scope.tempLongitude);
-
                     map = new google.maps.Map(angular.element('#mapa')[0], {
                         center: {lat: scope.tempLatitude, lng: scope.tempLongitude},
                         zoom: 15
                     });
-
-
 
 
                     new google.maps.Polyline({
@@ -426,7 +448,7 @@ export default function LandlotDirective($compile, $templateCache, $mdDialog, to
                         strokeOpacity: 1.0,
                         strokeWeight: 2
                     }).setMap(map);
-                    drawMapFarm = [];
+                    //drawMapFarm = [];
 
                     if(scope.landlot.location != null){
                         new google.maps.Polygon({
@@ -437,7 +459,28 @@ export default function LandlotDirective($compile, $templateCache, $mdDialog, to
                             fillColor: '#FF0000',
                             fillOpacity: 0.35
                         }).setMap(map);
-                        drawMapLandlot=[];
+                       // drawMapLandlot=[];
+                    }
+
+                    new google.maps.Polyline({
+                        path: drawMapFarm,
+                        geodesic: true,
+                        strokeColor: '#FF0000',
+                        strokeOpacity: 1.0,
+                        strokeWeight: 2
+                    }).setMap(map2);
+                    //drawMapFarm = [];
+
+                    if(scope.landlot.location != null){
+                        new google.maps.Polygon({
+                            paths: drawMapLandlot,
+                            strokeColor: '#FF0000',
+                            strokeOpacity: 0.8,
+                            strokeWeight: 2,
+                            fillColor: '#FF0000',
+                            fillOpacity: 0.35
+                        }).setMap(map2);
+                        // drawMapLandlot=[];
                     }
 
 

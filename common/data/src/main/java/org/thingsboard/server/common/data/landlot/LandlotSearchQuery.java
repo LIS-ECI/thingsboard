@@ -20,7 +20,7 @@ import org.thingsboard.server.common.data.relation.RelationsSearchParameters;
  */
 @Data
 public class LandlotSearchQuery {
-    
+
     private RelationsSearchParameters parameters;
     private String relationType;
     private List<String> landlotTypes;
@@ -33,5 +33,5 @@ public class LandlotSearchQuery {
                         Collections.singletonList(EntityType.LANDLOT))));
         return query;
     }
-    
+
 }
