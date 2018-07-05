@@ -373,13 +373,38 @@ export default function LandlotDirective($compile, $templateCache, $mdDialog, to
         };
 
         var map;
-        var drawMapFarm = [];
-        var drawMapLandlot = [];
+
         function Polygon() {
             this.coordinates = [];
             this.type = 'Polygon';
         }
+
+      /*  map = new google.maps.Map(angular.element('#mapa')[0], {
+            center: {lat: scope.tempLatitude, lng: scope.tempLongitude},
+            zoom: 15
+        });
+
+        scope.$watch("landlot.location",function(newVal){
+           var drawPolygonLandlot = [];
+           $log.log("Coordenadas");
+           $log.log(newVal);
+           if(newVal != null){
+               for(var j = 0 ; j < scope.landlot.location.coordinates[0].length; j++){
+                   drawPolygonLandlot.push({lat: scope.landlot.location.coordinates[0][j][1],lng: scope.landlot.location.coordinates[0][j][0]});
+               }
+
+               new google.maps.Polyline({
+                   path: drawPolygonLandlot,
+                   geodesic: true,
+                   strokeColor: '#FF0000',
+                   strokeOpacity: 1.0,
+                   strokeWeight: 2
+               }).setMap(map);
+           }
+        });*/
         scope.$watch("landlot",function(newVal){
+            var drawMapFarm = [];
+            var drawMapLandlot = [];
             if(scope.landlot.id != null && newVal){
                 scope.cropFarm = farmService.getFarm(scope.landlot.farmId).then(function(result){
                     var polygon = new Polygon();
@@ -410,14 +435,10 @@ export default function LandlotDirective($compile, $templateCache, $mdDialog, to
                         zoom: 15
                     });
 
-                    $log.log(scope.tempLatitude+" "+scope.tempLongitude);
-
                     map = new google.maps.Map(angular.element('#mapa')[0], {
                         center: {lat: scope.tempLatitude, lng: scope.tempLongitude},
                         zoom: 15
                     });
-
-
 
 
                     new google.maps.Polyline({
@@ -427,7 +448,7 @@ export default function LandlotDirective($compile, $templateCache, $mdDialog, to
                         strokeOpacity: 1.0,
                         strokeWeight: 2
                     }).setMap(map);
-                    drawMapFarm = [];
+                    //drawMapFarm = [];
 
                     if(scope.landlot.location != null){
                         new google.maps.Polygon({
@@ -438,7 +459,28 @@ export default function LandlotDirective($compile, $templateCache, $mdDialog, to
                             fillColor: '#FF0000',
                             fillOpacity: 0.35
                         }).setMap(map);
-                        drawMapLandlot=[];
+                       // drawMapLandlot=[];
+                    }
+
+                    new google.maps.Polyline({
+                        path: drawMapFarm,
+                        geodesic: true,
+                        strokeColor: '#FF0000',
+                        strokeOpacity: 1.0,
+                        strokeWeight: 2
+                    }).setMap(map2);
+                    //drawMapFarm = [];
+
+                    if(scope.landlot.location != null){
+                        new google.maps.Polygon({
+                            paths: drawMapLandlot,
+                            strokeColor: '#FF0000',
+                            strokeOpacity: 0.8,
+                            strokeWeight: 2,
+                            fillColor: '#FF0000',
+                            fillOpacity: 0.35
+                        }).setMap(map2);
+                        // drawMapLandlot=[];
                     }
 
 

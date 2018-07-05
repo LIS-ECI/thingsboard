@@ -53,10 +53,15 @@
                         <label translate>farm.description</label>
                         <textarea ng-model="farm.additionalInfo.description" rows="2"></textarea>
                     </md-input-container>
+                    <b>Las siguientes coordenadas representan a los vertices que delimitan la finca<br></b><br>
                     <md-button ng-click="addCoordinate()" background-color="grey">Add Coordinate</md-button>
                     <md-button ng-click="deleteCoordinate()" background-color="grey">Remove Coordinate</md-button><br>
-                    <label>Longitud</label>
-                    <label>Latitud</label><br>
+                    <table style="font-family: arial, sans-serif; border-collapse: collapse; width: 75%;">
+                        <tr>
+                            <th style=" text-align: center ; padding: 8px; border: 1px solid #dddddd;">Latitud</th>
+                            <th style=" text-align: center ; padding: 8px; border: 1px solid #dddddd;">Longitud</th>
+                        </tr>
+                    </table><br>
                     <div style="min-height: 200px;">
                         <label ng-repeat-start="label in labels">{{label}}</label>
                         <input ng-model='longitudes[$index]' type='text' value='' />
