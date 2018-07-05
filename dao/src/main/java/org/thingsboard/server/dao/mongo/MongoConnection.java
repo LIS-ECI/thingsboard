@@ -19,11 +19,13 @@ import com.mongodb.client.gridfs.GridFSBuckets;
 import org.bson.codecs.pojo.PojoCodecProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
+import org.springframework.context.annotation.Configuration;
 
 /**
  *
  * @author Carlos Ramirez
  */
+@Configuration
 public abstract class MongoConnection {
 
     private MongoClient mongoClient;

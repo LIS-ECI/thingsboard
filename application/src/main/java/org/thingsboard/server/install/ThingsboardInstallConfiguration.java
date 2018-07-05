@@ -21,8 +21,12 @@ import org.springframework.context.annotation.Profile;
 import org.thingsboard.server.dao.audit.AuditLogLevelFilter;
 
 import java.util.HashMap;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
+import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 
 @Configuration
+@EnableAutoConfiguration(exclude={MongoAutoConfiguration.class, MongoDataAutoConfiguration.class})
 @Profile("install")
 public class ThingsboardInstallConfiguration {
 

@@ -349,6 +349,7 @@ export default angular.module('thingsboard.locale', [])
                     "add-actions": "Add Action",
                     "actions": "Actions",
                     "action": "Action",
+                    "crops": "Crops",
                     "current": "Current Crop",
                     "history": "Crop History",
                     "finish-crop":"Finish Crop",

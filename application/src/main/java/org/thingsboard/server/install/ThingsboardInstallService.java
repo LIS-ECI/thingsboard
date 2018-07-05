@@ -28,9 +28,13 @@ import org.thingsboard.server.service.install.DatabaseUpgradeService;
 import org.thingsboard.server.service.install.SystemDataLoaderService;
 
 import java.nio.file.Paths;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
+import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 
 @Service
 @Profile("install")
+@EnableAutoConfiguration(exclude={MongoAutoConfiguration.class, MongoDataAutoConfiguration.class})
 @Slf4j
 public class ThingsboardInstallService {
 
