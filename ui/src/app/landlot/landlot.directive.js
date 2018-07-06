@@ -56,6 +56,7 @@ export default function LandlotDirective($compile, $templateCache, $mdDialog, to
             this.why = '';
             this.cause = '';
             this.startCrop = new Date();
+            this.finishCropDate = null;
             this.weekens = 0;
             this.initialConditions = '';
             this.actions = [];
@@ -205,6 +206,7 @@ export default function LandlotDirective($compile, $templateCache, $mdDialog, to
         scope.finishCrop = function(){
             scope.landlot.crop.finish = true;
             scope.landlot.cropsHistory.push(scope.landlot.crop);
+            scope.landlot.crop.finishCropDate = new Date();
             scope.landlot.crop = new Crop();
         };
 
@@ -370,7 +372,7 @@ export default function LandlotDirective($compile, $templateCache, $mdDialog, to
         };
 
 
-        scope.someCrop = function(){
+       scope.someCrop = function(){
             var crop = false;
             if(scope.landlot.name == null) {
                 scope.landlot.crop = new Crop();
@@ -380,6 +382,7 @@ export default function LandlotDirective($compile, $templateCache, $mdDialog, to
             }
             return crop;
         };
+
 
         var map;
 

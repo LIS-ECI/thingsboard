@@ -495,8 +495,12 @@ public class DeviceController extends BaseController {
         ListenableFuture<List<TsKvEntry>> values = tsService.findAllLatest(new DeviceId(UUID.fromString(deviceId)));
         try {
             if(values.get().size() > 0){
-                keyValue.add(values.get().get(0).getKey());
-                keyValue.add(values.get().get(0).getValueAsString());
+                //keyValue.add(values.get().get(0).getKey());
+                //keyValue.add(values.get().get(0).getValueAsString());
+                for(TsKvEntry ts: values.get()){
+                    keyValue.add(ts.getKey());
+                    keyValue.add(ts.getValueAsString());
+                }
             }
             return keyValue;
         } catch (Exception e) {
