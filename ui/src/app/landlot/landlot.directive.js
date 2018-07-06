@@ -176,16 +176,22 @@ export default function LandlotDirective($compile, $templateCache, $mdDialog, to
         scope.tagLandLot = "";
 
          scope.addTagLandLot = function(){
-            var taglandlot = new TagLandlot();
-            if(polygon2.coordinates.length > 0 && scope.tagLandLot.length > 0){
-                taglandlot.idLandlot = scope.landlot.id.id;
-                taglandlot.tag = scope.tagLandLot;
-                taglandlot.date = scope.selectedDate.getTime();
-                taglandlot.tagPolygon = polygon2;
+            var taglandlotSave = new TagLandlot();
+            $log.log("entro a guardar el tag");
+            //if(polygon2.coordinates.length > 0 && scope.tagLandLot.length > 0){
+            if(scope.tagLandLot.length > 0){
+                taglandlotSave.idLandlot = scope.landlot.id.id;
+                taglandlotSave.tag = scope.tagLandLot;
+                taglandlotSave.date = scope.selectedDate.getTime();
+                taglandlotSave.tagPolygon = polygon2;
                 $log.log("Este es el tag");
-                $log.log(taglandlot);
+                $log.log(taglandlotSave);
+                $log.log("estos son los datos de telimetria a verificar");
+                $log.log(dataTelemetryUpdated);
+                $log.log("Este es el tag");
             }
-            landlotService.saveTagLandlot(taglandlot);
+            $log.log("finaliza a guardar el tag");
+            //landlotService.saveTagLandlot(taglandlotSave);
         };
         
 
@@ -231,8 +237,6 @@ export default function LandlotDirective($compile, $templateCache, $mdDialog, to
             }
         });
 
-
-
         scope.highchartsNG = {
             options: {
                 chart: {
@@ -241,7 +245,6 @@ export default function LandlotDirective($compile, $templateCache, $mdDialog, to
                         redraw: function() {
                             $log.log('The chart is being redrawn');
                         }
-
                     }
                 }
             },
@@ -432,9 +435,6 @@ export default function LandlotDirective($compile, $templateCache, $mdDialog, to
                         }
                         $log.log(drawMapLandlot);
                     }
-
-                    
-
 
                     map2 = new google.maps.Map(angular.element('#mapa2')[0], {
                         center: {lat:scope.tempLatitude , lng: scope.tempLongitude},
