@@ -275,7 +275,16 @@ function DashboardLayoutController($scope, $rootScope, $translate, $window, hotk
         marker.addListener('click', function() {
             var text = "";
             deviceService.getLastTelemetryKey(deviceId).then(function(result4){
-                text = result4[0]+': '+result4[1];
+                $log.log(result4);
+                text += '<t>';
+                for(var i=0; i<result4.length;i++){
+                    if(i % 2 == 0){
+                        text +='<b>'+ result4[i]+": ";
+                    }else if(i % 2 == 1){
+                        text += result4[i]+'</b><br>';
+                    }
+                }
+                text +='</t>';
                 var infowindow = new google.maps.InfoWindow({
                     content: text
                 });

@@ -9,6 +9,7 @@ public class Crop {
     private String why;
     private String cause;
     private Date startCrop = new Date();
+    private Date finishCropDate;
     private int weekens = 0;
     private String initialConditions;
     private List<Action> actions;
@@ -16,11 +17,12 @@ public class Crop {
     private String state;
     private List<String> practices;
 
-    public Crop(String name, String why, String cause, Date startCrop, String initialConditions, List<Action> actions,Boolean finish,String state,List<String> practices) {
+    public Crop(String name, String why, String cause, Date startCrop, Date finishCropDate, String initialConditions, List<Action> actions,Boolean finish,String state,List<String> practices) {
         this.name = name;
         this.why = why;
         this.cause = cause;
         this.startCrop = startCrop;
+        this.setFinishCropDate(finishCropDate);
         this.weekens = dateToWeek(startCrop);
         this.initialConditions = initialConditions;
         this.actions = actions;
@@ -116,5 +118,13 @@ public class Crop {
 
     public void setPractices(List<String> practices) {
         this.practices = practices;
+    }
+
+    public Date getFinishCropDate() {
+        return finishCropDate;
+    }
+
+    public void setFinishCropDate(Date finishCropDate) {
+        this.finishCropDate = finishCropDate;
     }
 }
