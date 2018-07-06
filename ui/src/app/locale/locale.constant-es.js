@@ -156,6 +156,7 @@
               "add-action": "Agregar Acción",
               "actions": "Acciones",
               "action": "Acción",
+              "crops": "Cultivos",
               "current": "Cultivo Actual",
               "history": "Historia del cultivo",
               "finish-crop":"Terminar Cultivo",

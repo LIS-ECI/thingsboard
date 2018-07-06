@@ -341,17 +341,23 @@ export default function LandlotDirective($compile, $templateCache, $mdDialog, to
 
 
         scope.exists = function (item, list) {
-            return list.indexOf(item) > -1;
+            if (angular.isDefined(list)){
+                return list.indexOf(item) > -1;
+            }
         };
 
         scope.toggle = function (item, list) {
-            var idx = list.indexOf(item);
-            if (idx > -1) {
-                list.splice(idx, 1);
+            if (angular.isDefined(list)){
+
+                var idx = list.indexOf(item);
+                if (idx > -1) {
+                    list.splice(idx, 1);
+                }
+                else {
+                    list.push(item);
+                }
             }
-            else {
-                list.push(item);
-            }
+
         };
 
         scope.action = '';
