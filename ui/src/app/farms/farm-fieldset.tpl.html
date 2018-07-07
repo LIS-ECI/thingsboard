@@ -93,7 +93,7 @@
             <md-tab label="{{ 'farm.photographs' | translate }}">
                 <md-content class="md-padding">
                     <form>
-                        Select images: <input type="file" name="img" multiple onchange="angular.element(this).scope().getFileDetails(this)" >
+                        Seleccione las imágenes tomadas por el dron: <input type="file" name="img" multiple onchange="angular.element(this).scope().getFileDetails(this)" >
                         <md-button ng-click="uploadFiles()" type="submit" class="md-raised md-primary">
                             {{ 'farm.uploadPictures' | translate }}
                         </md-button>
@@ -105,7 +105,7 @@
                             <md-button ng-click="uploadImage()" class="md-raised md-primary">{{ 'farm.saveFrontageFarmPicture' | translate }}</md-button>
                             <md-button ng-click="getFrontFarmImage()" class="md-raised md-primary">{{ 'farm.loadFrontagePicture' | translate }}</md-button>
                         </form>
-                        <img src="data:image/*;base64,{{frontImage}}"/>
+                        <img src="data:image/*;base64,{{frontImage}}" width="500" height="300" alt="Foto no cargada" />
                     </div>
                         <p style="color:white;">This is a temporal resize way for the farm tabs - Thingsboard </p>
                 </md-content>

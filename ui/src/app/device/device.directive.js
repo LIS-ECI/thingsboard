@@ -90,7 +90,7 @@ export default function DeviceDirective($compile, $templateCache, toast, $transl
                         if(scope.landlots[i].location !== null){
                             map = new google.maps.Map(angular.element('#mapa')[0], {
                                 center: {lat: scope.landlots[i].location.coordinates[0][0][1], lng: scope.landlots[i].location.coordinates[0][0][0]},
-                                zoom: 12
+                                zoom: 15
                             });
                             
                             google.maps.event.addListener(map, 'click', function(clickEvent) {
