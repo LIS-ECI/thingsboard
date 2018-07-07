@@ -141,6 +141,7 @@ public class LandlotController extends BaseController {
     @ResponseBody
     public TagLandlot saveTagLandlot(@RequestBody TagLandlot tagLandlot) throws ThingsboardException {
         if(tagLandlot != null){
+            System.out.println("Este es el taglandlot entrante: "+tagLandlot.toString());
             return mongoService.getMongodbTag().save(tagLandlot);
         }else{
             throw new ThingsboardException("The landlot tag is null",ThingsboardErrorCode.BAD_REQUEST_PARAMS);
