@@ -101,7 +101,7 @@
                     <p style="color:white;">This is a temporal resize way for the farm tabs - Thingsboard </p>
                 </md-content>
             </md-tab>
-            <md-tab label="{{ 'landlot.crops-title' | translate }}" ng-show="someCrop()">
+            <md-tab label="{{ 'landlot.crops-title' | translate }}" ng-click="someCrop()">
                 <md-tabs md-dynamic-height md-border-bottom>
                     <md-tab label="{{ 'crop.current' | translate }}">
                         <md-content class="md-padding">
@@ -111,6 +111,13 @@
                                         <label translate>{{ 'crop.name' | translate }}</label>
                                         <textarea ng-model="landlot.crop.name" rows="2"></textarea>
                                     </md-input-container>
+                                    <md-input-container class="md-block">
+                                        <div flex-gt-xs>
+                                            <label>{{ 'landlot.start-date' | translate }}</label>
+                                            <md-datepicker ng-model="landlot.crop.startCrop"  md-placeholder="Cambiar fecha"></md-datepicker>
+                                        </div>
+                                    </md-input-container>
+                                    <label>{{landlot.crop.startCrop |date :  "dd/MM/y"}}</label>
                                     <md-input-container class="md-block">
                                         <label translate>{{ 'crop.why-crop' | translate }}</label>
                                         <textarea ng-model="landlot.crop.why" rows="2"></textarea>
@@ -138,12 +145,24 @@
                                     <md-card-title>
                                         <md-card-title-text>
                                             <span class="md-headline">{{crop.name}}</span>
-                                            <span class="md-subhead">{{crop.startCrop |date :  "dd/MM/y"}}</span>
                                         </md-card-title-text>
-                                        <md-card-title-media>
-                                            <div class="md-media-lg card-media"></div>
-                                        </md-card-title-media>
                                     </md-card-title>
+                                    <md-card-content>
+                                        <t>
+                                            <b>Fecha inicio:</b>
+                                            <span>{{crop.startCrop |date :  "dd/MM/y"}}</span><br>
+                                            <b>Fecha fin: </b>
+                                            <span>{{crop.finishCropDate |date :  "dd/MM/y"}}</span><br>
+                                            <b>Porque el cultivo:</b><br>
+                                            <span>{{crop.why}}</span><br>
+                                            <b>Causa:</b><br>
+                                            <span>{{crop.cause}}</span><br>
+                                            <b>Condiciones iniciales:</b><br>
+                                            <span>{{crop.initialConditions}}</span><br>
+                                            <b>Estado:</b><br>
+                                            <span>{{crop.state}}</span>
+                                        </t>
+                                    </md-card-content>
                                 </md-card>
                             </div>
                             <p style="color:white;">This is a temporal resize way for the farm tabs - Thingsboard </p>

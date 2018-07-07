@@ -39,6 +39,7 @@ import org.thingsboard.server.common.data.audit.ActionType;
 import org.thingsboard.server.common.data.farm.Farm;
 import org.thingsboard.server.common.data.farm.FarmSearchQuery;
 import org.thingsboard.server.common.data.id.CustomerId;
+import org.thingsboard.server.common.data.id.DashboardId;
 import org.thingsboard.server.common.data.id.FarmId;
 import org.thingsboard.server.common.data.id.TenantId;
 import org.thingsboard.server.common.data.page.TextPageData;
@@ -267,6 +268,8 @@ public class FarmController extends BaseController {
         try {
             FarmId farmId = new FarmId(toUUID(strFarmId));
             Farm farm = checkFarmId(farmId);
+            Farm f = farmService.findFarmById(new FarmId(toUUID(strFarmId)));
+            dashboardService.deleteDashboard(new DashboardId(toUUID(f.getDashboardId())));
             farmService.deleteFarm(farmId);
             mongoService.getMongodbFarm().removeById(strFarmId);
             logEntityAction(farmId, farm,

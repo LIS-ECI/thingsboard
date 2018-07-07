@@ -38,6 +38,8 @@ import org.bson.types.ObjectId;
 import org.thingsboard.server.common.data.Image;
 import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.imaging.jpeg.JpegProcessingException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.thingsboard.server.common.data.Point;
 import org.thingsboard.server.common.data.SpatialLandlot;
 
@@ -128,6 +130,16 @@ public class MongoDbImage extends MongoConnection {
                     }
                 });
     }
+    
+    public void findFilesByPrefix(String prefix) {
+        getGridFSDatabase().find().forEach(
+                new Block<GridFSFile>() {
+                    @Override
+                    public void apply(final GridFSFile gridFSFile) {
+                        System.out.println(gridFSFile.getFilename());
+                    }
+                });
+    }
 
     public File getFrontImage(String farmId) throws Exception {
         GridFSFile gridFSFile = getGridFSDatabase().find(Filters.eq("metadata.FarmId", farmId)).first();
@@ -165,6 +177,30 @@ public class MongoDbImage extends MongoConnection {
         } catch (IOException e) {
             throw new MongoDBException("It wasn´t posible to load the file");
         }
+    }
+    
+    public List<File> findFilesByPrefixInName(String prefix){
+        List<File> files = new ArrayList<>();
+        getGridFSDatabase().find(Filters.regex("filename", prefix)).forEach(new Block<GridFSFile>() {
+            @Override
+            public void apply(final GridFSFile gridFSFile) {
+                FileOutputStream streamToDownloadTo;
+                try {
+                    streamToDownloadTo = new FileOutputStream(gridFSFile.getFilename());
+                    getGridFSDatabase().downloadToStream(gridFSFile.getFilename(), streamToDownloadTo);
+                    streamToDownloadTo.close();
+
+                    File f = new File(gridFSFile.getFilename());
+                    files.add(f);
+                } catch (FileNotFoundException ex) {
+                    Logger.getLogger(MongoDbImage.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(MongoDbImage.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+            }
+        });
+        return files;
     }
 
     public List<Image> downloadMapsFile(String landlotId, long date) throws Exception {
