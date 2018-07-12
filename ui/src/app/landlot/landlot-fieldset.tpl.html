@@ -98,6 +98,7 @@
                             <textarea ng-model="landlot.groundFeatures.higrologicData" rows="2"></textarea>
                         </md-input-container>
                     </div>
+                    <p style="color:white;">This is a temporal resize way for the farm tabs - Thingsboard </p>
                 </md-content>
             </md-tab>
             <md-tab label="{{ 'landlot.crops-title' | translate }}" ng-click="someCrop()">
@@ -134,6 +135,7 @@
                                         <textarea ng-model="landlot.crop.state" rows="2"></textarea>
                                     </md-input-container>
                                 </div>
+                            <p style="color:white;">This is a temporal resize way for the farm tabs - Thingsboard </p>
                         </md-content>
                     </md-tab>
                     <md-tab label="{{ 'crop.history' | translate }}">
@@ -163,6 +165,7 @@
                                     </md-card-content>
                                 </md-card>
                             </div>
+                            <p style="color:white;">This is a temporal resize way for the farm tabs - Thingsboard </p>
                         </md-content>
                     </md-tab>
                     <md-tab label="{{ 'crop.good-practices' | translate }}" ng-show="someCrop()">
@@ -179,6 +182,7 @@
                                     </md-checkbox>
                                 </div>
                             </md-input-container>
+                            <p style="color:white;">This is a temporal resize way for the farm tabs - Thingsboard </p>
                         </md-content>
                     </md-tab>
                     <md-tab label="{{ 'crop.actions' | translate }}">
@@ -193,6 +197,7 @@
                                     <li ng-repeat="actionCrop in landlot.crop.actions">{{actionCrop.action}} -- {{actionCrop.actionDate |date :  "dd/MM/y"}}</li>
                                 </ul>
                             </div>
+                            <p style="color:white;">This is a temporal resize way for the farm tabs - Thingsboard </p>
                         </md-content>
                     </md-tab>
                 </md-tabs>
@@ -231,6 +236,7 @@
                                         <highchart id="chart1" config="highchartsNG"></highchart>
                                 </md-tab>
                             </md-tabs>
+                            <p style="color:white;">This is a temporal resize way for the farm tabs - Thingsboard </p>
                         </md-content>
                         <md-content class="md-padding">
                             <label>
@@ -261,6 +267,7 @@
                             <md-button ng-click="addTagLandLot()" class="md-raised md-primary">
                                 {{ 'landlot.create-landlot-tag' | translate }}
                             </md-button>
+                            <p style="color:white;">This is a temporal resize way for the farm tabs - Thingsboard </p>
                         </md-content>
                     </div>
                 </md-content>
