@@ -35,8 +35,6 @@ export default function LandlotDirective($compile, $templateCache, $mdDialog, to
                     scope.isPublic = false;
                     scope.assignedCustomer = null;
                 }
-                scope.highchartsNG.series.length = 0;
-                scope.highchartsNG.title['text'] = '';
                 scope.tabs.length = 0;
                 scope.selectedIndex = 0;
             }
@@ -235,7 +233,6 @@ export default function LandlotDirective($compile, $templateCache, $mdDialog, to
             }
 
             var taglandlotSave = new TagLandlot();
-            $log.log("entro a guardar el tag");
             if(polygon2.coordinates.length > 0 && scope.tagLandLot.length > 0){
                 taglandlotSave.idLandlot = scope.landlot.id.id;
                 taglandlotSave.tag = scope.tagLandLot;
@@ -258,21 +255,10 @@ export default function LandlotDirective($compile, $templateCache, $mdDialog, to
                     }
                     telemetryDataInDate[dataTelemetryUpdated[i].titleTab] = (sumValidData/contValidData);
                 }
-
-                $log.log(telemetryDataInDate);
-
                 taglandlotSave.telemetryData = telemetryDataInDate;
                 taglandlotSave.imageName = nearImagefromPolygon();
                 taglandlotSave.cropName = scope.landlot.crop.name;
                 taglandlotSave.tagPolygon = polygon2;
-
-                $log.log("imagenes con bounds");
-                $log.log(imagesToEvalute);
-                $log.log("Este es el tag");
-                $log.log(taglandlotSave);
-                $log.log("estos son los datos de telimetria a verificar");
-                $log.log(dataTelemetryUpdated);
-                $log.log("finaliza a guardar el tag");
                 landlotService.saveTagLandlot(taglandlotSave);
             }
             
@@ -327,41 +313,7 @@ export default function LandlotDirective($compile, $templateCache, $mdDialog, to
             }
         });
 
-        scope.highchartsNG = {
-            options: {
-                chart: {
-                    type: 'line',
-                    events: {
-                        redraw: function() {
-                            $log.log('The chart is being redrawn');
-                        }
-                    }
-                }
-            },
-            navigator: {
-                enabled: true,
-                series: {
-                    data: []
-                }
-            },
-            xAxis: {
-                type: 'datetime',
-                dateTimeLabelFormats: {
-                    day: "%e. %b",
-                    month: "%b '%y",
-                    year: "%Y"
-                }
-            },
-            title: {
-                text: ''
-            },
-            loading: false,
-            series: [{
-                name: 'Average per day',
-                data: [],
-                type: 'line',
-            }]
-        };
+        scope.highchartsNG = {};
 
         var selected = null;
         var dataTelemetryUpdated = [];
@@ -371,15 +323,42 @@ export default function LandlotDirective($compile, $templateCache, $mdDialog, to
         scope.$watch('selectedIndex', function(current){
             selected = scope.tabs[current];
             if ( current + 1 ){
-                scope.highchartsNG.series.length = 0;
-                scope.highchartsNG.series.push({
-                    name: 'Average per day',
-                    data: dataTelemetryUpdated[dataTelemetryUpdated.findIndex(data => data.titleTab === selected)]['telemetry'],
-                    type: 'line'
-                });
-                scope.highchartsNG.title['text'] = selected;
+                scope.highchartsNG = {
+                    options: {
+                        chart: {
+                            type: 'line',
+                            events: {
+                                redraw: function() {
+                                    $log.log('The chart is being redrawn');
+                                }
+                            }
+                        }
+                    },
+                    navigator: {
+                        enabled: true,
+                        series: {
+                            data: []
+                        }
+                    },
+                    xAxis: {
+                        type: 'datetime',
+                        dateTimeLabelFormats: {
+                            day: "%e. %b",
+                            month: "%b '%y",
+                            year: "%Y"
+                        }
+                    },
+                    title: {
+                        text: selected
+                    },
+                    loading: false,
+                    series: [{
+                        name: 'Average per day',
+                        data: dataTelemetryUpdated[dataTelemetryUpdated.findIndex(data => data.titleTab === selected)]['telemetry'],
+                        type: 'line'
+                    }]
+                };
             }
-            scope.$apply();
         });
 
         function infoTab(title,telemetryData){
@@ -413,16 +392,6 @@ export default function LandlotDirective($compile, $templateCache, $mdDialog, to
                     var tabHistoricalValues = new infoTab(key,seriesToAdd);
                     dataTelemetryUpdated.push(tabHistoricalValues);
                 });
-                if(dataTelemetryUpdated.length == 1){
-                    $log.log(dataTelemetryUpdated[0]);
-                    scope.highchartsNG.series.push({
-                        name: 'Average per day',
-                        data: dataTelemetryUpdated[0]['telemetry'],
-                        type: 'line'
-                    });
-                    scope.highchartsNG.title['text'] = dataTelemetryUpdated[0]['titleTab'];
-                    scope.$apply();
-                }
             });
         };
 
