@@ -204,7 +204,7 @@
             </md-tab>
             <md-tab label="{{ 'landlot.tags-title' | translate }}">
                 <md-content class="md-padding">
-                    <div style="min-height: 1000px;">
+                    <div style="min-height: 1500px;">
                         <div layout-gt-xs="row">
                             <div flex-gt-xs>
                                 <label>{{ 'landlot.start-date' | translate }}</label>
@@ -227,17 +227,18 @@
                         </md-input-container>
 
                         <br>
-
-                        <md-content class="md-padding">
-                            <md-tabs md-selected="selectedIndex" md-border-bottom md-autoselect md-swipe-content>
-                                <md-tab ng-repeat="tab in tabs"
-                                        ng-disabled="tab.disabled"
-                                        label="{{tab}}">
-                                        <highchart id="chart1" config="highchartsNG"></highchart>
-                                </md-tab>
-                            </md-tabs>
-                            <p style="color:white;">This is a temporal resize way for the farm tabs - Thingsboard </p>
-                        </md-content>
+                        <div style="min-height: 500px;">
+                            <md-content class="md-padding">
+                                <md-tabs md-selected="selectedIndex" md-border-bottom md-autoselect md-swipe-content>
+                                    <md-tab ng-repeat="tab in tabs"
+                                            ng-disabled="tab.disabled"
+                                            label="{{tab}}">
+                                            <highchart id="chart1" config="highchartsNG"></highchart>
+                                    </md-tab>
+                                </md-tabs>
+                                <!--<p style="color:white;">This is a temporal resize way for the farm tabs - Thingsboard </p>-->
+                            </md-content>
+                        </div>
                         <md-content class="md-padding">
                             <label>
                                 <input type="radio" ng-model="photoType" ng-click="changeImageType()" value="GRE">
