@@ -58,8 +58,8 @@
                     <md-button ng-click="deleteCoordinate()" background-color="grey">Remove Coordinate</md-button><br>
                     <table style="font-family: arial, sans-serif; border-collapse: collapse; width: 75%;">
                         <tr>
-                            <th style=" text-align: center ; padding: 8px; border: 1px solid #dddddd;">Latitud</th>
                             <th style=" text-align: center ; padding: 8px; border: 1px solid #dddddd;">Longitud</th>
+                            <th style=" text-align: center ; padding: 8px; border: 1px solid #dddddd;">Latitud</th>
                         </tr>
                     </table><br>
                     <div style="min-height: 200px;">
@@ -327,11 +327,11 @@
                     <div style="min-height: 1000px;">
                         <label>{{ 'farm.localClimatology' | translate }}</label>
                         <md-input-container class="md-block">
-                            <label translate>climatology.longitude</label>
+                            <label translate>climatology.latitude</label>
                             <textarea ng-model="longitude"></textarea>
                         </md-input-container>
                         <md-input-container class="md-block">
-                            <label translate>climatology.latitude</label>
+                            <label translate>climatology.longitude</label>
                             <textarea ng-model="latitude"></textarea>
                         </md-input-container>
                         <md-button ng-click="climatology()">{{ 'farm.currentClimatologyData' | translate }}</md-button><br>
