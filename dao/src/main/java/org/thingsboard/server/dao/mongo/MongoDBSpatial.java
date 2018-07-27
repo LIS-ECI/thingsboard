@@ -34,7 +34,7 @@ public class MongoDBSpatial extends MongoConnection implements SpatialIndexes {
         mongodbDevice = new MongoDBSpatialDevice();
         mongodbspark = new MongoDBSpatialSpark();
         mongodbimage = new MongoDbImage(mongodblandlot);
-        mongodbTag = new MongoDBTagLandlot();
+        mongodbTag = new MongoDBTagLandlot(mongodbimage);
     }
 
     public MongoDBSpatialLandlot getMongodblandlot() {

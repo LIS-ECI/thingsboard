@@ -140,6 +140,36 @@ public class MongoDbImage extends MongoConnection {
                     }
                 });
     }
+    
+    public List<Image> findPhotosByPrefix(String prefix) {
+        List<Image> imgs = new ArrayList<>();
+        getGridFSDatabase().find(Filters.regex("filename", prefix)).forEach(new Block<GridFSFile>() {
+            @Override
+            public void apply(final GridFSFile gridFSFile) {
+                FileOutputStream streamToDownloadTo;
+                Image img = new Image();
+                try {
+                    streamToDownloadTo = new FileOutputStream(gridFSFile.getFilename());
+                    getGridFSDatabase().downloadToStream(gridFSFile.getFilename(), streamToDownloadTo);
+                    streamToDownloadTo.close();
+                   
+                    
+                    File f = new File(gridFSFile.getFilename());
+                    BufferedImage bfimg = ImageIO.read(f);
+                    img.setImg(bfimg);
+                    img.setName(gridFSFile.getFilename());
+                    img.setCoordinates(((List<Double>) gridFSFile.getMetadata().get("coordinates")));
+                    imgs.add(img);
+                } catch (FileNotFoundException ex) {
+                    Logger.getLogger(MongoDbImage.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(MongoDbImage.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+            }
+        });
+        return imgs;
+    }
 
     public File getFrontImage(String farmId) throws Exception {
         GridFSFile gridFSFile = getGridFSDatabase().find(Filters.eq("metadata.FarmId", farmId)).first();

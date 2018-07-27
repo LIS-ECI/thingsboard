@@ -10,8 +10,12 @@ import com.mongodb.MongoWriteException;
 import com.mongodb.client.MongoCollection;
 import static com.mongodb.client.model.Filters.eq;
 import com.mongodb.client.result.DeleteResult;
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.thingsboard.server.common.data.Image;
 import org.thingsboard.server.common.data.TagLandlot;
 
 /**
@@ -20,6 +24,12 @@ import org.thingsboard.server.common.data.TagLandlot;
  */
 public class MongoDBTagLandlot extends MongoConnectionPOJO<TagLandlot> implements DaoMongo<TagLandlot>{
 
+    private MongoDbImage mdImage;
+    
+    public MongoDBTagLandlot(MongoDbImage mdImage) {
+        this.mdImage = mdImage;
+    }
+    
     @Override
     public MongoCollection<TagLandlot> getCollectionDependClass() {
         return this.getMongoDatabase().getCollection("TagLandlot", TagLandlot.class);
@@ -44,6 +54,14 @@ public class MongoDBTagLandlot extends MongoConnectionPOJO<TagLandlot> implement
     public TagLandlot save(TagLandlot t) {
         try {
             getCollectionDependClass().insertOne(t);
+            List<Image> imgs = mdImage.findPhotosByPrefix(t.getImageName().substring(0, t.getImageName().length()-8));
+            ImageML imgml;
+            try {
+                imgml = new ImageML(imgs, t);
+                imgml.calculateNDVI();
+            } catch (IOException ex) {
+                Logger.getLogger(MongoDBTagLandlot.class.getName()).log(Level.SEVERE, null, ex);
+            }
             return t;
         } catch (MongoWriteException ex) {
             System.out.println("No fue posible agregar la etiqueta del landlot");

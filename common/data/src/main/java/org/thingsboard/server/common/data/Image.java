@@ -1,5 +1,6 @@
 package org.thingsboard.server.common.data;
 
+import java.awt.image.BufferedImage;
 import java.util.List;
 
 /**
@@ -14,6 +15,7 @@ public class Image{
     private String fileSize;
     private String modifiedDate;
     private String src;
+    private BufferedImage img;
     private List<Double> coordinates;
     
     public Image(){
@@ -27,6 +29,17 @@ public class Image{
         this.modifiedDate = modifiedDate;
         this.coordinates = coordinates;
         this.src=src;
+    }
+
+    public Image(String name, String latitude, String longitude, String fileSize, String modifiedDate, String src, BufferedImage img, List<Double> coordinates) {
+        this.name = name;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.fileSize = fileSize;
+        this.modifiedDate = modifiedDate;
+        this.src = src;
+        this.img = img;
+        this.coordinates = coordinates;
     }
     
     public String getLatitude() {
@@ -90,4 +103,14 @@ public class Image{
     public void setSrc(String src) {
         this.src = src;
     }
+
+    public BufferedImage getImg() {
+        return img;
+    }
+
+    public void setImg(BufferedImage img) {
+        this.img = img;
+    }
+    
+    
 }
