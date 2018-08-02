@@ -16,6 +16,9 @@ import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
 import com.mongodb.client.gridfs.GridFSBucket;
 import com.mongodb.client.gridfs.GridFSBuckets;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 import org.bson.codecs.pojo.PojoCodecProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
@@ -31,11 +34,25 @@ public abstract class MongoConnection {
     private MongoClient mongoClient;
     private MongoDatabase mongoDatabase;
     private GridFSBucket gridFSBucket;
+    
+    private String host;
+    private String port;
+    private String database;    
 
     @Autowired
     private ServerProperties serverProperties;
 
     public MongoConnection() {
+        Properties prop = new Properties();
+        try{
+            InputStream inputStream = getClass().getClassLoader().getResourceAsStream("config.properties");
+            prop.load(inputStream);
+            host = prop.getProperty("mongodb.host");
+            port = prop.getProperty("mongodb.port");
+            database = prop.getProperty("mongodb.database");
+        }catch(IOException ex){
+            ex.printStackTrace();
+        }
     }
 
     public ServerProperties getServerProperties() {
@@ -45,7 +62,7 @@ public abstract class MongoConnection {
     public MongoClient getSession() {
         if (mongoClient == null) {
             //mongoClient = new MongoClient(new MongoClientURI(serverProperties.getMongoURI()));
-            mongoClient = new MongoClient(new MongoClientURI("mongodb://10.8.0.23:27017"));
+            mongoClient = new MongoClient(new MongoClientURI("mongodb://"+host+":"+port));
         }
         return mongoClient;
     }
@@ -55,7 +72,7 @@ public abstract class MongoConnection {
             org.bson.codecs.configuration.CodecRegistry pojoCodecRegistry = fromRegistries(MongoClient.getDefaultCodecRegistry(),
                     fromProviders(PojoCodecProvider.builder().automatic(true).build()));
             //mongoDatabase = getSession().getDatabase(serverProperties.getMongoDB());
-            mongoDatabase = getSession().getDatabase("pruebacm").withCodecRegistry(pojoCodecRegistry);
+            mongoDatabase = getSession().getDatabase(database).withCodecRegistry(pojoCodecRegistry);
         }
         return mongoDatabase;
     }
