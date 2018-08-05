@@ -358,8 +358,7 @@ Para instalar la herramienta caché Redis toca hacer los siguientes pasos:
 ```sh
 sudo apt-get update
 sudo apt-get install build-essential tcl
-cd /tmp
-curl -O [http://download.redis.io/redis-stable.tar.gz](http://download.redis.io/redis-stable.tar.gz)
+curl -O http://download.redis.io/redis-stable.tar.gz
 tar xzvf redis-stable.tar.gz
 cd redis-stable
 make
