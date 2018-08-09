@@ -211,8 +211,7 @@ $ wget http://apache.uniminuto.edu/spark/spark-2.3.1/spark-2.3.1-bin-hadoop2.7.t
 ```
 ![](https://lh6.googleusercontent.com/pk6eDgdbXujN7uciRm1lvZLPC3DjAA4YBxn6W6dn_1RMr_IiCVliCaqrK1jXoMiRT5uEuFEdq5Gr1D-QK_XcuLNAQAYM5JgYyhuuVtmG5UMfL_L--o9MGsioHcAft5aqFH-p3Wc5)
 
-Posteriormente se debe descomprimir. 
-La implementación de la solución se desarrolló en 3 equipos:
+Posteriormente se debe descomprimir. La implementación de la solución se desarrolló en 3 equipos (Todos deberían tener Java, Maven, Git):
 
 **![](https://lh4.googleusercontent.com/rGRJZWBVS1QMQzaHbUzp9LcYFr7KvFZqZGDSsoy4N9U0wfrrsGZ8btDNnKazDSO-JTHkxRaEjEfT3kdNp_xF1Bk4VteamfmPVPZy_P_knKPZb7Ug24aiydOa4H6TMrE7iRVFhv3-)**
 
