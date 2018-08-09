@@ -370,7 +370,9 @@ Una vez instalado procedemos a ejecutarlo:
 
 1.  Ejecutamos el comando “cd redis-stable/”
     
-2.  Y por último ejecutamos “sudo redis-server redis.conf”
+2.  Modificamos el archivo "redis.conf" y buscamos la linea bind, donde cambiaremos su valor por "0.0.0.0"
+    
+3.  Y por último ejecutamos “sudo redis-server redis.conf”
     
 
 En caso de que haya quedado abierto el servicio detener con el comando:
