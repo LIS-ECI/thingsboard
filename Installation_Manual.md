@@ -1,4 +1,10 @@
-﻿# Manual de Instalación
+
+# Manual de Instalación
+
+﻿La implementación de la solución se desarrolló en 3 equipos (Todos deberían tener Java, Maven, Git):
+
+**![](https://lh4.googleusercontent.com/rGRJZWBVS1QMQzaHbUzp9LcYFr7KvFZqZGDSsoy4N9U0wfrrsGZ8btDNnKazDSO-JTHkxRaEjEfT3kdNp_xF1Bk4VteamfmPVPZy_P_knKPZb7Ug24aiydOa4H6TMrE7iRVFhv3-)**
+
 
 # Windows 10/8.1/7
 
@@ -197,108 +203,13 @@ $ mongo
 ```
 ![](https://lh3.googleusercontent.com/QcOqB-3eMsy3AMoy7ZeujRHeGPzeYEg7crw6P6GBgOLiZwiLXpC7_oXbEChXBp2KWVnB60HXhzwcpleMweANgPPjQolK2mwAUr0GSfz2MJyZX2xrMFq8CaRGs3jF1NyIwcO5KxR7)
 **Problemas comunes:**
-Si aparece la siguiente notificación se debe escribir el comando **$ export LC_ALL=C**.
+Si aparece la siguiente notificación se debe escribir el comando 
+```sh
+$ export LC_ALL=C**.
+```
 ![](https://lh6.googleusercontent.com/jog2httXLusNVKpl59eiShaPEYULz67EQ80HsWZhVmeYaU_qI8M80VMkL05jrvJ1D6W9M9fSVKIqeoaDI6o1jYurwi3s_WDv9PugwXnm17yNoPpnYdA2JEob0R5OYKu82_E2PmCi)
 ---
 
-# Agregar archivo para despliegue de nodos Apache Spark
-
-En cada equipo que conformará el cluster de Spark se debe tener el siguiente archivo:
-Utilizando la siguiente dirección http://apache.uniminuto.edu/spark/spark-2.3.1/spark-2.3.1-bin-hadoop2.7.tgz se desacarga el archivo que se obtiene usando el comando wget.
-
-```sh
-$ wget http://apache.uniminuto.edu/spark/spark-2.3.1/spark-2.3.1-bin-hadoop2.7.tgz
-```
-![](https://lh6.googleusercontent.com/pk6eDgdbXujN7uciRm1lvZLPC3DjAA4YBxn6W6dn_1RMr_IiCVliCaqrK1jXoMiRT5uEuFEdq5Gr1D-QK_XcuLNAQAYM5JgYyhuuVtmG5UMfL_L--o9MGsioHcAft5aqFH-p3Wc5)
-
-Posteriormente se debe descomprimir. La implementación de la solución se desarrolló en 3 equipos (Todos deberían tener Java, Maven, Git):
-
-**![](https://lh4.googleusercontent.com/rGRJZWBVS1QMQzaHbUzp9LcYFr7KvFZqZGDSsoy4N9U0wfrrsGZ8btDNnKazDSO-JTHkxRaEjEfT3kdNp_xF1Bk4VteamfmPVPZy_P_knKPZb7Ug24aiydOa4H6TMrE7iRVFhv3-)**
-
-Es válido aclarar que en el archivo de configuración, todos los equipos deben conocer los hostname de los demás (para efectos del clúster de spark)
-
-para configurar esto puede hacerlo a través del comando:
-```sh
-sudo nano /etc/hosts
-```
-De forma que quede de esta manera:
-
-![](https://lh3.googleusercontent.com/7eG07T9MWLfRoF2LWLN4DPXV6LjkuMp3U1F3ISY8uUOMtyLBvPF4tQ9BpY2d0woLTCHLtDoD7A6YbtPVD8X_w1_YGt34JpXA5fa8oU5ejGyGZqJJPJDk_YJdvH36o1PVkUk5BIai)
-
-127.0.0.1 localhost
-
-10.8.0.17 agricultura2
-
-10.8.0.18 agricultura1
-
-10.8.0.23 agricultura3
-
- 
-Pasos para la ejecución de la prueba de concepto:
-
-Agricultura2:
-
--   Correr redis  
-```sh
-cd redis-stable/  
-sudo redis-server redis.conf
-```
-    
--   Correr Spark Master 
-```sh
-/home/pgr/spark-2.3.1-bin-hadoop2.7/bin/spark-class org.apache.spark.deploy.master.Master
-```    
--   Correr Spark Worker 
-```sh
-/home/pgr/spark-2.3.1-bin-hadoop2.7/bin/spark-class org.apache.spark.deploy.worker.Worker spark://10.8.0.17:7077
-```    
-
-Agricultura1:
-
--   Correr Thingsboard
-    
--   Correr Kafka 
-```sh
-sudo /opt/kafka/bin/kafka-server-start.sh /opt/kafka/config/server.properties
-```    
--   Correr Spark Worker 
-```sh
-/home/pgr/pgr/spark-2.3.1-bin-hadoop2.7/bin/spark-class org.apache.spark.deploy.worker.Worker spark://10.8.0.17:7077
-```    
-Agricultura3:
--   Correr Spark Worker 
-```sh
-/home/pgr/spark-2.3.1-bin-hadoop2.7/bin/spark-class org.apache.spark.deploy.worker.Worker spark://10.8.0.17:7077
-```    
-
-Envío de las aplicaciones de spark al clúster
-
-Agricultura2:
-
--   Compilar las aplicaciones de spark (más información en 6.4.3. Guía para la creación de nuevas aplicaciones de Spark Streaming paso 12 en adelante)
-    
--   Enviar al cluster la aplicación de humedad 
-```sh
-sudo /home/pgr/spark-2.3.1-bin-hadoop2.7/bin/spark-submit --class org.thingsboard.samples.spark.humidity.SparkKafkaStreamingHumidityMain --master spark://10.8.0.17:7077 --conf spark.cores.max=1 /home/pgr/thingsboard-spark-backend/target/Spark-Humidity-KafkaStreaming.jar
-```
-    
--   Enviar al cluster la aplicación de intensidad de la luz  
-```sh
-sudo /home/pgr/spark-2.3.1-bin-hadoop2.7/bin/spark-submit --class org.thingsboard.samples.spark.light.SparkKafkaStreamingLightMain --master spark://10.8.0.17:7077 --conf spark.cores.max=1 /home/pgr/thingsboard-spark-backend/target/Spark-Light-KafkaStreaming.jar
-```    
--   Enviar al cluster la aplicación de temperatura
-```sh
-sudo /home/pgr/spark-2.3.1-bin-hadoop2.7/bin/spark-submit --class org.thingsboard.samples.spark.temperature.SparkKafkaStreamingTemperatureMain --master spark://10.8.0.17:7077 --conf spark.cores.max=1 /home/pgr/thingsboard-spark-backend/target/Spark-Temperature-KafkaStreaming.jar
-```
-
-Puede cambiar la cantidad de cores que utilizan las aplicaciones cambiando el parámetro en los comandos “ spark.cores.max=1 “ por otro número
-
-Para acceder a la página principal del nodo master de spark debe ir a 10.8.0.17:8080 y aparecerá una pantalla como la siguiente:
-
-![](https://lh4.googleusercontent.com/yvkedIZk-iyZVDh616F7csaCmJOuQIqHYLIflWBHD0x6HCP9efp7kpmslaiXakhOXcoUaHxcgMIJRmT1CAWD2JvItVtbA_Y_N8zghypOaIx7o4saaGWcCTRidh-Yeg79m_4duDJc)
-
-
----
 # Instalación de Kafka:
 
 1.  Instalar Zookeeper: 
@@ -379,7 +290,7 @@ En caso de que haya quedado abierto el servicio detener con el comando:
 sudo service redis_6379 stop
 ```
 ---
-# Instalación y ejecución de Thingboard
+# Instalación y ejecución de Thingboard v1.4
 
 Tanto para linux como para windows se utiliza el mismo método de compilación y ejecución usando mvn y java.
 **Pasos:**
@@ -452,3 +363,106 @@ Password: tenant
 
 ![](https://lh4.googleusercontent.com/XO2_SeOduXpV8sFjRZx4uFvBWLKLOtrnKSUTAwPDaqmEpkYkQFuJeMUdfNd6eaOaNR56fjVPW0ZTXi4SZStuqsmt61DjToP_5wV12yPNHKFC2b-HFe5YDw7IETO1wHWaea93srs3)
 
+**Posibles problemas**
+Si al ejecutar Thingsboard aparece un error donde notifica el uso de un puerto debido a una clase que ejecuta MQTT se debe matar el proceso con la siguiente instrucción:
+```sh
+$ sudo kill `sudo lsof -t -i:1883`
+```
+---
+# Agregar archivo para despliegue de nodos Apache Spark
+
+Una vez se haya realizado toda la configuración del manual de usuario, se puede realizar la implementación de la prueba de concepto.
+
+En cada equipo que conformará el cluster de Spark se debe tener el siguiente archivo:
+Utilizando la siguiente dirección http://apache.uniminuto.edu/spark/spark-2.3.1/spark-2.3.1-bin-hadoop2.7.tgz se desacarga el archivo que se obtiene usando el comando wget.
+
+```sh
+$ wget http://apache.uniminuto.edu/spark/spark-2.3.1/spark-2.3.1-bin-hadoop2.7.tgz
+```
+![](https://lh6.googleusercontent.com/pk6eDgdbXujN7uciRm1lvZLPC3DjAA4YBxn6W6dn_1RMr_IiCVliCaqrK1jXoMiRT5uEuFEdq5Gr1D-QK_XcuLNAQAYM5JgYyhuuVtmG5UMfL_L--o9MGsioHcAft5aqFH-p3Wc5)
+
+Posteriormente se debe descomprimir.
+
+Es válido aclarar que en el archivo de configuración, todos los equipos deben conocer los hostname de los demás (para efectos del clúster de spark)
+
+para configurar esto puede hacerlo a través del comando:
+```sh
+sudo nano /etc/hosts
+```
+De forma que quede de esta manera:
+
+![](https://lh3.googleusercontent.com/7eG07T9MWLfRoF2LWLN4DPXV6LjkuMp3U1F3ISY8uUOMtyLBvPF4tQ9BpY2d0woLTCHLtDoD7A6YbtPVD8X_w1_YGt34JpXA5fa8oU5ejGyGZqJJPJDk_YJdvH36o1PVkUk5BIai)
+
+127.0.0.1 localhost
+
+10.8.0.17 agricultura2
+
+10.8.0.18 agricultura1
+
+10.8.0.23 agricultura3
+
+ 
+***Pasos para la ejecución de la prueba de concepto:***
+
+Agricultura2:
+
+-   Correr redis  
+```sh
+cd redis-stable/  
+sudo redis-server redis.conf
+```
+    
+-   Correr Spark Master 
+```sh
+/home/pgr/spark-2.3.1-bin-hadoop2.7/bin/spark-class org.apache.spark.deploy.master.Master
+```    
+-   Correr Spark Worker 
+```sh
+/home/pgr/spark-2.3.1-bin-hadoop2.7/bin/spark-class org.apache.spark.deploy.worker.Worker spark://10.8.0.17:7077
+```    
+
+Agricultura1:
+
+-   Correr Thingsboard
+    
+-   Correr Kafka 
+```sh
+sudo /opt/kafka/bin/kafka-server-start.sh /opt/kafka/config/server.properties
+```    
+-   Correr Spark Worker 
+```sh
+/home/pgr/pgr/spark-2.3.1-bin-hadoop2.7/bin/spark-class org.apache.spark.deploy.worker.Worker spark://10.8.0.17:7077
+```    
+Agricultura3:
+-   Correr Spark Worker 
+```sh
+/home/pgr/spark-2.3.1-bin-hadoop2.7/bin/spark-class org.apache.spark.deploy.worker.Worker spark://10.8.0.17:7077
+```    
+
+***Envío de las aplicaciones de spark al clúster***
+
+Agricultura2:
+
+-   Compilar las aplicaciones de spark (más información en 6.4.3. Guía para la creación de nuevas aplicaciones de Spark Streaming paso 12 en adelante)
+    
+-   Enviar al cluster la aplicación de humedad 
+```sh
+sudo /home/pgr/spark-2.3.1-bin-hadoop2.7/bin/spark-submit --class org.thingsboard.samples.spark.humidity.SparkKafkaStreamingHumidityMain --master spark://10.8.0.17:7077 --conf spark.cores.max=1 /home/pgr/thingsboard-spark-backend/target/Spark-Humidity-KafkaStreaming.jar
+```
+    
+-   Enviar al cluster la aplicación de intensidad de la luz  
+```sh
+sudo /home/pgr/spark-2.3.1-bin-hadoop2.7/bin/spark-submit --class org.thingsboard.samples.spark.light.SparkKafkaStreamingLightMain --master spark://10.8.0.17:7077 --conf spark.cores.max=1 /home/pgr/thingsboard-spark-backend/target/Spark-Light-KafkaStreaming.jar
+```    
+-   Enviar al cluster la aplicación de temperatura
+```sh
+sudo /home/pgr/spark-2.3.1-bin-hadoop2.7/bin/spark-submit --class org.thingsboard.samples.spark.temperature.SparkKafkaStreamingTemperatureMain --master spark://10.8.0.17:7077 --conf spark.cores.max=1 /home/pgr/thingsboard-spark-backend/target/Spark-Temperature-KafkaStreaming.jar
+```
+
+Puede cambiar la cantidad de cores que utilizan las aplicaciones cambiando el parámetro en los comandos “ spark.cores.max=1 “ por otro número
+
+Para acceder a la página principal del nodo master de spark debe ir a 10.8.0.17:8080 y aparecerá una pantalla como la siguiente:
+[Ingresar al link para ver el video de la prueba de concepto](https://drive.google.com/open?id=1XxTig49Rw3QNahTpZCTXVUV2Si_dT-Ua)
+
+
+---
